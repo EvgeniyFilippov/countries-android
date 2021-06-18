@@ -1,10 +1,11 @@
 package com.example.course_android
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.fragment_second.*
 
 class SecondFragment : Fragment() {
 
@@ -16,4 +17,10 @@ class SecondFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_second, container, false)
     }
 
+    override fun onStart() {
+        super.onStart()
+        back_btn.setOnClickListener {
+            (activity as MainActivity).navController.navigate(R.id.action_secondFragment_to_startFragment)
+        }
+    }
 }
