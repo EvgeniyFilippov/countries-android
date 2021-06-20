@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 
 class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
-    private var titles = arrayOf("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
-    private val details = arrayOf("One details", "Two details", "Three details", "Four details", "Five details",
-        "Six details", "Seven details", "Eight details", "Nine details", "Ten details")
+    private var titles = arrayOf("First heading", "Second heading", "Third heading", "Fourth heading", "Fifth heading",
+        "Sixth heading", "Seventh heading", "Eighth heading", "Ninth heading", "Tenth heading")
+    private val details = arrayOf("First description", "Second description", "The third description", "Fourth description",
+        "Fifth description", "Sixth description", "Seventh description", "Eighth description", "Ninth description", "Tenth description")
     private var images = intArrayOf(R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh,
         R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh)
 
@@ -40,6 +41,5 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
             itemTitle = itemView.findViewById(R.id.item_title)
             itemDetail = itemView.findViewById(R.id.item_detail)
         }
-
     }
 }
