@@ -24,9 +24,6 @@ class SecondFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        back_btn.setOnClickListener {
-            (activity as MainActivity).navController.navigate(R.id.action_secondFragment_to_startFragment)
-        }
         layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
 
