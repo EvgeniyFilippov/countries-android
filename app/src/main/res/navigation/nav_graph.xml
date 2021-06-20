@@ -14,13 +14,10 @@
             android:id="@+id/action_startFragment_to_secondFragment"
             app:destination="@id/secondFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/secondFragment"
         android:name="com.example.course_android.SecondFragment"
         android:label="fragment_second"
-        tools:layout="@layout/fragment_second" >
-        <action
-            android:id="@+id/action_secondFragment_to_startFragment"
-            app:destination="@id/startFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_second" />
 </navigation>
