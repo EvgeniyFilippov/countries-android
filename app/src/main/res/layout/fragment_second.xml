@@ -7,11 +7,12 @@
     tools:context=".StartFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Second fragment"
-        android:textSize="24sp" />
+        android:layout_height="match_parent"/>
 
     <Button
         android:id="@+id/back_btn"
