@@ -26,7 +26,6 @@ class SecondFragment : Fragment() {
         super.onStart()
         layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
-
         adapter = RecyclerAdapter()
         recyclerView.adapter = adapter
     }
