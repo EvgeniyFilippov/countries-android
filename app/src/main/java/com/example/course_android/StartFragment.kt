@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_start.*
-
+import androidx.navigation.fragment.findNavController
 
 class StartFragment : Fragment() {
 
@@ -20,8 +20,9 @@ class StartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        main_btn.setOnClickListener {
-            (activity as MainActivity).navController.navigate(R.id.action_startFragment_to_secondFragment)
+        val button = view.findViewById<Button>(R.id.main_btn)
+        button.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_secondFragment)
         }
     }
 
