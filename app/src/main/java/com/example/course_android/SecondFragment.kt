@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.fragment_second.*
 
 class SecondFragment : Fragment() {
 
-    private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
 
     override fun onCreateView(
@@ -24,8 +23,7 @@ class SecondFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        layoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = LinearLayoutManager(context)
         adapter = RecyclerAdapter()
         recyclerView.adapter = adapter
     }
