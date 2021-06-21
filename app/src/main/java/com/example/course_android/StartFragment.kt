@@ -18,8 +18,8 @@ class StartFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_start, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         main_btn.setOnClickListener {
             (activity as MainActivity).navController.navigate(R.id.action_startFragment_to_secondFragment)
         }
