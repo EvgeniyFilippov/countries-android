@@ -4,17 +4,17 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
-    android:layout_margin="5dp"
-    app:cardBackgroundColor="#00BCD4"
-    app:cardCornerRadius="10dp"
-    app:contentPadding="4dp"
+    android:layout_margin="@dimen/card_recycler_margin"
+    app:cardBackgroundColor="@color/background_color_recycler"
+    app:cardCornerRadius="@dimen/radius_recycler_card"
+    app:contentPadding="@dimen/card_recycler_margin"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/relativeLayout"
-        android:padding="14dp"
+        android:padding="@dimen/padding_recycler_layout"
         >
         <ImageView
             android:id="@+id/item_image"
@@ -24,18 +24,18 @@
             app:layout_constraintLeft_toLeftOf="parent"/>
         <TextView
             android:id="@+id/item_title"
-            android:layout_width="240dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/layout_width_heading"
+            android:layout_height="@dimen/layout_height_heading"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/item_image"
-            android:layout_marginStart="16dp"
-            android:textSize="30sp"/>
+            android:layout_marginStart="@dimen/margin_start_heading"
+            android:textSize="@dimen/text_heading"/>
         <TextView
             android:id="@+id/item_detail"
-            android:layout_width="240dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="@dimen/layout_width_heading"
+            android:layout_height="@dimen/short_descr_recycler_layout"
+            android:layout_marginStart="@dimen/margin_start_heading"
+            android:layout_marginTop="@dimen/margin_top_shot_descr_recycler"
             app:layout_constraintTop_toBottomOf="@+id/item_title"
             app:layout_constraintLeft_toRightOf="@+id/item_image"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
