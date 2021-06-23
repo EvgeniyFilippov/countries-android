@@ -20,7 +20,7 @@ class StartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val button = view.findViewById<Button>(R.id.main_btn)
+        val button = view.findViewById<Button>(R.id.btn_main)
         button.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_secondFragment)
         }
