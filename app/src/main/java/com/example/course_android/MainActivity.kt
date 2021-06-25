@@ -6,7 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import okhttp3.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.IOException
+import java.lang.reflect.Array.get
 
 private const val URL = "https://restcountries.eu/rest/v2/all"
 
@@ -28,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             .url(URL)
             .build()
         val call = httpClient.newCall(request = request)
-        call.enqueue(object: Callback {
+        call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("JSON", e.toString())
             }
@@ -42,5 +45,11 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    private fun jsonToCountries(json: String) {
+        val jsonArray = JSONArray(json)
+        val jsonObject = jsonArray.getJSONObject(0)
+        val all = jsonObject.getString("capital")
     }
 }
