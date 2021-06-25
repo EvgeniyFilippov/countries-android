@@ -1,10 +1,10 @@
 package com.example.course_android
 
-class CountriesRootObject (
+data class CountriesRootObject (
     val countriesObject: List<CountriesObject>
         )
 
-class CountriesObject (
+data class CountriesObject (
     val name: String,
     val topLevelDomain: List<String?>,
     val alpha2Code: String,
@@ -30,20 +30,20 @@ class CountriesObject (
     val regionalBlocs: List<RegionalBlocs>
 )
 
-class Currencies (
+data class Currencies (
     val code: String,
     val name: String,
     val symbol: String
     )
 
-class Languages (
+data class Languages (
     val iso639_1: String,
     val iso639_2: String,
     val name: String,
     val nativeName: String
         )
 
-class Translations (
+data class Translations (
     val de: String,
     val es: String,
     val fr: String,
@@ -56,7 +56,7 @@ class Translations (
     val fa: String
 )
 
-class RegionalBlocs (
+data class RegionalBlocs (
     val acronym: String,
     val name: String,
     val otherAcronyms: List<String?>,
