@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.databinding.FragmentSecondBinding
-import com.example.course_android.databinding.FragmentStartBinding
 import kotlinx.android.synthetic.main.fragment_second.*
 
 class SecondFragment : Fragment() {
