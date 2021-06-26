@@ -8,13 +8,17 @@ import com.example.course_android.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     lateinit var navController: NavController
-    private lateinit var binding: ActivityMainBinding
+    private  var binding: ActivityMainBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding?.root)
         navController = Navigation.findNavController(this, R.id.nav_host)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
     }
 }
