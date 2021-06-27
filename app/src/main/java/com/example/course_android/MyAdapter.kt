@@ -7,16 +7,10 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.model.CountriesDataItem
+import kotlinx.coroutines.joinAll
 import retrofit2.Callback
 
-class MyAdapter(val context: Callback<List<CountriesDataItem>?>, val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-
-    private var titles = arrayOf("First heading", "Second heading", "Third heading", "Fourth heading", "Fifth heading",
-        "Sixth heading", "Seventh heading", "Eighth heading", "Ninth heading", "Tenth heading")
-    private val details = arrayOf("First description", "Second description", "The third description", "Fourth description",
-        "Fifth description", "Sixth description", "Seventh description", "Eighth description", "Ninth description", "Tenth description")
-//    private var images = intArrayOf(R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh,
-//        R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh, R.drawable.vinnipuh)
+class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyAdapter.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
@@ -30,18 +24,22 @@ class MyAdapter(val context: Callback<List<CountriesDataItem>?>, val countriesLi
     override fun onBindViewHolder(holder: MyAdapter.ViewHolder, position: Int) {
         holder.itemTitle.text = countriesList[position].name
         holder.itemDetail.text = countriesList[position].capital
-//        holder.itemImage.setImageResource(countriesList[position].flag)
-        holder.itemLang.text = countriesList[position].languages.get(0).name
+        val myStringBuilder = StringBuilder()
+        for (n in countriesList[position].languages.indices) {
+            myStringBuilder.append(countriesList[position].languages.get(n).name)
+            if (n < countriesList[position].languages.size - 1) {
+                myStringBuilder.append(", ")
+            }
+        }
+        holder.itemLang.text = myStringBuilder
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-//        var itemImage: AppCompatImageView
         var itemTitle: AppCompatTextView
         var itemDetail: AppCompatTextView
         var itemLang: AppCompatTextView
 
         init {
-//            itemImage = itemView.findViewById(R.id.item_image)
             itemTitle = itemView.findViewById(R.id.item_title)
             itemDetail = itemView.findViewById(R.id.item_detail)
             itemLang = itemView.findViewById(R.id.item_lang)
