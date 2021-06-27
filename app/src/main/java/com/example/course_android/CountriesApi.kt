@@ -1,14 +1,11 @@
 package com.example.course_android
 
+import com.example.course_android.model.CountriesDataItem
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Query
 
 //https://restcountries.eu/rest/v2/all?fields=name;capital
 interface CountriesApi {
-    @GET("v2/top-headlines")
-    fun getTopHeadlines(
-        @Query("country") country: String,
-        @Query("apiKey") apiKey: String
-    ): Call<NewsRootObject>
+    @GET("rest/v2/all")
+    fun getTopHeadlines(): Call<List<CountriesDataItem>>
 }
