@@ -5,51 +5,38 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import okhttp3.*
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.IOException
-import java.lang.reflect.Array.get
-
-private const val URL = "https://restcountries.eu/rest/v2/all"
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     lateinit var navController: NavController
-    private val httpClient = OkHttpClient()
+    private val retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://newsapi.org/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
+    }
 
+//    https://newsapi.org/v2/top-headlines?country=us&apiKey=fe27628816ba4ca5b23fe932cf36e26e
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getTopHeadLines()
         navController = Navigation.findNavController(this, R.id.nav_host)
 
-    }
-
-    private fun getTopHeadLines() {
-        val request = Request.Builder()
-            .url(URL)
-            .build()
-        val call = httpClient.newCall(request = request)
-        call.enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("JSON", e.toString())
+        val newsApi = retrofit.create(NewsApi::class.java)
+        val newsApiCall = newsApi.getTopHeadlines("us", "f12")
+        newsApiCall.enqueue(object: Callback<NewsRootObject>{
+            override fun onResponse(call: Call<NewsRootObject>, response: Response<NewsRootObject>) {
+                Log.d("RETROFIT_COUNTRIES", response.body().toString())
             }
 
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val json = response.body?.string()
-                    Log.d("JSON", json ?: "")
-                }
+            override fun onFailure(call: Call<NewsRootObject>, t: Throwable) {
+                Log.d("RETROFIT_COUNTRIES", t.toString())
             }
-
         })
-
-    }
-
-    private fun jsonToCountries(json: String) {
-        val jsonArray = JSONArray(json)
-        val jsonObject = jsonArray.getJSONObject(0)
-        val all = jsonObject.getString("capital")
     }
 }
