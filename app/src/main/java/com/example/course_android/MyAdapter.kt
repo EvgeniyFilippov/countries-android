@@ -30,18 +30,21 @@ class MyAdapter(val context: Callback<List<CountriesDataItem>?>, val countriesLi
     override fun onBindViewHolder(holder: MyAdapter.ViewHolder, position: Int) {
         holder.itemTitle.text = countriesList[position].name
         holder.itemDetail.text = countriesList[position].capital
-//        holder.itemImage.setImageResource(images[position])
+//        holder.itemImage.setImageResource(countriesList[position].flag)
+        holder.itemLang.text = countriesList[position].languages.get(0).name
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 //        var itemImage: AppCompatImageView
         var itemTitle: AppCompatTextView
         var itemDetail: AppCompatTextView
+        var itemLang: AppCompatTextView
 
         init {
 //            itemImage = itemView.findViewById(R.id.item_image)
             itemTitle = itemView.findViewById(R.id.item_title)
             itemDetail = itemView.findViewById(R.id.item_detail)
+            itemLang = itemView.findViewById(R.id.item_lang)
         }
     }
 }
