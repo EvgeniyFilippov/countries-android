@@ -3,11 +3,9 @@ package com.example.course_android
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.model.CountriesDataItem
-import kotlinx.coroutines.joinAll
 import retrofit2.Callback
 
 class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
