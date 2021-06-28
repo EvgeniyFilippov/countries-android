@@ -12,15 +12,22 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.example.course_android.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var navController: NavController
+    private  var binding: ActivityMainBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
         navController = Navigation.findNavController(this, R.id.nav_host)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
 }
