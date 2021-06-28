@@ -22,5 +22,4 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         super.onDestroyView()
         binding = null
     }
-
 }
