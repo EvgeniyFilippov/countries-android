@@ -2,13 +2,11 @@ package com.example.course_android
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.course_android.model.CountriesDataItem
-import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.databinding.FragmentSecondBinding
+import com.example.course_android.model.CountriesDataItem
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,13 +19,11 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
     private var binding: FragmentSecondBinding? = null
-
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://restcountries.eu/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,8 +55,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 Log.d("RETROFIT_COUNTRIES", t.toString())
             }
         })
-
-
     }
 
     override fun onDestroyView() {
