@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         navController = Navigation.findNavController(this, R.id.nav_host)
     }
 
+
+
     override fun onDestroy() {
         super.onDestroy()
         binding = null
