@@ -1,12 +1,14 @@
-package com.example.course_android
+package com.example.course_android.fragments
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.api.CountriesApi
+import com.example.course_android.MyAdapter
+import com.example.course_android.R
+import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
@@ -15,30 +17,21 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SecondFragment : Fragment() {
+class SecondFragment : Fragment(R.layout.fragment_second) {
 
     lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
-
+    private var binding: FragmentSecondBinding? = null
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://restcountries.eu/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding = FragmentSecondBinding.bind(view)
         recyclerView.setHasFixedSize(true)
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
@@ -54,7 +47,7 @@ class SecondFragment : Fragment() {
                 call: Call<List<CountriesDataItem>?>,
                 response: Response<List<CountriesDataItem>?>
             ) {
-                val responseBody = response.body()!!
+                val responseBody = response.body()!!.sortedByDescending {it.name}
                 myAdapter = MyAdapter(this, responseBody)
                 myAdapter.notifyDataSetChanged()
                 recyclerView.adapter = myAdapter
@@ -67,4 +60,9 @@ class SecondFragment : Fragment() {
         })
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
 }

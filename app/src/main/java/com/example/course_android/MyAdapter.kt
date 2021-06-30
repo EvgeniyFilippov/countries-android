@@ -3,11 +3,10 @@ package com.example.course_android
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.model.CountriesDataItem
-import kotlinx.coroutines.joinAll
+import com.example.course_android.utils.getLanguageByKey
 import retrofit2.Callback
 
 class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
@@ -24,14 +23,7 @@ class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val cou
     override fun onBindViewHolder(holder: MyAdapter.ViewHolder, position: Int) {
         holder.itemTitle.text = countriesList[position].name
         holder.itemDetail.text = countriesList[position].capital
-        val myStringBuilder = StringBuilder()
-        for (n in countriesList[position].languages.indices) {
-            myStringBuilder.append(countriesList[position].languages.get(n).name)
-            if (n < countriesList[position].languages.size - 1) {
-                myStringBuilder.append(", ")
-            }
-        }
-        holder.itemLang.text = myStringBuilder
+        holder.itemLang.text = getLanguageByKey(countriesList, position)
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
