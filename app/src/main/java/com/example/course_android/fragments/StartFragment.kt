@@ -1,6 +1,8 @@
 package com.example.course_android.fragments
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -17,6 +19,13 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         binding?.btnMain?.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_secondFragment)
         }
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+
     }
 
     override fun onDestroyView() {
