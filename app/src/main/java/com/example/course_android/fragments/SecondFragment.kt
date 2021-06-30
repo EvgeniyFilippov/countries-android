@@ -1,10 +1,13 @@
-package com.example.course_android
+package com.example.course_android.fragments
 
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.api.CountriesApi
+import com.example.course_android.MyAdapter
+import com.example.course_android.R
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import kotlinx.android.synthetic.main.fragment_second.*
@@ -44,7 +47,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 call: Call<List<CountriesDataItem>?>,
                 response: Response<List<CountriesDataItem>?>
             ) {
-                val responseBody = response.body()!!
+                val responseBody = response.body()!!.sortedByDescending {it.name}
                 myAdapter = MyAdapter(this, responseBody)
                 myAdapter.notifyDataSetChanged()
                 recyclerView.adapter = myAdapter
