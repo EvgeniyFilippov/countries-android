@@ -21,7 +21,7 @@
             android:layout_width="@dimen/image_width_recycle"
             android:layout_height="@dimen/image_height_recycle"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/item_title"
             android:layout_width="@dimen/layout_width_heading"
