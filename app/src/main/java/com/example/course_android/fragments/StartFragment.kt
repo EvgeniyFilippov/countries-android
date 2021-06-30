@@ -1,9 +1,10 @@
-package com.example.course_android
+package com.example.course_android.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.course_android.R
 import com.example.course_android.databinding.FragmentStartBinding
 
 class StartFragment : Fragment(R.layout.fragment_start) {
