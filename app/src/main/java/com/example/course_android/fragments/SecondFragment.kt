@@ -60,6 +60,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         })
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
