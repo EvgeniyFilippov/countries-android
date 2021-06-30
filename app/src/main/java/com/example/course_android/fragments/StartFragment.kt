@@ -3,6 +3,7 @@ package com.example.course_android.fragments
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -26,6 +27,13 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         inflater.inflate(R.menu.main_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.item1) {
+            findNavController().navigate(R.id.action_startFragment_to_secondFragment)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {
