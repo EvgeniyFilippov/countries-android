@@ -3,14 +3,14 @@
     <dimen name="image_width_recycle">100dp</dimen>
     <dimen name="image_height_recycle">100dp</dimen>
     <dimen name="layout_width_heading">240dp</dimen>
-    <dimen name="layout_height_heading">40dp</dimen>
+    <dimen name="layout_height_heading">30dp</dimen>
     <dimen name="margin_start_heading">16dp</dimen>
     <dimen name="card_recycler_margin">4dp</dimen>
     <dimen name="radius_recycler_card">10dp</dimen>
     <dimen name="padding_recycler_layout">14dp</dimen>
     <dimen name="short_descr_recycler_layout">20dp</dimen>
     <dimen name="margin_top_shot_descr_recycler">8dp</dimen>
-    <dimen name="text_heading">30sp</dimen>
+    <dimen name="text_heading">20sp</dimen>
     <dimen name="text_name_fragment">24sp</dimen>
     <dimen name="margin_button">40dp</dimen>
     <dimen name="margin_top_name_fragment">200dp</dimen>
