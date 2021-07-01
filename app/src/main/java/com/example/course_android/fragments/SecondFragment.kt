@@ -69,10 +69,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 call: Call<List<CountriesDataItem>?>,
                 response: Response<List<CountriesDataItem>?>
             ) {
-                responseBody = (response.body() as MutableList<CountriesDataItem>?)!!
-                myAdapter = MyAdapter(this, responseBody)
-                recyclerView.adapter = myAdapter
-                Log.d("RETROFIT_COUNTRIES", response.body().toString())
+                if (response.body() != null) {
+                    responseBody = (response.body() as MutableList<CountriesDataItem>)
+                    myAdapter = MyAdapter(this, responseBody)
+                    recyclerView.adapter = myAdapter
+                } else {
+                    Log.d("RETROFIT_COUNTRIES", response.body().toString())
+                }
             }
 
             override fun onFailure(call: Call<List<CountriesDataItem>?>, t: Throwable) {
