@@ -23,7 +23,7 @@ class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val cou
     override fun onBindViewHolder(holder: MyAdapter.ViewHolder, position: Int) {
         holder.itemTitle.text = countriesList[position].name
         holder.itemDetail.text = countriesList[position].capital
-        holder.itemLang.text = getLanguageByKey(countriesList, position)
+        holder.itemLang.text = countriesList[position].languages.getLanguageByKey()
         holder.itemPopulation.text = countriesList[position].population.toString()
     }
 
