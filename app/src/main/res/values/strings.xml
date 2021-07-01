@@ -8,4 +8,6 @@
     <string name="menu_item2">item 2</string>
     <string name="menu_item3">item 3</string>
     <string name="menu_item4">item 4</string>
+    <string name="sort_down_population">По убыванию численности</string>
+    <string name="sort_up_population">По возрастанию численности</string>
 </resources>

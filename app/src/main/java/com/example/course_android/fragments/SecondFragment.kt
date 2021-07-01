@@ -2,6 +2,9 @@ package com.example.course_android.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +24,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
     lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var responseBody: MutableList<CountriesDataItem>
     private var binding: FragmentSecondBinding? = null
     private val retrofit by lazy {
         Retrofit.Builder()
@@ -35,7 +39,25 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         recyclerView.setHasFixedSize(true)
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
+        setHasOptionsMenu(true)
         getMyData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.countries_sort_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.sort_up) {
+            responseBody.sortBy { it.population }
+            myAdapter.notifyDataSetChanged()
+
+        } else if (item.itemId == R.id.sort_down) {
+            responseBody.sortByDescending { it.population }
+            myAdapter.notifyDataSetChanged()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun getMyData() {
@@ -47,9 +69,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 call: Call<List<CountriesDataItem>?>,
                 response: Response<List<CountriesDataItem>?>
             ) {
-                val responseBody = response.body()!!.sortedByDescending {it.name}
+                responseBody = (response.body() as MutableList<CountriesDataItem>?)!!
                 myAdapter = MyAdapter(this, responseBody)
-                myAdapter.notifyDataSetChanged()
                 recyclerView.adapter = myAdapter
                 Log.d("RETROFIT_COUNTRIES", response.body().toString())
             }
@@ -59,6 +80,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             }
         })
     }
+
+
 
 
     override fun onDestroyView() {
