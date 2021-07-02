@@ -29,14 +29,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var responseBody: MutableList<CountriesDataItem>
     private var binding: FragmentSecondBinding? = null
-
     private val okHttpClientBuilder = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
     private val logging = HttpLoggingInterceptor()
-
-
-
 
     private val retrofit by lazy {
         Retrofit.Builder()
