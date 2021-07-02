@@ -14,11 +14,14 @@ import com.example.course_android.R
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import kotlinx.android.synthetic.main.fragment_second.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class SecondFragment : Fragment(R.layout.fragment_second) {
 
@@ -26,10 +29,20 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var responseBody: MutableList<CountriesDataItem>
     private var binding: FragmentSecondBinding? = null
+
+    private val okHttpClientBuilder = OkHttpClient.Builder()
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+    private val logging = HttpLoggingInterceptor()
+
+
+
+
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://restcountries.eu/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClientBuilder.build())
             .build()
     }
 
@@ -61,6 +74,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     }
 
     private fun getMyData() {
+        logging.level = HttpLoggingInterceptor.Level.BODY
+        okHttpClientBuilder.addInterceptor(logging)
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val countriesApiCall = countriesApi.getTopHeadlines()
 
