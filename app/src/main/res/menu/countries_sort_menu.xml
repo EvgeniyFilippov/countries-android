@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/sort_down"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/sort_countries"
+        android:icon="@drawable/ic_baseline_keyboard_arrow_up_24"
+        app:showAsAction="ifRoom"
         android:title="@string/sort_down_population"/>
-    <item android:id="@+id/sort_up"
-        android:title="@string/sort_up_population"/>
 </menu>
