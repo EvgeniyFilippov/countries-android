@@ -48,6 +48,10 @@ dependencies {
     final junitVersion = "4.+"
     final testJunitVersion = "1.1.2"
     final testEspressoVersion = "3.3.0"
+    final retrofit = "2.9.0"
+    final converterGson = "2.9.0"
+    final okhttp = "4.9.0"
+    final loggingInterceptor = "4.9.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -60,8 +64,12 @@ dependencies {
     implementation "androidx.cardview:cardview:$cardviewVersion"
     implementation "androidx.legacy:legacy-support-v4:$legacySupportVersion"
     testImplementation "junit:junit:$junitVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$converterGson"
+    implementation"com.squareup.okhttp3:okhttp:$okhttp"
     androidTestImplementation "androidx.test.ext:junit:$testJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$testEspressoVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$loggingInterceptor"
 }
 
 apply plugin: 'kotlin-android-extensions'

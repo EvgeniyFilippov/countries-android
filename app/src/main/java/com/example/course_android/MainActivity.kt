@@ -7,6 +7,7 @@ import androidx.navigation.Navigation
 import com.example.course_android.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
     lateinit var navController: NavController
     private  var binding: ActivityMainBinding? = null
 
