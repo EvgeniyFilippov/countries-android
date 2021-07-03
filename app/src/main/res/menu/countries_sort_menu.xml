@@ -4,5 +4,5 @@
     <item android:id="@+id/sort_countries"
         android:icon="@drawable/ic_baseline_keyboard_arrow_up_24"
         app:showAsAction="ifRoom"
-        android:title="@string/sort_down_population"/>
+        android:title="@string/sort_population"/>
 </menu>
