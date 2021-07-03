@@ -63,13 +63,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             if (!item.isChecked) {
                 responseBody.sortBy { it.population }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
-                Toast.makeText(context,"Sorted up",
+                Toast.makeText(context,getString(R.string.sort_up),
                     Toast.LENGTH_SHORT).show();
                 item.isChecked = true
             } else {
                 responseBody.sortByDescending { it.population }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
-                Toast.makeText(context,"Sorted down",
+                Toast.makeText(context,getString(R.string.sort_down),
                     Toast.LENGTH_SHORT).show();
                 item.isChecked = false
             }
