@@ -23,18 +23,22 @@ class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val cou
     override fun onBindViewHolder(holder: MyAdapter.ViewHolder, position: Int) {
         holder.itemTitle.text = countriesList[position].name
         holder.itemDetail.text = countriesList[position].capital
-        holder.itemLang.text = getLanguageByKey(countriesList, position)
+        holder.itemLang.text = countriesList[position].languages.getLanguageByKey()
+        holder.itemPopulation.text = countriesList[position].population.toString()
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var itemTitle: AppCompatTextView
         var itemDetail: AppCompatTextView
         var itemLang: AppCompatTextView
+        var itemPopulation: AppCompatTextView
+
 
         init {
             itemTitle = itemView.findViewById(R.id.item_title)
             itemDetail = itemView.findViewById(R.id.item_detail)
             itemLang = itemView.findViewById(R.id.item_lang)
+            itemPopulation = itemView.findViewById(R.id.item_population)
         }
     }
 }
