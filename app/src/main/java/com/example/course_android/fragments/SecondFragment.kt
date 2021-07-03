@@ -1,12 +1,12 @@
 package com.example.course_android.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.MyAdapter
@@ -35,7 +35,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
     private val logging = HttpLoggingInterceptor()
-    private var sortCount = 1
+    private var sortStatus = 0
 
     private val retrofit by lazy {
         Retrofit.Builder()
@@ -47,6 +47,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        readData()
         binding = FragmentSecondBinding.bind(view)
         recyclerView.setHasFixedSize(true)
         linearLayoutManager = LinearLayoutManager(context)
@@ -58,10 +59,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_sort_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-        if (sortCount == 1) {
+        if (sortStatus == 1) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
             context?.toast(getString(R.string.sort_up))
-        } else if (sortCount == 2) {
+        } else if (sortStatus == 2) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
             context?.toast(getString(R.string.sort_down))
         }
@@ -74,16 +75,17 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
-                sortCount = 1
+                sortStatus = 1
             } else {
                 responseBody.sortByDescending { it.population }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
-                sortCount = 2
+                sortStatus = 2
 
             }
             myAdapter.notifyDataSetChanged()
+            saveData()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -101,9 +103,9 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             ) {
                 if (response.body() != null) {
                     responseBody = (response.body() as MutableList<CountriesDataItem>)
-                    if (sortCount == 1 ) {
+                    if (sortStatus == 1 ) {
                         responseBody.sortBy { it.population }
-                    } else if (sortCount == 2) {
+                    } else if (sortStatus == 2) {
                         responseBody.sortByDescending { it.population }
                     }
                     myAdapter = MyAdapter(this, responseBody)
@@ -118,6 +120,21 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 Log.d("RETROFIT_COUNTRIES", t.toString())
             }
         })
+    }
+
+    fun saveData() {
+        val sharedPreference = activity?.getSharedPreferences("data", Context.MODE_PRIVATE)
+        val editor = sharedPreference?.edit()
+        editor?.putInt("sortStatus", sortStatus)
+        editor?.apply()
+    }
+
+    fun readData() {
+        val sharedPreference = activity?.getSharedPreferences("data", Context.MODE_PRIVATE)
+        val reader = sharedPreference?.getInt("sortStatus", 0)
+        if (reader != null) {
+            sortStatus = reader
+        }
     }
 
     override fun onDestroyView() {
