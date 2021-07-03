@@ -6,11 +6,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.course_android.api.CountriesApi
 import com.example.course_android.MyAdapter
 import com.example.course_android.R
+import com.example.course_android.api.CountriesApi
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import kotlinx.android.synthetic.main.fragment_second.*
@@ -58,12 +59,20 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.sort_up) {
-            responseBody.sortBy { it.population }
-            myAdapter.notifyDataSetChanged()
-
-        } else if (item.itemId == R.id.sort_down) {
-            responseBody.sortByDescending { it.population }
+        if (item.itemId == R.id.sort_countries) {
+            if (!item.isChecked) {
+                responseBody.sortBy { it.population }
+                item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
+                Toast.makeText(context,"Sorted up",
+                    Toast.LENGTH_SHORT).show();
+                item.isChecked = true
+            } else {
+                responseBody.sortByDescending { it.population }
+                item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
+                Toast.makeText(context,"Sorted down",
+                    Toast.LENGTH_SHORT).show();
+                item.isChecked = false
+            }
             myAdapter.notifyDataSetChanged()
         }
         return super.onOptionsItemSelected(item)
