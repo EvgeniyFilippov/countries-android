@@ -14,6 +14,7 @@ import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
+import com.example.course_android.utils.toast
 import kotlinx.android.synthetic.main.fragment_second.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -34,6 +35,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
     private val logging = HttpLoggingInterceptor()
+    private var sortCount = 1
 
     private val retrofit by lazy {
         Retrofit.Builder()
@@ -56,6 +58,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_sort_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+        if (sortCount == 1) {
+            menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
+            context?.toast(getString(R.string.sort_up))
+        } else if (sortCount == 2) {
+            menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
+            context?.toast(getString(R.string.sort_down))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -63,15 +72,16 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             if (!item.isChecked) {
                 responseBody.sortBy { it.population }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
-                Toast.makeText(context,getString(R.string.sort_up),
-                    Toast.LENGTH_SHORT).show();
+                context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
+                sortCount = 1
             } else {
                 responseBody.sortByDescending { it.population }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
-                Toast.makeText(context,getString(R.string.sort_down),
-                    Toast.LENGTH_SHORT).show();
+                context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
+                sortCount = 2
+
             }
             myAdapter.notifyDataSetChanged()
         }
@@ -91,8 +101,14 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             ) {
                 if (response.body() != null) {
                     responseBody = (response.body() as MutableList<CountriesDataItem>)
+                    if (sortCount == 1 ) {
+                        responseBody.sortBy { it.population }
+                    } else if (sortCount == 2) {
+                        responseBody.sortByDescending { it.population }
+                    }
                     myAdapter = MyAdapter(this, responseBody)
                     recyclerView.adapter = myAdapter
+
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
