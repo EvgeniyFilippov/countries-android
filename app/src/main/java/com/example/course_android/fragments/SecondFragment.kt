@@ -122,19 +122,25 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         })
     }
 
-    fun saveData() {
-        val sharedPreference = activity?.getSharedPreferences("data", Context.MODE_PRIVATE)
-        val editor = sharedPreference?.edit()
-        editor?.putInt("sortStatus", sortStatus)
-        editor?.apply()
+    private fun saveData() {
+        activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
+            ?.edit()
+            ?.apply { putInt(KEY_SORT_STATUS, sortStatus) }
+            ?.apply()
     }
 
-    fun readData() {
-        val sharedPreference = activity?.getSharedPreferences("data", Context.MODE_PRIVATE)
-        val reader = sharedPreference?.getInt("sortStatus", 0)
+    private fun readData() {
+        val sharedPreference = activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
+        val reader = sharedPreference?.getInt(KEY_SORT_STATUS, DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
         }
+    }
+
+    companion object {
+        private const val FILE_NAME_PREF = "data"
+        private const val KEY_SORT_STATUS = "sortStatus"
+        private const val DEFAULT_INT = 0
     }
 
     override fun onDestroyView() {
