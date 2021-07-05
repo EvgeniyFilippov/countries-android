@@ -14,6 +14,7 @@ import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
+import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.DatabaseInfo
 import com.example.course_android.utils.toast
 import kotlinx.android.synthetic.main.fragment_second.*
@@ -55,6 +56,9 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
         val dao = context?.let { DatabaseInfo.init(it).getCountryInfoDAO() }
+        dao?.add(CountryBaseInfoEntity("Belarus", "Minsk", 145.9))
+        dao?.add(CountryBaseInfoEntity("Litva", "Vilnus", 140.9))
+        dao?.getAllInfo()
         getMyData()
     }
 
