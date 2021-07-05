@@ -71,13 +71,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
-                responseBody.sortBy { it.population }
+                responseBody.sortBy { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = 1
             } else {
-                responseBody.sortByDescending { it.population }
+                responseBody.sortByDescending { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
@@ -104,9 +104,9 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 if (response.body() != null) {
                     responseBody = (response.body() as MutableList<CountriesDataItem>)
                     if (sortStatus == 1 ) {
-                        responseBody.sortBy { it.population }
+                        responseBody.sortBy { it.area }
                     } else if (sortStatus == 2) {
-                        responseBody.sortByDescending { it.population }
+                        responseBody.sortByDescending { it.area }
                     }
                     myAdapter = MyAdapter(this, responseBody)
                     recyclerView.adapter = myAdapter
