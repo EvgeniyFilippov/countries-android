@@ -11,13 +11,10 @@ interface CountryInfoDAO {
 
     @Query("SELECT * FROM countries_base_info_table")
     fun getAllInfo(): LiveData<List<CountryBaseInfoEntity>>
-//
-//    @Query("SELECT * FROM countries_base_info_table WHERE name = :name")
-//    fun getInfoByName(name: String)
 
-//    @Query("INSERT INTO countries_base_info_table (name, capital, area) VALUES (name = :name, capital = :capital, area = :area)")
-//    fun addCountry(name: String, capital: String, area: String)
+    @Query("SELECT * FROM countries_base_info_table WHERE name = :name")
+    fun getInfoByName(name: String): LiveData<List<CountryBaseInfoEntity>>
 
-//    @Insert(onConflict = OnConflictStrategy.IGNORE)
-//    fun add(entity: CountryBaseInfoEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun add(entity: CountryBaseInfoEntity)
 }
