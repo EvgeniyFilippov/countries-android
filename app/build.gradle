@@ -52,6 +52,7 @@ dependencies {
     final converterGson = "2.9.0"
     final okhttp = "4.9.0"
     final loggingInterceptor = "4.9.0"
+    def room_version = "2.3.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -67,6 +68,8 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$converterGson"
     implementation"com.squareup.okhttp3:okhttp:$okhttp"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor "androidx.room:room-compiler:$room_version"
     androidTestImplementation "androidx.test.ext:junit:$testJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$testEspressoVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$loggingInterceptor"
