@@ -14,8 +14,7 @@ import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
-import com.example.course_android.room.CountryBaseInfoEntity
-import com.example.course_android.room.DatabaseInfo
+import com.example.course_android.room.*
 import com.example.course_android.utils.toast
 import kotlinx.android.synthetic.main.fragment_second.*
 import okhttp3.OkHttpClient
@@ -39,6 +38,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     private val logging = HttpLoggingInterceptor()
     private var sortStatus = 0
 
+    private lateinit var country: String
+
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://restcountries.eu/")
@@ -55,11 +56,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
-        val dao = context?.let { DatabaseInfo.init(it).getCountryInfoDAO() }
-        dao?.add(CountryBaseInfoEntity("Belarus", "Minsk", 145.9))
-        dao?.add(CountryBaseInfoEntity("Litva", "Vilnus", 140.9))
-        dao?.getAllInfo()
-        getMyData()
+        val base = context?.let { DatabaseInfo.init(it) }
+        val daoCountry = base?.getCountryInfoDAO()
+        val daoLanguage = base?.getLanguageInfoDao()
+        getMyData(daoCountry, daoLanguage)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -96,7 +96,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMyData() {
+    private fun getMyData(daoCounty: CountryInfoDAO?, daoLanguage: LanguagesInfoDao?) {
         logging.level = HttpLoggingInterceptor.Level.BODY
         okHttpClientBuilder.addInterceptor(logging)
         val countriesApi = retrofit.create(CountriesApi::class.java)
@@ -109,6 +109,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             ) {
                 if (response.body() != null) {
                     responseBody = (response.body() as MutableList<CountriesDataItem>)
+                    responseBody.forEach{
+                        daoCounty?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
+                        country = it.name
+                        it.languages.forEach{ language ->
+                            daoLanguage?.add(LanguagesInfoEntity(id, country, language.name))
+                        }
+                    }
                     if (sortStatus == 1 ) {
                         responseBody.sortBy { it.area }
                     } else if (sortStatus == 2) {
