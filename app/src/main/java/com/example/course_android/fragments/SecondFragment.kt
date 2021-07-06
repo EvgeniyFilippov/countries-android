@@ -14,8 +14,8 @@ import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
+import com.example.course_android.model.Language
 import com.example.course_android.room.*
-import com.example.course_android.utils.getLanguageByKey
 import com.example.course_android.utils.toast
 import kotlinx.android.synthetic.main.fragment_second.*
 import okhttp3.OkHttpClient
@@ -25,7 +25,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.StringBuilder
 import java.util.concurrent.TimeUnit
 
 class SecondFragment : Fragment(R.layout.fragment_second) {
@@ -129,31 +128,29 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     //создаем MutableList<CountriesDataItem> из БД
                     val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
                     val languagesFromDB = base?.getLanguageInfoDao()
-                    val listOfCountriesFromDB = MutableList<CountriesDataItem>()
-                    val countriesDataItemFromDB = CountriesDataItem()
-                    countriesFromDB?.forEach{
-                        val listOfLanguages = languagesFromDB?.getLanguageByCountry(it.name)
-
-
-                    }
-
-
-
-                    val name1 = responseFromDB?.get(0)?.name
-                    val responseFromDB2 = name1?.let {
-                        base?.getLanguageInfoDao()?.getLanguageByCountry(it)
-                    }
+                    
+                    val listOfCountriesFromDB: MutableList<CountriesDataItem> = mutableListOf()
+                    val listOfLanguagesFromDB: MutableList<Language> = mutableListOf()
+//                    countriesFromDB?.forEach{
+//                        languagesFromDB?.getLanguageByCountry(it.name)?.forEach{
+//                            val langItem = Language("", "", )
+//                            listOfLanguagesFromDB.add()
+//                        }
+//                        val listOfLanguages =
+//                        val ex = CountriesDataItem(it.area, it.capital, it., it.name)
+//                        listOfCountriesFromDB.add(ex)
+//                    }
 
 //                    val mylangs = name1?.let { responseFromDB2?.getLanguageByCountry(it) }
-                    val myStringBuilder = StringBuilder()
-                    if (responseFromDB2 != null) {
-                        for (n in responseFromDB2.indices) {
-                            myStringBuilder.append(responseFromDB2[n])
-                            if (n < responseFromDB2.size - 1) {
-                                myStringBuilder.append(", ")
-                            }
-                        }
-                    }
+//                    val myStringBuilder = StringBuilder()
+//                    if (responseFromDB2 != null) {
+//                        for (n in responseFromDB2.indices) {
+//                            myStringBuilder.append(responseFromDB2[n])
+//                            if (n < responseFromDB2.size - 1) {
+//                                myStringBuilder.append(", ")
+//                            }
+//                        }
+//                    }
 
                     //подключаем к адаптеру MutableList<CountriesDataItem> из запроса
                     myAdapter = MyAdapter(this, responseBody)
