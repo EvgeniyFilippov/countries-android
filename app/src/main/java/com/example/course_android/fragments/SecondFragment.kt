@@ -118,14 +118,27 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                             daoLanguage?.add(LanguagesInfoEntity( it.name, language.name))
                         }
                     }
+
+                    //сортируем страны из запроса
                     if (sortStatus == 1 ) {
                         responseBody.sortBy { it.area }
                     } else if (sortStatus == 2) {
                         responseBody.sortByDescending { it.area }
                     }
 
-                    //извлекаем данные из БД
-                    val responseFromDB = base?.getCountryInfoDAO()?.getAllInfo()
+                    //создаем MutableList<CountriesDataItem> из БД
+                    val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
+                    val languagesFromDB = base?.getLanguageInfoDao()
+                    val listOfCountriesFromDB = MutableList<CountriesDataItem>()
+                    val countriesDataItemFromDB = CountriesDataItem()
+                    countriesFromDB?.forEach{
+                        val listOfLanguages = languagesFromDB?.getLanguageByCountry(it.name)
+
+
+                    }
+
+
+
                     val name1 = responseFromDB?.get(0)?.name
                     val responseFromDB2 = name1?.let {
                         base?.getLanguageInfoDao()?.getLanguageByCountry(it)
@@ -142,10 +155,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                         }
                     }
 
-
-
-
-
+                    //подключаем к адаптеру MutableList<CountriesDataItem> из запроса
                     myAdapter = MyAdapter(this, responseBody)
                     recyclerView.adapter = myAdapter
 
