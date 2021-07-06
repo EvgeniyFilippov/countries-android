@@ -113,7 +113,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                         daoCounty?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
                         country = it.name
                         it.languages.forEach{ language ->
-                            daoLanguage?.add(LanguagesInfoEntity(id, country, language.name))
+                            daoLanguage?.add(LanguagesInfoEntity(0 , country, language.name))
                         }
                     }
                     if (sortStatus == 1 ) {
