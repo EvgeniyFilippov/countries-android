@@ -15,6 +15,7 @@ import com.example.course_android.api.CountriesApi
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import com.example.course_android.room.*
+import com.example.course_android.utils.getLanguageByKey
 import com.example.course_android.utils.toast
 import kotlinx.android.synthetic.main.fragment_second.*
 import okhttp3.OkHttpClient
@@ -24,6 +25,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.StringBuilder
 import java.util.concurrent.TimeUnit
 
 class SecondFragment : Fragment(R.layout.fragment_second) {
@@ -37,8 +39,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         .writeTimeout(30, TimeUnit.SECONDS)
     private val logging = HttpLoggingInterceptor()
     private var sortStatus = 0
-
-    private lateinit var country: String
+    private var base: DatabaseInfo? = null
 
     private val retrofit by lazy {
         Retrofit.Builder()
@@ -56,7 +57,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
-        val base = context?.let { DatabaseInfo.init(it) }
+        base = context?.let { DatabaseInfo.init(it) }
         val daoCountry = base?.getCountryInfoDAO()
         val daoLanguage = base?.getLanguageInfoDao()
         getMyData(daoCountry, daoLanguage)
@@ -109,11 +110,12 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             ) {
                 if (response.body() != null) {
                     responseBody = (response.body() as MutableList<CountriesDataItem>)
-                    responseBody.forEach{
+
+                    //записываем страны в БД
+                    responseBody.forEach { it ->
                         daoCounty?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
-                        country = it.name
                         it.languages.forEach{ language ->
-                            daoLanguage?.add(LanguagesInfoEntity(0 , country, language.name))
+                            daoLanguage?.add(LanguagesInfoEntity( it.name, language.name))
                         }
                     }
                     if (sortStatus == 1 ) {
@@ -121,6 +123,29 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     } else if (sortStatus == 2) {
                         responseBody.sortByDescending { it.area }
                     }
+
+                    //извлекаем данные из БД
+                    val responseFromDB = base?.getCountryInfoDAO()?.getAllInfo()
+                    val name1 = responseFromDB?.get(0)?.name
+                    val responseFromDB2 = name1?.let {
+                        base?.getLanguageInfoDao()?.getLanguageByCountry(it)
+                    }
+
+//                    val mylangs = name1?.let { responseFromDB2?.getLanguageByCountry(it) }
+                    val myStringBuilder = StringBuilder()
+                    if (responseFromDB2 != null) {
+                        for (n in responseFromDB2.indices) {
+                            myStringBuilder.append(responseFromDB2[n])
+                            if (n < responseFromDB2.size - 1) {
+                                myStringBuilder.append(", ")
+                            }
+                        }
+                    }
+
+
+
+
+
                     myAdapter = MyAdapter(this, responseBody)
                     recyclerView.adapter = myAdapter
 
