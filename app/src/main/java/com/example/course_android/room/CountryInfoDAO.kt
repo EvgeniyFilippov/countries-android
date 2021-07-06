@@ -10,10 +10,10 @@ import androidx.room.Query
 interface CountryInfoDAO {
 
     @Query("SELECT * FROM countries_base_info_table")
-    fun getAllInfo(): LiveData<List<CountryBaseInfoEntity>>
+    fun getAllInfo(): List<CountryBaseInfoEntity>
 
     @Query("SELECT * FROM countries_base_info_table WHERE name = :name")
-    fun getInfoByName(name: String): LiveData<List<CountryBaseInfoEntity>>
+    fun getInfoByCountry(name: String): LiveData<List<CountryBaseInfoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun add(entity: CountryBaseInfoEntity)
