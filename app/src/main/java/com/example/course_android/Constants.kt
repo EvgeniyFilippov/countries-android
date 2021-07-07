@@ -6,4 +6,7 @@ object Constants {
     const val KEY_SORT_STATUS = "sortStatus"
     const val FILE_NAME_PREF = "data"
     const val DEFAULT_STRING = ""
+    const val SORT_STATUS_UP = 1
+    const val SORT_STATUS_DOWN = 2
+    const val DEFAULT_SORT_STATUS = 0
 }
