@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.Constants
 import com.example.course_android.MyAdapter
 import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
@@ -42,7 +43,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://restcountries.eu/")
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClientBuilder.build())
             .build()
@@ -50,7 +51,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        readData()
+        readSortStatus()
         binding = FragmentSecondBinding.bind(view)
         recyclerView.setHasFixedSize(true)
         linearLayoutManager = LinearLayoutManager(context)
@@ -58,7 +59,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         setHasOptionsMenu(true)
         base = context?.let { DatabaseInfo.init(it) }
         val daoCountry = base?.getCountryInfoDAO()
-        val daoLanguage = base?.getLanguageInfoDao()
+        val daoLanguage = base?.getLanguageInfoDAO()
         getMyData(daoCountry, daoLanguage)
     }
 
@@ -91,12 +92,12 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
             }
             myAdapter.notifyDataSetChanged()
-            saveData()
+            saveSortStatus()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMyData(daoCounty: CountryInfoDAO?, daoLanguage: LanguagesInfoDao?) {
+    private fun getMyData(daoCountry: CountryInfoDAO?, daoLanguage: LanguagesInfoDAO?) {
         logging.level = HttpLoggingInterceptor.Level.BODY
         okHttpClientBuilder.addInterceptor(logging)
         val countriesApi = retrofit.create(CountriesApi::class.java)
@@ -112,7 +113,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     //записываем страны в БД
                     responseBody.forEach { it ->
-                        daoCounty?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
+                        daoCountry?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
                         it.languages.forEach{ language ->
                             daoLanguage?.add(LanguagesInfoEntity( it.name, language.name))
                         }
@@ -127,19 +128,20 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     //создаем MutableList<CountriesDataItem> из БД
                     val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
-                    val languagesFromDB = base?.getLanguageInfoDao()
+                    val languagesFromDB = base?.getLanguageInfoDAO()
                     
                     val listOfCountriesFromDB: MutableList<CountriesDataItem> = mutableListOf()
-                    val listOfLanguagesFromDB: MutableList<Language> = mutableListOf()
-//                    countriesFromDB?.forEach{
-//                        languagesFromDB?.getLanguageByCountry(it.name)?.forEach{
-//                            val langItem = Language("", "", )
-//                            listOfLanguagesFromDB.add()
-//                        }
-//                        val listOfLanguages =
-//                        val ex = CountriesDataItem(it.area, it.capital, it., it.name)
-//                        listOfCountriesFromDB.add(ex)
-//                    }
+
+                    countriesFromDB?.forEach{countryDB ->
+                        val listOfLanguagesFromDB: MutableList<Language> = mutableListOf()
+                        languagesFromDB?.getLanguageByCountry(countryDB.name)?.forEach{languageDB ->
+                            val languageItem = Language(Constants.DEFAULT_STRING, Constants.DEFAULT_STRING, languageDB, Constants.DEFAULT_STRING)
+
+                            listOfLanguagesFromDB.add(languageItem)
+                        }
+                        val countryDataItem = CountriesDataItem(countryDB.area, countryDB.capital, listOfLanguagesFromDB, countryDB.name)
+                        listOfCountriesFromDB.add(countryDataItem)
+                    }
 
 //                    val mylangs = name1?.let { responseFromDB2?.getLanguageByCountry(it) }
 //                    val myStringBuilder = StringBuilder()
@@ -153,7 +155,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 //                    }
 
                     //подключаем к адаптеру MutableList<CountriesDataItem> из запроса
-                    myAdapter = MyAdapter(this, responseBody)
+                    myAdapter = MyAdapter(responseBody)
                     recyclerView.adapter = myAdapter
 
                 } else {
@@ -167,26 +169,26 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         })
     }
 
-    private fun saveData() {
-        activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
+    private fun saveSortStatus() {
+        activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
             ?.edit()
-            ?.apply { putInt(KEY_SORT_STATUS, sortStatus) }
+            ?.apply { putInt(Constants.KEY_SORT_STATUS, sortStatus) }
             ?.apply()
     }
 
-    private fun readData() {
-        val sharedPreference = activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
-        val reader = sharedPreference?.getInt(KEY_SORT_STATUS, DEFAULT_INT)
+    private fun readSortStatus() {
+        val sharedPreference = activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
+        val reader = sharedPreference?.getInt(Constants.KEY_SORT_STATUS, Constants.DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
         }
     }
 
-    companion object {
-        private const val FILE_NAME_PREF = "data"
-        private const val KEY_SORT_STATUS = "sortStatus"
-        private const val DEFAULT_INT = 0
-    }
+//    companion object {
+//        private const val FILE_NAME_PREF = "data"
+//        private const val KEY_SORT_STATUS = "sortStatus"
+//        private const val DEFAULT_INT = 0
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
