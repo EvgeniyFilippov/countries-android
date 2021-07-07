@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
@@ -89,7 +90,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         RetrofitObj.getOkHttp()
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val countriesApiCall = countriesApi.getTopHeadlines()
-
+        val progressBar = binding?.progressBar as ProgressBar
+        progressBar.visibility = ProgressBar.VISIBLE
         countriesApiCall.enqueue(object : Callback<List<CountriesDataItem>?> {
             override fun onResponse(
                 call: Call<List<CountriesDataItem>?>,
@@ -126,7 +128,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     recyclerView.adapter = myAdapter
                     myAdapter = MyAdapter(listCountriesFromApi)
                     recyclerView.adapter = myAdapter
-
+                    progressBar.visibility = ProgressBar.INVISIBLE;
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
