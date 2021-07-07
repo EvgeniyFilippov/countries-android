@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitObj {
 
-    lateinit var retrofit: Retrofit
+    private lateinit var retrofit: Retrofit
     lateinit var okHttpClientBuilder: OkHttpClient.Builder
     lateinit var logging: HttpLoggingInterceptor
 
