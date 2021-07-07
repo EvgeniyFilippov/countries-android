@@ -34,6 +34,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var responseBody: MutableList<CountriesDataItem>
+    private lateinit var  listOfCountriesFromDB: MutableList<CountriesDataItem>
     private var binding: FragmentSecondBinding? = null
     private val okHttpClientBuilder = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
@@ -80,12 +81,14 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
                 responseBody.sortBy { it.area }
+                listOfCountriesFromDB.sortBy { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = 1
             } else {
                 responseBody.sortByDescending { it.area }
+                listOfCountriesFromDB.sortByDescending { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
@@ -120,31 +123,21 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     }
 
                     //сортируем страны из запроса
-
-                    responseBody.sortBySortStatus(sortStatus)
-
-//
-//                    if (sortStatus == Constants.SORT_STATUS_UP ) {
-//                        responseBody.sortBy { it.area }
-//                    } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
-//                        responseBody.sortByDescending { it.area }
-//                    }
+                    responseBody.sortBySortStatusFromPref(sortStatus)
 
                     //приводим данные из ДБ к модели ретрофита
                     val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
                     val languagesFromDB = base?.getLanguageInfoDAO()
-                    var listOfCountriesFromDB: MutableList<CountriesDataItem> = mutableListOf()
+                    listOfCountriesFromDB = arrayListOf()
                     listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(languagesFromDB, listOfCountriesFromDB)
 
-
                     //сортируем БД
-                    listOfCountriesFromDB.sortBySortStatus(sortStatus)
-
+                    listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
 
                     //подключаем к адаптеру MutableList<CountriesDataItem> из запроса
+                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 20))
+                    myAdapter = MyAdapter(responseBody)
 
-
-                    myAdapter = MyAdapter(listOfCountriesFromDB)
                     recyclerView.adapter = myAdapter
 
                 } else {
@@ -178,5 +171,4 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         binding = null
     }
 
-    fun sortUpByValue(value: String){ }
 }
