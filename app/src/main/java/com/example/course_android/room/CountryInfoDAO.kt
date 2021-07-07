@@ -17,4 +17,7 @@ interface CountryInfoDAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun add(entity: CountryBaseInfoEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun addAll(list: List<CountryBaseInfoEntity>)
 }
