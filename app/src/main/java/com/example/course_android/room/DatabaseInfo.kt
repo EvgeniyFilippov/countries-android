@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
 abstract class DatabaseInfo: RoomDatabase() {
 
     abstract fun getCountryInfoDAO(): CountryInfoDAO
-    abstract fun getLanguageInfoDao(): LanguagesInfoDao
+    abstract fun getLanguageInfoDAO(): LanguagesInfoDAO
 
     companion object {
         fun init(context: Context) =
