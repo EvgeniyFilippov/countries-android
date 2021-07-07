@@ -7,7 +7,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.model.CountriesDataItem
 import com.example.course_android.utils.getLanguageByKey
-import retrofit2.Callback
 
 class MyAdapter(private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
