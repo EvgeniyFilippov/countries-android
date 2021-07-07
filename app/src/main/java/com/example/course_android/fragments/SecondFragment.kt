@@ -122,7 +122,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
 
-                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 2))
+                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 20))
                     recyclerView.adapter = myAdapter
                     myAdapter = MyAdapter(listCountriesFromApi)
                     recyclerView.adapter = myAdapter
