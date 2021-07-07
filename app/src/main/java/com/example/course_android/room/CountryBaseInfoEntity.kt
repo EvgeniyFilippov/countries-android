@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "countries_base_info_table")
-class CountryBaseInfoEntity (
+class CountryBaseInfoEntity(
     @PrimaryKey @ColumnInfo val name: String,
     @ColumnInfo val capital: String,
     @ColumnInfo val area: Double
-    )
+)
 
