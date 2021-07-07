@@ -100,7 +100,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
                     val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-                    listCountriesFromApi.let { it ->
+                    listCountriesFromApi.let {
                         listCountriesFromApi.forEach { item ->
                             listOfAllCountries.add(CountryBaseInfoEntity(item.name, item.capital, item.area))
                             item.languages.forEach { language ->
