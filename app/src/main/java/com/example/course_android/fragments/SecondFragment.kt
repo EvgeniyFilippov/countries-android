@@ -71,13 +71,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
-                sortStatus = 1
+                sortStatus = Constants.SORT_STATUS_UP
             } else {
                 listCountriesFromApi.sortByDescending { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
-                sortStatus = 2
+                sortStatus = Constants.SORT_STATUS_DOWN
             }
             myAdapter.notifyDataSetChanged()
             saveSortStatus()
