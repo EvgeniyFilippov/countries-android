@@ -15,7 +15,6 @@ import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
-import com.example.course_android.model.Language
 import com.example.course_android.room.*
 import com.example.course_android.utils.*
 //import com.example.course_android.utils.convertDBdataToRetrofitModel
@@ -33,8 +32,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
     lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var responseBody: MutableList<CountriesDataItem>
-    private lateinit var  listOfCountriesFromDB: MutableList<CountriesDataItem>
+    private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
+    private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
     private val okHttpClientBuilder = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
@@ -80,14 +79,14 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
-                responseBody.sortBy { it.area }
+                listCountriesFromApi.sortBy { it.area }
                 listOfCountriesFromDB.sortBy { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = 1
             } else {
-                responseBody.sortByDescending { it.area }
+                listCountriesFromApi.sortByDescending { it.area }
                 listOfCountriesFromDB.sortByDescending { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
@@ -112,10 +111,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 response: Response<List<CountriesDataItem>?>
             ) {
                 if (response.body() != null) {
-                    responseBody = (response.body() as MutableList<CountriesDataItem>)
+                    listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
 
                     //записываем страны в БД
-                    responseBody.forEach { it ->
+                    listCountriesFromApi.forEach { it ->
                         daoCountry?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
                         it.languages.forEach{ language ->
                             daoLanguage?.add(LanguagesInfoEntity( it.name, language.name))
@@ -123,22 +122,21 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     }
 
                     //сортируем страны из запроса
-                    responseBody.sortBySortStatusFromPref(sortStatus)
+                    listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
                     //приводим данные из ДБ к модели ретрофита
                     val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
                     val languagesFromDB = base?.getLanguageInfoDAO()
-                    listOfCountriesFromDB = arrayListOf()
                     listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(languagesFromDB, listOfCountriesFromDB)
 
                     //сортируем БД
                     listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
 
-                    //подключаем к адаптеру MutableList<CountriesDataItem> из запроса
-                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 20))
-                    myAdapter = MyAdapter(responseBody)
-
+                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 2))
                     recyclerView.adapter = myAdapter
+                    myAdapter = MyAdapter(listCountriesFromApi)
+                    recyclerView.adapter = myAdapter
+                    myAdapter.notifyDataSetChanged()
 
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
