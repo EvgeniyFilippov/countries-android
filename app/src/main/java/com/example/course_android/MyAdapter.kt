@@ -9,7 +9,7 @@ import com.example.course_android.model.CountriesDataItem
 import com.example.course_android.utils.getLanguageByKey
 import retrofit2.Callback
 
-class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+class MyAdapter(private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyAdapter.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
