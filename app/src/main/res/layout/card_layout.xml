@@ -47,7 +47,7 @@
             app:layout_constraintTop_toBottomOf="@+id/item_detail"
             app:layout_constraintLeft_toRightOf="@+id/item_image"/>
         <TextView
-            android:id="@+id/item_population"
+            android:id="@+id/item_area"
             android:layout_width="@dimen/layout_width_heading"
             android:layout_height="@dimen/short_descr_recycler_layout"
             android:layout_marginStart="@dimen/margin_start_heading"

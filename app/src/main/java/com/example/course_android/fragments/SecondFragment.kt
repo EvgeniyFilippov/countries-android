@@ -9,60 +9,56 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.Constants
+import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.MyAdapter
 import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
+import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
+import com.example.course_android.room.*
+import com.example.course_android.utils.convertDBdataToRetrofitModel
+import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import kotlinx.android.synthetic.main.fragment_second.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 class SecondFragment : Fragment(R.layout.fragment_second) {
 
     lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var responseBody: MutableList<CountriesDataItem>
+    private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
+    private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
-    private val okHttpClientBuilder = OkHttpClient.Builder()
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-    private val logging = HttpLoggingInterceptor()
-    private var sortStatus = 0
+    private var base: DatabaseInfo? = null
+    private var sortStatus = Constants.DEFAULT_SORT_STATUS
 
-    private val retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://restcountries.eu/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClientBuilder.build())
-            .build()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        readData()
+        readSortStatus()
         binding = FragmentSecondBinding.bind(view)
         recyclerView.setHasFixedSize(true)
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
-        getMyData()
+        base = context?.let { DatabaseInfo.init(it) }
+        val daoCountry = base?.getCountryInfoDAO()
+        val daoLanguage = base?.getLanguageInfoDAO()
+        getMyData(daoCountry, daoLanguage)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_sort_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-        if (sortStatus == 1) {
-            menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
+        if (sortStatus == Constants.SORT_STATUS_UP) {
+            menu.findItem(R.id.sort_countries)
+                .setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
             context?.toast(getString(R.string.sort_up))
-        } else if (sortStatus == 2) {
+        } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
             context?.toast(getString(R.string.sort_down))
         }
@@ -71,28 +67,26 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
-                responseBody.sortBy { it.population }
+                listCountriesFromApi.sortBy { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = 1
             } else {
-                responseBody.sortByDescending { it.population }
+                listCountriesFromApi.sortByDescending { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
                 sortStatus = 2
-
             }
             myAdapter.notifyDataSetChanged()
-            saveData()
+            saveSortStatus()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMyData() {
-        logging.level = HttpLoggingInterceptor.Level.BODY
-        okHttpClientBuilder.addInterceptor(logging)
+    private fun getMyData(daoCountry: CountryInfoDAO?, daoLanguage: LanguagesInfoDAO?) {
+        RetrofitObj.getOkHttp()
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val countriesApiCall = countriesApi.getTopHeadlines()
 
@@ -102,13 +96,35 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 response: Response<List<CountriesDataItem>?>
             ) {
                 if (response.body() != null) {
-                    responseBody = (response.body() as MutableList<CountriesDataItem>)
-                    if (sortStatus == 1 ) {
-                        responseBody.sortBy { it.population }
-                    } else if (sortStatus == 2) {
-                        responseBody.sortByDescending { it.population }
+                    listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
+
+                    val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+                    val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+                    listCountriesFromApi.let { it ->
+                        listCountriesFromApi.forEach { item ->
+                            listOfAllCountries.add(CountryBaseInfoEntity(item.name, item.capital, item.area))
+                            item.languages.forEach { language ->
+                                listOfAllLanguages.add(LanguagesInfoEntity(item.name, language.name))
+                            }
+                        }
+                        daoCountry?.addAll(listOfAllCountries)
+                        daoLanguage?.addAll(listOfAllLanguages)
                     }
-                    myAdapter = MyAdapter(this, responseBody)
+
+                    listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
+
+                    val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
+                    val languagesFromDB = base?.getLanguageInfoDAO()
+                    listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
+                        languagesFromDB,
+                        listOfCountriesFromDB
+                    )
+
+                    listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
+
+                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 20))
+                    recyclerView.adapter = myAdapter
+                    myAdapter = MyAdapter(listCountriesFromApi)
                     recyclerView.adapter = myAdapter
 
                 } else {
@@ -122,16 +138,17 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         })
     }
 
-    fun saveData() {
-        val sharedPreference = activity?.getSharedPreferences("data", Context.MODE_PRIVATE)
-        val editor = sharedPreference?.edit()
-        editor?.putInt("sortStatus", sortStatus)
-        editor?.apply()
+    private fun saveSortStatus() {
+        activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
+            ?.edit()
+            ?.apply { putInt(Constants.KEY_SORT_STATUS, sortStatus) }
+            ?.apply()
     }
 
-    fun readData() {
-        val sharedPreference = activity?.getSharedPreferences("data", Context.MODE_PRIVATE)
-        val reader = sharedPreference?.getInt("sortStatus", 0)
+    private fun readSortStatus() {
+        val sharedPreference =
+            activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
+        val reader = sharedPreference?.getInt(Constants.KEY_SORT_STATUS, Constants.DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
         }
