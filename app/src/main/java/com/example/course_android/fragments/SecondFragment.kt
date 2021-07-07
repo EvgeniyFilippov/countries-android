@@ -10,23 +10,21 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
+import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.MyAdapter
 import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
+import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import com.example.course_android.room.*
-import com.example.course_android.utils.*
-//import com.example.course_android.utils.convertDBdataToRetrofitModel
+import com.example.course_android.utils.convertDBdataToRetrofitModel
+import com.example.course_android.utils.sortBySortStatusFromPref
+import com.example.course_android.utils.toast
 import kotlinx.android.synthetic.main.fragment_second.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 class SecondFragment : Fragment(R.layout.fragment_second) {
 
@@ -35,20 +33,9 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
-    private val okHttpClientBuilder = OkHttpClient.Builder()
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-    private val logging = HttpLoggingInterceptor()
-    private var sortStatus = Constants.DEFAULT_SORT_STATUS
     private var base: DatabaseInfo? = null
+    private var sortStatus = Constants.DEFAULT_SORT_STATUS
 
-    private val retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClientBuilder.build())
-            .build()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,7 +55,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         inflater.inflate(R.menu.countries_sort_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
         if (sortStatus == 1) {
-            menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
+            menu.findItem(R.id.sort_countries)
+                .setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
             context?.toast(getString(R.string.sort_up))
         } else if (sortStatus == 2) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
@@ -80,14 +68,12 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
                 listCountriesFromApi.sortBy { it.area }
-                listOfCountriesFromDB.sortBy { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = 1
             } else {
                 listCountriesFromApi.sortByDescending { it.area }
-                listOfCountriesFromDB.sortByDescending { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
@@ -100,8 +86,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     }
 
     private fun getMyData(daoCountry: CountryInfoDAO?, daoLanguage: LanguagesInfoDAO?) {
-        logging.level = HttpLoggingInterceptor.Level.BODY
-        okHttpClientBuilder.addInterceptor(logging)
+        RetrofitObj.getOkHttp()
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val countriesApiCall = countriesApi.getTopHeadlines()
 
@@ -116,8 +101,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     //записываем страны в БД
                     listCountriesFromApi.forEach { it ->
                         daoCountry?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
-                        it.languages.forEach{ language ->
-                            daoLanguage?.add(LanguagesInfoEntity( it.name, language.name))
+                        it.languages.forEach { language ->
+                            daoLanguage?.add(LanguagesInfoEntity(it.name, language.name))
                         }
                     }
 
@@ -127,7 +112,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     //приводим данные из ДБ к модели ретрофита
                     val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
                     val languagesFromDB = base?.getLanguageInfoDAO()
-                    listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(languagesFromDB, listOfCountriesFromDB)
+                    listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
+                        languagesFromDB,
+                        listOfCountriesFromDB
+                    )
 
                     //сортируем БД
                     listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
@@ -157,7 +145,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     }
 
     private fun readSortStatus() {
-        val sharedPreference = activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
+        val sharedPreference =
+            activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
         val reader = sharedPreference?.getInt(Constants.KEY_SORT_STATUS, Constants.DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
