@@ -54,11 +54,11 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_sort_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-        if (sortStatus == 1) {
+        if (sortStatus == Constants.SORT_STATUS_UP) {
             menu.findItem(R.id.sort_countries)
                 .setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
             context?.toast(getString(R.string.sort_up))
-        } else if (sortStatus == 2) {
+        } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
             context?.toast(getString(R.string.sort_down))
         }
@@ -98,18 +98,21 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 if (response.body() != null) {
                     listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
 
-                    //записываем страны в БД
-                    listCountriesFromApi.forEach { it ->
-                        daoCountry?.add(CountryBaseInfoEntity(it.name, it.capital, it.area))
-                        it.languages.forEach { language ->
-                            daoLanguage?.add(LanguagesInfoEntity(it.name, language.name))
+                    val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+                    val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+                    listCountriesFromApi.let { it ->
+                        listCountriesFromApi.forEach { item ->
+                            listOfAllCountries.add(CountryBaseInfoEntity(item.name, item.capital, item.area))
+                            item.languages.forEach { language ->
+                                listOfAllLanguages.add(LanguagesInfoEntity(item.name, language.name))
+                            }
                         }
+                        daoCountry?.addAll(listOfAllCountries)
+                        daoLanguage?.addAll(listOfAllLanguages)
                     }
 
-                    //сортируем страны из запроса
                     listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
-                    //приводим данные из ДБ к модели ретрофита
                     val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
                     val languagesFromDB = base?.getLanguageInfoDAO()
                     listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
@@ -117,7 +120,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                         listOfCountriesFromDB
                     )
 
-                    //сортируем БД
                     listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
 
                     myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 2))
@@ -157,5 +159,4 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         super.onDestroyView()
         binding = null
     }
-
 }
