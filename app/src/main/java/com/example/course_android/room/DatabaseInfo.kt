@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [CountryBaseInfoEntity::class, LanguagesInfoEntity::class], version = 1)
-abstract class DatabaseInfo: RoomDatabase() {
+abstract class DatabaseInfo : RoomDatabase() {
 
     abstract fun getCountryInfoDAO(): CountryInfoDAO
     abstract fun getLanguageInfoDAO(): LanguagesInfoDAO
