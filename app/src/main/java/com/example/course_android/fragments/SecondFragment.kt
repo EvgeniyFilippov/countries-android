@@ -17,7 +17,8 @@ import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import com.example.course_android.model.Language
 import com.example.course_android.room.*
-import com.example.course_android.utils.toast
+import com.example.course_android.utils.*
+//import com.example.course_android.utils.convertDBdataToRetrofitModel
 import kotlinx.android.synthetic.main.fragment_second.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,7 +39,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
     private val logging = HttpLoggingInterceptor()
-    private var sortStatus = 0
+    private var sortStatus = Constants.DEFAULT_SORT_STATUS
     private var base: DatabaseInfo? = null
 
     private val retrofit by lazy {
@@ -89,7 +90,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
                 sortStatus = 2
-
             }
             myAdapter.notifyDataSetChanged()
             saveSortStatus()
@@ -120,42 +120,31 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     }
 
                     //сортируем страны из запроса
-                    if (sortStatus == 1 ) {
-                        responseBody.sortBy { it.area }
-                    } else if (sortStatus == 2) {
-                        responseBody.sortByDescending { it.area }
-                    }
 
-                    //создаем MutableList<CountriesDataItem> из БД
-                    val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
-                    val languagesFromDB = base?.getLanguageInfoDAO()
-                    
-                    val listOfCountriesFromDB: MutableList<CountriesDataItem> = mutableListOf()
+                    responseBody.sortBySortStatus(sortStatus)
 
-                    countriesFromDB?.forEach{countryDB ->
-                        val listOfLanguagesFromDB: MutableList<Language> = mutableListOf()
-                        languagesFromDB?.getLanguageByCountry(countryDB.name)?.forEach{languageDB ->
-                            val languageItem = Language(Constants.DEFAULT_STRING, Constants.DEFAULT_STRING, languageDB, Constants.DEFAULT_STRING)
-
-                            listOfLanguagesFromDB.add(languageItem)
-                        }
-                        val countryDataItem = CountriesDataItem(countryDB.area, countryDB.capital, listOfLanguagesFromDB, countryDB.name)
-                        listOfCountriesFromDB.add(countryDataItem)
-                    }
-
-//                    val mylangs = name1?.let { responseFromDB2?.getLanguageByCountry(it) }
-//                    val myStringBuilder = StringBuilder()
-//                    if (responseFromDB2 != null) {
-//                        for (n in responseFromDB2.indices) {
-//                            myStringBuilder.append(responseFromDB2[n])
-//                            if (n < responseFromDB2.size - 1) {
-//                                myStringBuilder.append(", ")
-//                            }
-//                        }
+//
+//                    if (sortStatus == Constants.SORT_STATUS_UP ) {
+//                        responseBody.sortBy { it.area }
+//                    } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
+//                        responseBody.sortByDescending { it.area }
 //                    }
 
+                    //приводим данные из ДБ к модели ретрофита
+                    val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
+                    val languagesFromDB = base?.getLanguageInfoDAO()
+                    var listOfCountriesFromDB: MutableList<CountriesDataItem> = mutableListOf()
+                    listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(languagesFromDB, listOfCountriesFromDB)
+
+
+                    //сортируем БД
+                    listOfCountriesFromDB.sortBySortStatus(sortStatus)
+
+
                     //подключаем к адаптеру MutableList<CountriesDataItem> из запроса
-                    myAdapter = MyAdapter(responseBody)
+
+
+                    myAdapter = MyAdapter(listOfCountriesFromDB)
                     recyclerView.adapter = myAdapter
 
                 } else {
@@ -184,14 +173,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         }
     }
 
-//    companion object {
-//        private const val FILE_NAME_PREF = "data"
-//        private const val KEY_SORT_STATUS = "sortStatus"
-//        private const val DEFAULT_INT = 0
-//    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
     }
+
+    fun sortUpByValue(value: String){ }
 }
