@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp.Companion.retrofit
@@ -68,19 +69,19 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
-                listCountriesFromApi.sortBy { it.area }
+                myAdapter.sortAndReplaceItem()
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = Constants.SORT_STATUS_UP
             } else {
-                listCountriesFromApi.sortByDescending { it.area }
+                myAdapter.sortDescendingAndReplaceItem()
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
                 sortStatus = Constants.SORT_STATUS_DOWN
             }
-            myAdapter.notifyDataSetChanged()
+//            myAdapter.notifyDataSetChanged()
             saveSortStatus()
         }
         return super.onOptionsItemSelected(item)
@@ -104,9 +105,20 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
                     listCountriesFromApi.let {
                         listCountriesFromApi.forEach { item ->
-                            listOfAllCountries.add(CountryBaseInfoEntity(item.name, item.capital, item.area))
+                            listOfAllCountries.add(
+                                CountryBaseInfoEntity(
+                                    item.name,
+                                    item.capital,
+                                    item.area
+                                )
+                            )
                             item.languages.forEach { language ->
-                                listOfAllLanguages.add(LanguagesInfoEntity(item.name, language.name))
+                                listOfAllLanguages.add(
+                                    LanguagesInfoEntity(
+                                        item.name,
+                                        language.name
+                                    )
+                                )
                             }
                         }
                         daoCountry?.addAll(listOfAllCountries)
@@ -124,10 +136,20 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
 
-                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 20))
+                    myAdapter = MyAdapter()
+                    myAdapter.setItemClick { item ->
+                        val bundle = Bundle()
+                        bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
+                        findNavController().navigate(R.id.action_secondFragment_to_countryDetailsFragment)
+                    }
                     recyclerView.adapter = myAdapter
-                    myAdapter = MyAdapter(listCountriesFromApi)
-                    recyclerView.adapter = myAdapter
+                    myAdapter.repopulate(listCountriesFromApi)
+//                    recyclerView.adapter = myAdapter
+
+
+//                    myAdapter = MyAdapter(listCountriesFromApi)
+
+
                     progressBar.visibility = ProgressBar.INVISIBLE;
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
