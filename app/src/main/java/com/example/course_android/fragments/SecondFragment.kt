@@ -140,7 +140,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     myAdapter.setItemClick { item ->
                         val bundle = Bundle()
                         bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
-                        findNavController().navigate(R.id.action_secondFragment_to_countryDetailsFragment)
+                        findNavController().navigate(R.id.action_secondFragment_to_countryDetailsFragment, bundle)
                     }
                     recyclerView.adapter = myAdapter
                     myAdapter.repopulate(listCountriesFromApi)
