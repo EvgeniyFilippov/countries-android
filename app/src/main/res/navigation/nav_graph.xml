@@ -19,5 +19,14 @@
         android:id="@+id/secondFragment"
         android:name="com.example.course_android.fragments.SecondFragment"
         android:label="fragment_second"
-        tools:layout="@layout/fragment_second" />
+        tools:layout="@layout/fragment_second" >
+        <action
+            android:id="@+id/action_secondFragment_to_countryDetailsFragment"
+            app:destination="@id/countryDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/countryDetailsFragment"
+        android:name="com.example.course_android.fragments.CountryDetailsFragment"
+        android:label="fragment_country_details"
+        tools:layout="@layout/fragment_country_details" />
 </navigation>
