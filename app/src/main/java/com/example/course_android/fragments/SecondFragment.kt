@@ -11,6 +11,7 @@ import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.BaseParcelable
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.MyAdapter
@@ -19,6 +20,7 @@ import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
+import com.example.course_android.model.Language
 import com.example.course_android.room.*
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
@@ -140,7 +142,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     myAdapter.setItemClick { item ->
                         val bundle = Bundle()
                         bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
-                        findNavController().navigate(R.id.action_secondFragment_to_countryDetailsFragment, bundle)
+                        findNavController().navigate(
+                            R.id.action_secondFragment_to_countryDetailsFragment,
+                            bundle
+                        )
                     }
                     recyclerView.adapter = myAdapter
                     myAdapter.repopulate(listCountriesFromApi)
@@ -178,8 +183,19 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         }
     }
 
+    companion object {
+        fun newInstance(countryName: Int, listOfLanguages: ArrayList<Language>): Fragment {
+            val fragment = CategoryAllAdsFragment()
+            fragment.arguments = Bundle()
+            fragment.arguments!!.putString(Constants.COUNTRY_NAME_KEY, countryName)
+            fragment.arguments!!.putParcelable(Constants.LANGUAGES_LIST, BaseParcelable(listOfLanguages))
+            return fragment
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
     }
+
 }
