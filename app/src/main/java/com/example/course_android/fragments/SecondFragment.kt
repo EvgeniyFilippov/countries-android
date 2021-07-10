@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
@@ -71,13 +72,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
-                sortStatus = 1
+                sortStatus = Constants.SORT_STATUS_UP
             } else {
                 listCountriesFromApi.sortByDescending { it.area }
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
-                sortStatus = 2
+                sortStatus = Constants.SORT_STATUS_DOWN
             }
             myAdapter.notifyDataSetChanged()
             saveSortStatus()
@@ -89,7 +90,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         RetrofitObj.getOkHttp()
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val countriesApiCall = countriesApi.getTopHeadlines()
-
+        val progressBar = binding?.progressBar as ProgressBar
+        progressBar.visibility = ProgressBar.VISIBLE
         countriesApiCall.enqueue(object : Callback<List<CountriesDataItem>?> {
             override fun onResponse(
                 call: Call<List<CountriesDataItem>?>,
@@ -100,7 +102,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
                     val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-                    listCountriesFromApi.let { it ->
+                    listCountriesFromApi.let {
                         listCountriesFromApi.forEach { item ->
                             listOfAllCountries.add(CountryBaseInfoEntity(item.name, item.capital, item.area))
                             item.languages.forEach { language ->
@@ -126,7 +128,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     recyclerView.adapter = myAdapter
                     myAdapter = MyAdapter(listCountriesFromApi)
                     recyclerView.adapter = myAdapter
-
+                    progressBar.visibility = ProgressBar.GONE;
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
