@@ -12,4 +12,5 @@ object Constants {
     const val ERROR = "ERROR"
     const val COUNTRY_NAME_KEY = "COUNTRY_NAME_KEY"
     const val LANGUAGES_LIST = "LANGUAGES_LIST"
+    const val LANGUAGE_VIEW_HEIGHT = 150
 }
