@@ -17,13 +17,16 @@ class CountryDetailsFragment : Fragment() {
     private lateinit var mCountryName: String
     private lateinit var mLanguageJsonString: String
     private lateinit var binding: FragmentCountryDetailsBinding
-    private var mLanguageList: MutableList<Language>? = null
+    private var mLanguageList: List<Language>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mCountryName = arguments?.getString(Constants.COUNTRY_NAME_KEY) ?: Constants.ERROR
         mLanguageJsonString = arguments?.getString(Constants.LANGUAGES_LIST) ?: Constants.ERROR
-//        val mLanguageList = getGsonParser()?.fromJson(mLanguageJsonString, Language::class.java)
+
+        val gson = GsonBuilder().create()
+        mLanguageList = gson.fromJson(mLanguageJsonString, Array<Language>::class.java)?.toList()
+
     }
 
     override fun onCreateView(
@@ -37,7 +40,7 @@ class CountryDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.mTvCountryName.text = mCountryName
-        binding.mTvLanguageJsonString.text = mLanguageJsonString
+        binding.mTvLanguageJsonString.text = mLanguageList.toString()
     }
 
     companion object {
