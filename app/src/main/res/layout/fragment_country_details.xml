@@ -27,9 +27,9 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/item_image"
-            android:layout_width="@dimen/image_width_recycle"
-            android:layout_height="@dimen/image_height_recycle"
+            android:id="@+id/item_flag"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mTvCountryName" />
 
@@ -40,7 +40,7 @@
             android:textSize="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_image" />
+            app:layout_constraintTop_toBottomOf="@id/item_flag" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_languages"
