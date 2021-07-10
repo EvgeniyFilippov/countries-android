@@ -26,4 +26,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mTvCountryName" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/mTvLanguageJsonString"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_heading_country_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_image" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
