@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_language"
-    android:layout_margin="@dimen/card_recycler_margin"
     app:cardBackgroundColor="@color/background_color_recycler"
     app:cardCornerRadius="@dimen/radius_recycler_card"
     app:contentPadding="@dimen/card_recycler_margin"
