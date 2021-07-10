@@ -36,7 +36,6 @@ class CountryDetailsFragment : Fragment() {
         mLanguageList = gson.fromJson(mLanguageJsonString, Array<Language>::class.java)?.toList()
 
         mCountryFlagString = arguments?.getString(Constants.COUNTRY_FLAG_KEY) ?: Constants.ERROR
-
     }
 
     override fun onCreateView(
@@ -58,7 +57,8 @@ class CountryDetailsFragment : Fragment() {
         adapterLanguages = AdapterLanguages()
 
         val params: ViewGroup.LayoutParams = recycler_languages.layoutParams
-        params.height = mLanguageList?.size?.times(Constants.LANGUAGE_VIEW_HEIGHT) ?: Constants.DEFAULT_INT
+        params.height =
+            mLanguageList?.size?.times(Constants.LANGUAGE_VIEW_HEIGHT) ?: Constants.DEFAULT_INT
         recycler_languages.layoutParams = params
 
         recycler_languages.adapter = adapterLanguages
