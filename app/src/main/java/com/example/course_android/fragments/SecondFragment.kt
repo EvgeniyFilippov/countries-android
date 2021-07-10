@@ -152,10 +152,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     recyclerView.adapter = myAdapter
                     myAdapter.repopulate(listCountriesFromApi)
 //                    recyclerView.adapter = myAdapter
-
-
 //                    myAdapter = MyAdapter(listCountriesFromApi)
-
 
                     progressBar.visibility = ProgressBar.GONE;
                 } else {
