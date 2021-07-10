@@ -20,7 +20,8 @@ class MyAdapter : BaseAdapter<CountriesDataItem>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
         return CountryViewHolder(itemView)
     }
 
@@ -31,24 +32,9 @@ class MyAdapter : BaseAdapter<CountriesDataItem>() {
             holder.tvCapital.text = item.capital
             holder.tvLanguages.text = item.languages.getLanguageByKey()
             holder.tvArea.text = item.area.toString()
-            holder.itemView.setOnClickListener{ mClickFunction?.invoke(item)}
+            holder.itemView.setOnClickListener { mClickFunction?.invoke(item) }
         }
     }
-
-//    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-//        var itemTitle: AppCompatTextView
-//        var itemDetail: AppCompatTextView
-//        var itemLang: AppCompatTextView
-//        var itemArea: AppCompatTextView
-//
-//
-//        init {
-//            itemTitle = itemView.findViewById(R.id.item_title)
-//            itemDetail = itemView.findViewById(R.id.item_detail)
-//            itemLang = itemView.findViewById(R.id.item_lang)
-//            itemArea = itemView.findViewById(R.id.item_area)
-//        }
-//    }
 
     fun sortAndReplaceItem() {
         mDataList.sortBy { it.area }
@@ -59,6 +45,5 @@ class MyAdapter : BaseAdapter<CountriesDataItem>() {
         mDataList.sortByDescending { it.area }
         notifyDataSetChanged()
     }
-
 
 }
