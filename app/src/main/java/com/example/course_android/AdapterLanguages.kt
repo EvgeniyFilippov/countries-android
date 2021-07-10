@@ -17,8 +17,9 @@ class AdapterLanguages : BaseAdapter<Language>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LanguageViewHolder {
         val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_language
-                , parent, false)
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_language, parent, false
+            )
         return LanguageViewHolder(itemView)
     }
 
