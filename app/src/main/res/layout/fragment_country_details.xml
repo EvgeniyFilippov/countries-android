@@ -6,13 +6,24 @@
     android:id="@+id/list_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/margin_start_heading"
     tools:context=".fragments.CountryDetailsFragment">
 
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/mTvCountryName"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_heading_country_info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_image"
+        android:layout_width="@dimen/image_width_recycle"
+        android:layout_height="@dimen/image_height_recycle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mTvCountryName" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
