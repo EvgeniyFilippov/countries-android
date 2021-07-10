@@ -23,6 +23,7 @@ fun List<CountryBaseInfoEntity>?.convertDBdataToRetrofitModel(
         val countryDataItem = CountriesDataItem(
             countryDB.area,
             countryDB.capital,
+            "",
             listOfLanguagesFromDB,
             countryDB.name
         )
