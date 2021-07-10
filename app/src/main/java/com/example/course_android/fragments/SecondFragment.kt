@@ -144,15 +144,13 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     myAdapter = MyAdapter()
                     myAdapter.setItemClick { item ->
                         val bundle = Bundle()
-//                        val bundleLangs = Bundle()
+                        val gson = GsonBuilder().create()
                         bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
-                        bundle.putString(Constants.LANGUAGES_LIST, getGsonParser()?.toJson(item.languages))
+                        bundle.putString(Constants.LANGUAGES_LIST, gson.toJson(item.languages))
                         findNavController().navigate(
                             R.id.action_secondFragment_to_countryDetailsFragment,
                             bundle
                         )
-                        val languagesJsonString = getGsonParser()?.toJson(item.languages)
-//                        bundle.putString(Constants.LANGUAGES_LIST, "test")
                     }
                     recyclerView.adapter = myAdapter
                     myAdapter.repopulate(listCountriesFromApi)
@@ -162,7 +160,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 //                    myAdapter = MyAdapter(listCountriesFromApi)
 
 
-                    progressBar.visibility = ProgressBar.INVISIBLE;
+                    progressBar.visibility = ProgressBar.GONE;
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
@@ -190,28 +188,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         }
     }
 
-    companion object {
-        private var gson: Gson? = null
-
-        private fun getGsonParser(): Gson? {
-            if (null == gson) {
-                val builder = GsonBuilder()
-                gson = builder.create()
-            }
-            return gson
-        }
-    }
-
-
-//    companion object {
-//        fun newInstance(countryName: Int, listOfLanguages: ArrayList<Language>): Fragment {
-//            val fragment = CategoryAllAdsFragment()
-//            fragment.arguments = Bundle()
-//            fragment.arguments!!.putString(Constants.COUNTRY_NAME_KEY, countryName)
-//            fragment.arguments!!.putParcelable(Constants.LANGUAGES_LIST, BaseParcelable(listOfLanguages))
-//            return fragment
-//        }
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
