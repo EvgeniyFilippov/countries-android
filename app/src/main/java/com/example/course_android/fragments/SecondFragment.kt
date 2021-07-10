@@ -11,7 +11,6 @@ import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.course_android.BaseParcelable
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.MyAdapter
@@ -20,13 +19,10 @@ import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
-import com.example.course_android.model.Language
 import com.example.course_android.room.*
-import com.example.course_android.utils.JsonParser
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
@@ -146,7 +142,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                         val bundle = Bundle()
                         val gson = GsonBuilder().create()
                         bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
-                        bundle.putString(Constants.LANGUAGES_LIST, gson.toJson(item.languages))
+                        bundle.putString(Constants.LANGUAGES_LIST_KEY, gson.toJson(item.languages))
+                        bundle.putString(Constants.COUNTRY_FLAG_KEY, item.flag)
                         findNavController().navigate(
                             R.id.action_secondFragment_to_countryDetailsFragment,
                             bundle
