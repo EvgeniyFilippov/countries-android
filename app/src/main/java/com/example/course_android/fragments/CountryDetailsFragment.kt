@@ -5,11 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.model.Language
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.fragment_country_details.*
+import kotlinx.android.synthetic.main.fragment_second.*
 
 
 class CountryDetailsFragment : Fragment() {
@@ -18,6 +21,8 @@ class CountryDetailsFragment : Fragment() {
     private lateinit var mLanguageJsonString: String
     private lateinit var binding: FragmentCountryDetailsBinding
     private var mLanguageList: List<Language>? = null
+    lateinit var adapterLanguages: AdapterLanguages
+    lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,18 +45,15 @@ class CountryDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.mTvCountryName.text = mCountryName
-        binding.mTvLanguageJsonString.text = mLanguageList.toString()
-    }
+        linearLayoutManager = LinearLayoutManager(context)
+        recycler_languages.layoutManager = linearLayoutManager
+        adapterLanguages = AdapterLanguages()
 
-    companion object {
-        private var gson: Gson? = null
+        val params: ViewGroup.LayoutParams = recycler_languages.layoutParams
+        params.height = mLanguageList?.size?.times(Constants.LANGUAGE_VIEW_HEIGHT) ?: Constants.DEFAULT_INT
+        recycler_languages.layoutParams = params
 
-        private fun getGsonParser(): Gson? {
-            if (null == gson) {
-                val builder = GsonBuilder()
-                gson = builder.create()
-            }
-            return gson
-        }
+        recycler_languages.adapter = adapterLanguages
+        adapterLanguages.repopulate(mLanguageList as MutableList<Language>)
     }
 }
