@@ -22,9 +22,12 @@ import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.CountriesDataItem
 import com.example.course_android.model.Language
 import com.example.course_android.room.*
+import com.example.course_android.utils.JsonParser
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -141,11 +144,15 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     myAdapter = MyAdapter()
                     myAdapter.setItemClick { item ->
                         val bundle = Bundle()
+//                        val bundleLangs = Bundle()
                         bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
+                        bundle.putString(Constants.LANGUAGES_LIST, getGsonParser()?.toJson(item.languages))
                         findNavController().navigate(
                             R.id.action_secondFragment_to_countryDetailsFragment,
                             bundle
                         )
+                        val languagesJsonString = getGsonParser()?.toJson(item.languages)
+//                        bundle.putString(Constants.LANGUAGES_LIST, "test")
                     }
                     recyclerView.adapter = myAdapter
                     myAdapter.repopulate(listCountriesFromApi)
@@ -184,14 +191,27 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     }
 
     companion object {
-        fun newInstance(countryName: Int, listOfLanguages: ArrayList<Language>): Fragment {
-            val fragment = CategoryAllAdsFragment()
-            fragment.arguments = Bundle()
-            fragment.arguments!!.putString(Constants.COUNTRY_NAME_KEY, countryName)
-            fragment.arguments!!.putParcelable(Constants.LANGUAGES_LIST, BaseParcelable(listOfLanguages))
-            return fragment
+        private var gson: Gson? = null
+
+        private fun getGsonParser(): Gson? {
+            if (null == gson) {
+                val builder = GsonBuilder()
+                gson = builder.create()
+            }
+            return gson
         }
     }
+
+
+//    companion object {
+//        fun newInstance(countryName: Int, listOfLanguages: ArrayList<Language>): Fragment {
+//            val fragment = CategoryAllAdsFragment()
+//            fragment.arguments = Bundle()
+//            fragment.arguments!!.putString(Constants.COUNTRY_NAME_KEY, countryName)
+//            fragment.arguments!!.putParcelable(Constants.LANGUAGES_LIST, BaseParcelable(listOfLanguages))
+//            return fragment
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
