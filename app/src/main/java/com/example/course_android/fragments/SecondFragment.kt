@@ -128,7 +128,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     recyclerView.adapter = myAdapter
                     myAdapter = MyAdapter(listCountriesFromApi)
                     recyclerView.adapter = myAdapter
-                    progressBar.visibility = ProgressBar.INVISIBLE;
+                    progressBar.visibility = ProgressBar.GONE;
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
