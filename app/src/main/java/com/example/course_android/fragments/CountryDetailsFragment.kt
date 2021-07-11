@@ -5,13 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
+import com.example.course_android.R
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.model.Language
-import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
+//import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
+import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.SupportMapFragment
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_country_details.*
 import kotlinx.android.synthetic.main.fragment_second.*
@@ -27,6 +34,9 @@ class CountryDetailsFragment : Fragment() {
     lateinit var adapterLanguages: AdapterLanguages
     lateinit var linearLayoutManager: LinearLayoutManager
 
+    private lateinit var googleMap: GoogleMap
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mCountryName = arguments?.getString(Constants.COUNTRY_NAME_KEY) ?: Constants.ERROR
@@ -36,6 +46,13 @@ class CountryDetailsFragment : Fragment() {
         mLanguageList = gson.fromJson(mLanguageJsonString, Array<Language>::class.java)?.toList()
 
         mCountryFlagString = arguments?.getString(Constants.COUNTRY_FLAG_KEY) ?: Constants.ERROR
+
+
+        val mapFragment = activity?.supportFragmentManager
+            ?.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
+        mapFragment?.run {
+            getMapAsync { map -> googleMap = map }
+        }
     }
 
     override fun onCreateView(
@@ -49,8 +66,11 @@ class CountryDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.mTvCountryName.text = mCountryName
-        val uri = Uri.parse(mCountryFlagString)
-        GlideToVectorYou.justLoadImage(activity, uri, item_flag)
+//        val uri = Uri.parse(mCountryFlagString)
+//        GlideToVectorYou.justLoadImage(activity, uri, item_flag)
+        binding.itemFlag.loadSvg(mCountryFlagString)
+
+
 
         linearLayoutManager = LinearLayoutManager(context)
         recycler_languages.layoutManager = linearLayoutManager
@@ -63,5 +83,20 @@ class CountryDetailsFragment : Fragment() {
 
         recycler_languages.adapter = adapterLanguages
         adapterLanguages.repopulate(mLanguageList as MutableList<Language>)
+    }
+
+    private fun AppCompatImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
+            .build()
+
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+
+        imageLoader.enqueue(request)
     }
 }
