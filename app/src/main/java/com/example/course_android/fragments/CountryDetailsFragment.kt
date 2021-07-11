@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.ImageLoader
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
+//import coil.ImageLoader
+//import coil.decode.SvgDecoder
+//import coil.request.ImageRequest
 import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
 import com.example.course_android.R
@@ -38,6 +38,7 @@ class CountryDetailsFragment : Fragment() {
     lateinit var linearLayoutManager: LinearLayoutManager
 
     private lateinit var googleMap: GoogleMap
+    var mapFragment : SupportMapFragment? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,11 +52,7 @@ class CountryDetailsFragment : Fragment() {
         mCountryFlagString = arguments?.getString(Constants.COUNTRY_FLAG_KEY) ?: Constants.ERROR
 
 
-        val mapFragment = activity?.supportFragmentManager
-            ?.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
-        mapFragment?.run {
-            getMapAsync { map -> initMap(map) }
-        }
+
     }
 
     private fun initMap(map: GoogleMap) {
@@ -72,6 +69,7 @@ class CountryDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -80,8 +78,12 @@ class CountryDetailsFragment : Fragment() {
         binding.mTvCountryName.text = mCountryName
 //        val uri = Uri.parse(mCountryFlagString)
 //        GlideToVectorYou.justLoadImage(activity, uri, item_flag)
-        binding.itemFlag.loadSvg(mCountryFlagString)
-
+//        binding.itemFlag.loadSvg(mCountryFlagString)
+        mapFragment =
+            childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
+        mapFragment?.run {
+            getMapAsync { map -> initMap(map) }
+        }
 
 
         linearLayoutManager = LinearLayoutManager(context)
@@ -97,18 +99,18 @@ class CountryDetailsFragment : Fragment() {
         adapterLanguages.repopulate(mLanguageList as MutableList<Language>)
     }
 
-    private fun AppCompatImageView.loadSvg(url: String) {
-        val imageLoader = ImageLoader.Builder(this.context)
-            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
-            .build()
-
-        val request = ImageRequest.Builder(this.context)
-            .crossfade(true)
-            .crossfade(500)
-            .data(url)
-            .target(this)
-            .build()
-
-        imageLoader.enqueue(request)
-    }
+//    private fun AppCompatImageView.loadSvg(url: String) {
+//        val imageLoader = ImageLoader.Builder(this.context)
+//            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
+//            .build()
+//
+//        val request = ImageRequest.Builder(this.context)
+//            .crossfade(true)
+//            .crossfade(500)
+//            .data(url)
+//            .target(this)
+//            .build()
+//
+//        imageLoader.enqueue(request)
+//    }
 }
