@@ -51,6 +51,10 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         base = context?.let { DatabaseInfo.init(it) }
         val daoCountry = base?.getCountryInfoDAO()
         val daoLanguage = base?.getLanguageInfoDAO()
+        myAdapter = MyAdapter()
+        recyclerView.adapter = myAdapter
+
+        getFromDB()
         getMyData(daoCountry, daoLanguage)
     }
 
@@ -128,16 +132,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
-                    val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
-                    val languagesFromDB = base?.getLanguageInfoDAO()
-                    listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
-                        languagesFromDB,
-                        listOfCountriesFromDB
-                    )
-
-                    listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
-
-                    myAdapter = MyAdapter()
                     myAdapter.setItemClick { item ->
                         val bundle = Bundle()
                         val gson = GsonBuilder().create()
@@ -149,10 +143,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                             bundle
                         )
                     }
-                    recyclerView.adapter = myAdapter
                     myAdapter.repopulate(listCountriesFromApi)
-//                    recyclerView.adapter = myAdapter
-//                    myAdapter = MyAdapter(listCountriesFromApi)
 
                     progressBar.visibility = ProgressBar.GONE;
                 } else {
@@ -180,6 +171,17 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         if (reader != null) {
             sortStatus = reader
         }
+    }
+
+    private fun getFromDB() {
+        val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
+        val languagesFromDB = base?.getLanguageInfoDAO()
+        listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
+            languagesFromDB,
+            listOfCountriesFromDB
+        )
+        listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
+        myAdapter.repopulate(listOfCountriesFromDB.subList(0, 20))
     }
 
 
