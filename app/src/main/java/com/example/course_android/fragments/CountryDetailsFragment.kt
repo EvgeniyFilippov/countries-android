@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 //import coil.ImageLoader
 //import coil.decode.SvgDecoder
 //import coil.request.ImageRequest
@@ -51,17 +54,6 @@ class CountryDetailsFragment : Fragment() {
 
         mCountryFlagString = arguments?.getString(Constants.COUNTRY_FLAG_KEY) ?: Constants.ERROR
 
-
-
-    }
-
-    private fun initMap(map: GoogleMap) {
-        googleMap = map.apply {
-            val startLocation = LatLng(53.904133, 27.557541)
-            val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 10.0f)
-            this.moveCamera(cameraLocation)
-        }
-
     }
 
     override fun onCreateView(
@@ -78,9 +70,8 @@ class CountryDetailsFragment : Fragment() {
         binding.mTvCountryName.text = mCountryName
 //        val uri = Uri.parse(mCountryFlagString)
 //        GlideToVectorYou.justLoadImage(activity, uri, item_flag)
-//        binding.itemFlag.loadSvg(mCountryFlagString)
-        mapFragment =
-            childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
+        binding.itemFlag.loadSvg(mCountryFlagString)
+        mapFragment = childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
         mapFragment?.run {
             getMapAsync { map -> initMap(map) }
         }
@@ -99,18 +90,27 @@ class CountryDetailsFragment : Fragment() {
         adapterLanguages.repopulate(mLanguageList as MutableList<Language>)
     }
 
-//    private fun AppCompatImageView.loadSvg(url: String) {
-//        val imageLoader = ImageLoader.Builder(this.context)
-//            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
-//            .build()
-//
-//        val request = ImageRequest.Builder(this.context)
-//            .crossfade(true)
-//            .crossfade(500)
-//            .data(url)
-//            .target(this)
-//            .build()
-//
-//        imageLoader.enqueue(request)
-//    }
+
+    private fun initMap(map: GoogleMap) {
+        googleMap = map.apply {
+            val startLocation = LatLng(53.0, 28.0)
+            val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 5.0f)
+            this.moveCamera(cameraLocation)
+        }
+
+    }
+    private fun AppCompatImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
+            .build()
+
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+
+        imageLoader.enqueue(request)
+    }
 }
