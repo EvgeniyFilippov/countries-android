@@ -16,9 +16,12 @@ import com.example.course_android.Constants
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.model.Language
+import com.google.android.libraries.maps.CameraUpdateFactory
 //import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.libraries.maps.model.CameraPosition
+import com.google.android.libraries.maps.model.LatLng
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_country_details.*
 import kotlinx.android.synthetic.main.fragment_second.*
@@ -51,8 +54,17 @@ class CountryDetailsFragment : Fragment() {
         val mapFragment = activity?.supportFragmentManager
             ?.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
         mapFragment?.run {
-            getMapAsync { map -> googleMap = map }
+            getMapAsync { map -> initMap(map) }
         }
+    }
+
+    private fun initMap(map: GoogleMap) {
+        googleMap = map.apply {
+            val startLocation = LatLng(53.904133, 27.557541)
+            val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 10.0f)
+            this.moveCamera(cameraLocation)
+        }
+
     }
 
     override fun onCreateView(
