@@ -66,13 +66,14 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     private fun initMap(map: GoogleMap) {
         googleMap = map.apply {
-            val startLocation = LatLng(
-                countryDescriptionFromApi[0].latlng[0],
-                countryDescriptionFromApi[0].latlng[1])
-            val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 7.0f)
-            this.moveCamera(cameraLocation)
+            if (countryDescriptionFromApi[0].latlng.size == 2) {
+                val startLocation = LatLng(
+                    countryDescriptionFromApi[0].latlng[0],
+                    countryDescriptionFromApi[0].latlng[1])
+                val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 7.0f)
+                this.moveCamera(cameraLocation)
+            }
         }
-
     }
 
     private fun AppCompatImageView.loadSvg(url: String) {
