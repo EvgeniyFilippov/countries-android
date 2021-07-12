@@ -1,6 +1,6 @@
 package com.example.course_android.utils
 
-import com.example.course_android.model.Language
+import com.example.course_android.model.allCountries.Language
 
 fun List<Language>.getLanguageByKey(): StringBuilder {
     val myStringBuilder = StringBuilder()
