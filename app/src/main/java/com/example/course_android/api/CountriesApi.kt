@@ -1,6 +1,6 @@
 package com.example.course_android.api
 
-import com.example.course_android.model.CountriesDataItem
+import com.example.course_android.model.allCountries.CountriesDataItem
 import retrofit2.Call
 import retrofit2.http.GET
 
