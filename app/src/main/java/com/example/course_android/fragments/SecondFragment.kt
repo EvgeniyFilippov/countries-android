@@ -12,6 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
+import com.example.course_android.CountriesApp.Companion.base
+import com.example.course_android.CountriesApp.Companion.daoCountry
+import com.example.course_android.CountriesApp.Companion.daoLanguage
 import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.MyAdapter
 import com.example.course_android.R
@@ -36,7 +39,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
-    private var base: DatabaseInfo? = null
+
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
 
 
@@ -48,9 +51,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
-        base = context?.let { DatabaseInfo.init(it) }
-        val daoCountry = base?.getCountryInfoDAO()
-        val daoLanguage = base?.getLanguageInfoDAO()
+
         myAdapter = MyAdapter()
         recyclerView.adapter = myAdapter
 
