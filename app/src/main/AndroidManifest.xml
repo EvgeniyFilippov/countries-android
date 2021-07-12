@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.course_android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:name="com.example.course_android.CountriesApp"
         android:allowBackup="true"
@@ -13,6 +14,11 @@
         android:debuggable="true"
         android:theme="@style/Theme.Courseandroid"
         tools:ignore="HardcodedDebugMode">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDHDYZuYtYIMHtM-Fm2DIAyjC50an8plic"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

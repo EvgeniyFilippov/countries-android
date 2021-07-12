@@ -9,4 +9,9 @@ object Constants {
     const val SORT_STATUS_UP = 1
     const val SORT_STATUS_DOWN = 2
     const val DEFAULT_SORT_STATUS = 0
+    const val ERROR = "ERROR"
+    const val COUNTRY_NAME_KEY = "COUNTRY_NAME_KEY"
+    const val LANGUAGES_LIST_KEY = "LANGUAGES_LIST_KEY"
+    const val COUNTRY_FLAG_KEY = "COUNTRY_FLAG_KEY"
+    const val LANGUAGE_VIEW_HEIGHT = 150
 }

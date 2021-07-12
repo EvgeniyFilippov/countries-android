@@ -1,4 +1,4 @@
-package com.example.course_android.model
+package com.example.course_android.model.allCountries
 
 data class CountriesDataItem(
 //    val alpha2Code: String,

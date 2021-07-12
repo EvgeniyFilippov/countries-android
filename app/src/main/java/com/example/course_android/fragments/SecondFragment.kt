@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp.Companion.retrofit
@@ -17,11 +18,12 @@ import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
-import com.example.course_android.model.CountriesDataItem
+import com.example.course_android.model.allCountries.CountriesDataItem
 import com.example.course_android.room.*
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,6 +51,12 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         base = context?.let { DatabaseInfo.init(it) }
         val daoCountry = base?.getCountryInfoDAO()
         val daoLanguage = base?.getLanguageInfoDAO()
+        myAdapter = MyAdapter()
+        recyclerView.adapter = myAdapter
+
+        if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
+            getCountriesFromDB()
+        }
         getMyData(daoCountry, daoLanguage)
     }
 
@@ -68,19 +76,18 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
-                listCountriesFromApi.sortBy { it.area }
+                myAdapter.sortAndReplaceItem()
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = Constants.SORT_STATUS_UP
             } else {
-                listCountriesFromApi.sortByDescending { it.area }
+                myAdapter.sortDescendingAndReplaceItem()
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
                 sortStatus = Constants.SORT_STATUS_DOWN
             }
-            myAdapter.notifyDataSetChanged()
             saveSortStatus()
         }
         return super.onOptionsItemSelected(item)
@@ -104,9 +111,20 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
                     listCountriesFromApi.let {
                         listCountriesFromApi.forEach { item ->
-                            listOfAllCountries.add(CountryBaseInfoEntity(item.name, item.capital, item.area))
+                            listOfAllCountries.add(
+                                CountryBaseInfoEntity(
+                                    item.name,
+                                    item.capital,
+                                    item.area
+                                )
+                            )
                             item.languages.forEach { language ->
-                                listOfAllLanguages.add(LanguagesInfoEntity(item.name, language.name))
+                                listOfAllLanguages.add(
+                                    LanguagesInfoEntity(
+                                        item.name,
+                                        language.name
+                                    )
+                                )
                             }
                         }
                         daoCountry?.addAll(listOfAllCountries)
@@ -115,19 +133,17 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
 
                     listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
-                    val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
-                    val languagesFromDB = base?.getLanguageInfoDAO()
-                    listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
-                        languagesFromDB,
-                        listOfCountriesFromDB
-                    )
+                    myAdapter.setItemClick { item ->
+                        val bundle = Bundle()
+                        bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
+                        findNavController().navigate(
+                            R.id.action_secondFragment_to_countryDetailsFragment,
+                            bundle
+                        )
+                    }
 
-                    listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
+                    myAdapter.repopulate(listCountriesFromApi)
 
-                    myAdapter = MyAdapter(listOfCountriesFromDB.subList(0, 20))
-                    recyclerView.adapter = myAdapter
-                    myAdapter = MyAdapter(listCountriesFromApi)
-                    recyclerView.adapter = myAdapter
                     progressBar.visibility = ProgressBar.GONE;
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
@@ -156,8 +172,21 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         }
     }
 
+    private fun getCountriesFromDB() {
+        val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
+        val languagesFromDB = base?.getLanguageInfoDAO()
+        listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
+            languagesFromDB,
+            listOfCountriesFromDB
+        )
+        listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
+        myAdapter.repopulate(listOfCountriesFromDB.subList(0, 20))
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
     }
+
 }

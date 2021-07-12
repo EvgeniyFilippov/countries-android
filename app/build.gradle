@@ -10,10 +10,11 @@ android {
 
     defaultConfig {
         applicationId "com.example.course_android"
-        minSdkVersion 19
+        minSdkVersion defaultMinSdkVersion
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+//        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -62,6 +63,7 @@ dependencies {
     final okhttp = "4.9.0"
     final loggingInterceptor = "4.9.0"
     def room_version = "2.3.0"
+    final glideToVector = "v2.0.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -82,6 +84,12 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$testJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$testEspressoVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$loggingInterceptor"
+//    implementation "com.github.corouteam:GlideToVectorYou:$glideToVector"
+    implementation 'com.google.android.libraries.maps:maps:3.1.0-beta'
+
+    implementation("io.coil-kt:coil:0.12.0")
+    implementation("io.coil-kt:coil-svg:0.12.0")
+//    implementation 'com.android.support:multidex:1.0.3'
 }
 
 apply plugin: 'kotlin-android-extensions'
