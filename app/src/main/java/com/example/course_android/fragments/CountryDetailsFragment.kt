@@ -77,12 +77,7 @@ class CountryDetailsFragment : Fragment() {
 
 
 
-        //карта гугл
-        mapFragment =
-            childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
-        mapFragment?.run {
-            getMapAsync { map -> initMap(map) }
-        }
+
 
 
 
@@ -92,8 +87,10 @@ class CountryDetailsFragment : Fragment() {
 
     private fun initMap(map: GoogleMap) {
         googleMap = map.apply {
-            val startLocation = LatLng(53.0, 28.0)
-            val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 5.0f)
+            val startLocation = LatLng(
+                countryDescriptionFromApi[0].latlng[0],
+                countryDescriptionFromApi[0].latlng[1])
+            val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 7.0f)
             this.moveCamera(cameraLocation)
         }
 
@@ -145,6 +142,13 @@ class CountryDetailsFragment : Fragment() {
 
                     //флаг
                     binding.itemFlag.loadSvg(countryDescriptionFromApi[0].flag)
+
+                    //карта гугл
+                    mapFragment =
+                        childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
+                    mapFragment?.run {
+                        getMapAsync { map -> initMap(map) }
+                    }
 
 
 
