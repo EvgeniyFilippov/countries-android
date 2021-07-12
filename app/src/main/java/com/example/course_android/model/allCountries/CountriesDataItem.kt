@@ -1,4 +1,4 @@
-package com.example.course_android.model
+package com.example.course_android.model.allCountries
 
 data class CountriesDataItem(
 //    val alpha2Code: String,
@@ -11,7 +11,7 @@ data class CountriesDataItem(
 //    val cioc: String,
 //    val currencies: List<Currency>,
 //    val demonym: String,
-    val flag: String,
+//    val flag: String,
 //    val gini: Double,
     val languages: List<Language>,
 //    val latlng: List<Double>,
