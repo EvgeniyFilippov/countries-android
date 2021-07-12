@@ -117,7 +117,7 @@ class CountryDetailsFragment : Fragment() {
     private fun getMyData() {
         RetrofitObj.getOkHttp()
         val countryDescrApi = CountriesApp.retrofit.create(CountryDescriptionApi::class.java)
-        val countryDescrApiCall = countryDescrApi.getTopHeadlines()
+        val countryDescrApiCall = countryDescrApi.getTopHeadlines(mCountryName)
 
         countryDescrApiCall.enqueue(object : Callback<List<CountryDescriptionItem>?> {
             override fun onResponse(
