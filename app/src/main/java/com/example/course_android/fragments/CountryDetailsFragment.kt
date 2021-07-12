@@ -2,19 +2,14 @@ package com.example.course_android.fragments
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-//import coil.ImageLoader
-//import coil.decode.SvgDecoder
-//import coil.request.ImageRequest
 import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp
@@ -22,15 +17,12 @@ import com.example.course_android.R
 import com.example.course_android.api.CountryDescriptionApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
-import com.example.course_android.model.allCountries.Language
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.model.oneCountry.LanguageOfOneCountry
 import com.google.android.libraries.maps.CameraUpdateFactory
-//import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
-import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_country_details.*
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
@@ -38,11 +30,9 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class CountryDetailsFragment : Fragment() {
+class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     private lateinit var mCountryName: String
-    private lateinit var mCountryFlagString: String
-    private lateinit var mLanguageJsonString: String
     private lateinit var binding: FragmentCountryDetailsBinding
     private var mLanguageList: List<LanguageOfOneCountry>? = null
     lateinit var adapterLanguages: AdapterLanguages
@@ -56,28 +46,17 @@ class CountryDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mCountryName = arguments?.getString(Constants.COUNTRY_NAME_KEY) ?: Constants.ERROR
-
-
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
 
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding = FragmentCountryDetailsBinding.bind(view)
         getMyData()
         //название страны
         binding.mTvCountryName.text = mCountryName
-
-
-
-
 
 
 
