@@ -1,4 +1,4 @@
-package com.example.course_android.model
+package com.example.course_android.model.oneCountry
 
 data class Translations(
     val br: String,
