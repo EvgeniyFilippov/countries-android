@@ -7,9 +7,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.model.CountriesDataItem
 import com.example.course_android.utils.getLanguageByKey
-import retrofit2.Callback
 
-class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+class MyAdapter(private val countriesList: List<CountriesDataItem>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyAdapter.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
@@ -24,21 +23,21 @@ class MyAdapter(val context: Callback<List<CountriesDataItem>?>, private val cou
         holder.itemTitle.text = countriesList[position].name
         holder.itemDetail.text = countriesList[position].capital
         holder.itemLang.text = countriesList[position].languages.getLanguageByKey()
-        holder.itemPopulation.text = countriesList[position].population.toString()
+        holder.itemArea.text = countriesList[position].area.toString()
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var itemTitle: AppCompatTextView
         var itemDetail: AppCompatTextView
         var itemLang: AppCompatTextView
-        var itemPopulation: AppCompatTextView
+        var itemArea: AppCompatTextView
 
 
         init {
             itemTitle = itemView.findViewById(R.id.item_title)
             itemDetail = itemView.findViewById(R.id.item_detail)
             itemLang = itemView.findViewById(R.id.item_lang)
-            itemPopulation = itemView.findViewById(R.id.item_population)
+            itemArea = itemView.findViewById(R.id.item_area)
         }
     }
 }
