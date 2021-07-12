@@ -54,7 +54,9 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         myAdapter = MyAdapter()
         recyclerView.adapter = myAdapter
 
-        getFromDB()
+        if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
+            getCountriesFromDB()
+        }
         getMyData(daoCountry, daoLanguage)
     }
 
@@ -143,6 +145,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                             bundle
                         )
                     }
+
                     myAdapter.repopulate(listCountriesFromApi)
 
                     progressBar.visibility = ProgressBar.GONE;
@@ -173,7 +176,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         }
     }
 
-    private fun getFromDB() {
+    private fun getCountriesFromDB() {
         val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = base?.getLanguageInfoDAO()
         listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
