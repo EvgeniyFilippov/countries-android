@@ -87,8 +87,8 @@ dependencies {
 //    implementation "com.github.corouteam:GlideToVectorYou:$glideToVector"
     implementation 'com.google.android.libraries.maps:maps:3.1.0-beta'
 
-//    implementation("io.coil-kt:coil:0.12.0")
-//    implementation("io.coil-kt:coil-svg:0.12.0")
+    implementation("io.coil-kt:coil:0.12.0")
+    implementation("io.coil-kt:coil-svg:0.12.0")
 //    implementation 'com.android.support:multidex:1.0.3'
 }
 
