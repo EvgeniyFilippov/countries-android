@@ -88,7 +88,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 item.isChecked = false
                 sortStatus = Constants.SORT_STATUS_DOWN
             }
-//            myAdapter.notifyDataSetChanged()
             saveSortStatus()
         }
         return super.onOptionsItemSelected(item)
