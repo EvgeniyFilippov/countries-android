@@ -58,7 +58,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
             getCountriesFromDB()
         }
-        getMyData(daoCountry, daoLanguage)
+        getMyData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -94,7 +94,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMyData(daoCountry: CountryInfoDAO?, daoLanguage: LanguagesInfoDAO?) {
+    private fun getMyData() {
         RetrofitObj.getOkHttp()
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val countriesApiCall = countriesApi.getTopHeadlines()
@@ -107,31 +107,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             ) {
                 if (response.body() != null) {
                     listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
-
-                    val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-                    val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-                    listCountriesFromApi.let {
-                        listCountriesFromApi.forEach { item ->
-                            listOfAllCountries.add(
-                                CountryBaseInfoEntity(
-                                    item.name,
-                                    item.capital,
-                                    item.area
-                                )
-                            )
-                            item.languages.forEach { language ->
-                                listOfAllLanguages.add(
-                                    LanguagesInfoEntity(
-                                        item.name,
-                                        language.name
-                                    )
-                                )
-                            }
-                        }
-                        daoCountry?.addAll(listOfAllCountries)
-                        daoLanguage?.addAll(listOfAllLanguages)
-                    }
-
                     listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
                     myAdapter.setItemClick { item ->
@@ -146,6 +121,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                     myAdapter.repopulate(listCountriesFromApi)
 
                     progressBar.visibility = ProgressBar.GONE;
+                    saveToDBfromApi()
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
@@ -184,6 +160,31 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         myAdapter.repopulate(listOfCountriesFromDB.subList(0, 20))
     }
 
+    private fun saveToDBfromApi() {
+        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+        listCountriesFromApi.let {
+            listCountriesFromApi.forEach { item ->
+                listOfAllCountries.add(
+                    CountryBaseInfoEntity(
+                        item.name,
+                        item.capital,
+                        item.area
+                    )
+                )
+                item.languages.forEach { language ->
+                    listOfAllLanguages.add(
+                        LanguagesInfoEntity(
+                            item.name,
+                            language.name
+                        )
+                    )
+                }
+            }
+            daoCountry?.addAll(listOfAllCountries)
+            daoLanguage?.addAll(listOfAllLanguages)
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
