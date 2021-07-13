@@ -158,6 +158,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         )
         listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
         myAdapter.repopulate(listOfCountriesFromDB.subList(0, 20))
+        listOfCountriesFromDB.clear()
     }
 
     private fun saveToDBfromApi() {
