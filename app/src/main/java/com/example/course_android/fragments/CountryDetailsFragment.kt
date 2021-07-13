@@ -4,12 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.ImageLoader
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
 import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp
@@ -19,16 +15,15 @@ import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.model.oneCountry.LanguageOfOneCountry
+import com.example.course_android.utils.loadSvg
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_country_details.*
-import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
@@ -42,27 +37,17 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private lateinit var googleMap: GoogleMap
     var mapFragment: SupportMapFragment? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mCountryName = arguments?.getString(Constants.COUNTRY_NAME_KEY) ?: Constants.ERROR
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding = FragmentCountryDetailsBinding.bind(view)
-        getMyData()
-        //название страны
         binding.mTvCountryName.text = mCountryName
-
-
-
-
+        getMyData()
     }
-
 
     private fun initMap(map: GoogleMap) {
         googleMap = map.apply {
@@ -76,26 +61,10 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         }
     }
 
-    private fun AppCompatImageView.loadSvg(url: String) {
-        val imageLoader = ImageLoader.Builder(this.context)
-            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
-            .build()
-
-        val request = ImageRequest.Builder(this.context)
-            .crossfade(true)
-            .crossfade(500)
-            .data(url)
-            .target(this)
-            .build()
-
-        imageLoader.enqueue(request)
-    }
-
     private fun getMyData() {
         RetrofitObj.getOkHttp()
         val countryDescrApi = CountriesApp.retrofit.create(CountryDescriptionApi::class.java)
         val countryDescrApiCall = countryDescrApi.getTopHeadlines(mCountryName)
-
         countryDescrApiCall.enqueue(object : Callback<List<CountryDescriptionItem>?> {
             override fun onResponse(
                 call: Call<List<CountryDescriptionItem>?>,
@@ -109,13 +78,12 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     linearLayoutManager = LinearLayoutManager(context)
                     recycler_languages.layoutManager = linearLayoutManager
                     adapterLanguages = AdapterLanguages()
-
                     mLanguageList = countryDescriptionFromApi[0].languages
 
-                    val params: ViewGroup.LayoutParams = recycler_languages.layoutParams
-                    params.height =
-                        mLanguageList?.size?.times(Constants.LANGUAGE_VIEW_HEIGHT) ?: Constants.DEFAULT_INT
-                    recycler_languages.layoutParams = params
+//                    val params: ViewGroup.LayoutParams = recycler_languages.layoutParams
+//                    params.height =
+//                        mLanguageList?.size?.times(Constants.LANGUAGE_VIEW_HEIGHT) ?: Constants.DEFAULT_INT
+//                    recycler_languages.layoutParams = params
 
                     recycler_languages.adapter = adapterLanguages
                     adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountry>)
@@ -129,9 +97,6 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     mapFragment?.run {
                         getMapAsync { map -> initMap(map) }
                     }
-
-
-
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
