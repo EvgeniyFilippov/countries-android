@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp
@@ -36,6 +37,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var countryDescriptionFromApi: MutableList<CountryDescriptionItem>
     private lateinit var countryDetailsDto: CountryDescriptionItemDto
+    private var mSrCountryDetails: SwipeRefreshLayout? = null
 
     private lateinit var googleMap: GoogleMap
     var mapFragment: SupportMapFragment? = null
@@ -49,6 +51,10 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCountryDetailsBinding.bind(view)
         binding?.mTvCountryName?.text = mCountryName
+        mSrCountryDetails = binding?.srCountryDetails
+        mSrCountryDetails?.setOnRefreshListener {
+            getMyData()
+        }
         getMyData()
     }
 
@@ -75,7 +81,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                 if (response.body() != null) {
                     countryDescriptionFromApi =
                         (response.body() as MutableList<CountryDescriptionItem>)
-
+                    mSrCountryDetails?.isRefreshing = false
                     //трансформируем в DTO
                     val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
                     countryDetailsDto = countryDetailsDtoTransformer.transform(countryDescriptionFromApi)
@@ -104,6 +110,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
             override fun onFailure(call: Call<List<CountryDescriptionItem>?>, t: Throwable) {
                 Log.d("RETROFIT_COUNTRIES", t.toString())
+                mSrCountryDetails?.isRefreshing = false
             }
         })
     }
