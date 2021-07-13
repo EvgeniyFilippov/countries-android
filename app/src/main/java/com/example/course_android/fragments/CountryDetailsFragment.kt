@@ -31,7 +31,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     private lateinit var mCountryName: String
     private var binding: FragmentCountryDetailsBinding? = null
-    private var mLanguageList: List<LanguageOfOneCountry>? = null
+    private var mLanguageList: List<LanguageOfOneCountryDto>? = null
     lateinit var adapterLanguages: AdapterLanguages
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var countryDescriptionFromApi: MutableList<CountryDescriptionItem>
@@ -84,9 +84,9 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     linearLayoutManager = LinearLayoutManager(context)
                     recycler_languages.layoutManager = linearLayoutManager
                     adapterLanguages = AdapterLanguages()
-                    mLanguageList = countryDescriptionFromApi[0].languages
+                    mLanguageList = countryDetailsDto.languages
                     recycler_languages.adapter = adapterLanguages
-                    adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountry>)
+                    adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountryDto>)
 
                     //флаг
                     binding?.itemFlag?.loadSvg(countryDetailsDto.flag)
