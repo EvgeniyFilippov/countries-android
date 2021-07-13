@@ -16,7 +16,7 @@ data class CountryDescriptionItemDto(
 //    val demonym: String,
     var flag: String = "",
 //    val gini: Double,
-    var languages: List<LanguageOfOneCountry> = arrayListOf(),
+    var languages: MutableList<LanguageOfOneCountryDto> = mutableListOf(),
     var latlng: List<Double> = arrayListOf(1.0, 1.0),
     var name: String = ""
 //    val nativeName: String,
