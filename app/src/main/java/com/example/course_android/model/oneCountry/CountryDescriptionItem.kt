@@ -1,5 +1,7 @@
 package com.example.course_android.model.oneCountry
 
+import com.example.course_android.model.allCountries.Language
+
 data class CountryDescriptionItem(
 //    val alpha2Code: String,
 //    val alpha3Code: String,
@@ -11,11 +13,11 @@ data class CountryDescriptionItem(
 //    val cioc: String,
 //    val currencies: List<Currency>,
 //    val demonym: String,
-    val flag: String,
+    val flag: String?,
 //    val gini: Double,
-    val languages: List<LanguageOfOneCountry>,
-    val latlng: List<Double>,
-    val name: String
+    val languages: List<LanguageOfOneCountry>?,
+    val latlng: List<Double>?,
+    val name: String?
 //    val nativeName: String,
 //    val numericCode: String,
 //    val population: Int,
