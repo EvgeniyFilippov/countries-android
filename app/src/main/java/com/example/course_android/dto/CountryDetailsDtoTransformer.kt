@@ -7,15 +7,13 @@ import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.Constants.FIRST_COUNTRY
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
-import com.example.course_android.model.allCountries.Language
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
-import com.example.course_android.model.oneCountry.LanguageOfOneCountry
 
 class CountryDetailsDtoTransformer :
     Transformer<MutableList<CountryDescriptionItem>, CountryDescriptionItemDto> {
     override fun transform(item: MutableList<CountryDescriptionItem>?): CountryDescriptionItemDto {
         val countryDescriptionItemDto = CountryDescriptionItemDto()
-//        val defaultLanguages: List<LanguageOfOneCountryDto> = mutableListOf()
+        val listOfLanguagesDto: MutableList<LanguageOfOneCountryDto> = mutableListOf()
 
         item?.let {
             countryDescriptionItemDto.flag = it[FIRST_COUNTRY].flag ?: DEFAULT_FLAG
@@ -27,12 +25,17 @@ class CountryDetailsDtoTransformer :
                 countryDescriptionItemDto.latlng = arrayListOf(DEFAULT_LATLNG, DEFAULT_LATLNG)
             }
 
-//            defaultLanguages[0].iso639_1 = it[FIRST_COUNTRY].languages?.get(0)?.iso639_1 ?: ""
-//            defaultLanguages[0].iso639_2 = it[FIRST_COUNTRY].languages?.get(0)?.iso639_1 ?: ""
-//            defaultLanguages[0].nativeName = it[FIRST_COUNTRY].languages?.get(0)?.nativeName ?: ""
-//            defaultLanguages[0].name = it[FIRST_COUNTRY].languages?.get(0)?.name ?: ""
-//
-//            countryDescriptionItemDto.languages = defaultLanguages
+            var count = 0;
+            it[FIRST_COUNTRY].languages?.forEach {
+                val languageDto = LanguageOfOneCountryDto()
+                languageDto.iso639_1 = it.iso639_1 ?: ""
+                languageDto.iso639_2 = it.iso639_2 ?: ""
+                languageDto.name = it.name ?: ""
+                languageDto.nativeName = it.nativeName ?: ""
+                listOfLanguagesDto.add(languageDto)
+                count++
+            }
+            countryDescriptionItemDto.languages = listOfLanguagesDto
         }
         return countryDescriptionItemDto
     }
