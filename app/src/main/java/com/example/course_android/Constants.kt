@@ -14,4 +14,8 @@ object Constants {
     const val LANGUAGES_LIST_KEY = "LANGUAGES_LIST_KEY"
     const val COUNTRY_FLAG_KEY = "COUNTRY_FLAG_KEY"
     const val LANGUAGE_VIEW_HEIGHT = 150
+    const val DEFAULT_FLAG = "https://static.wikia.nocookie.net/science/images/2/2a/Flag_of_None.svg/revision/latest?cb=20091012151312&path-prefix=ru"
+    const val DEFAULT_LATLNG = 2.0
+    const val FIRST_COUNTRY = 0
+    const val DEFAULT_LATLNG_SIZE = 2
 }
