@@ -12,6 +12,9 @@ import com.example.course_android.R
 import com.example.course_android.api.CountryDescriptionApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
+import com.example.course_android.dto.CountryDetailsDtoTransformer
+import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.model.oneCountry.LanguageOfOneCountry
 import com.example.course_android.utils.loadSvg
@@ -32,6 +35,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     lateinit var adapterLanguages: AdapterLanguages
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var countryDescriptionFromApi: MutableList<CountryDescriptionItem>
+    private lateinit var countryDetailsDto: CountryDescriptionItemDto
 
     private lateinit var googleMap: GoogleMap
     var mapFragment: SupportMapFragment? = null
@@ -50,13 +54,12 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     private fun initMap(map: GoogleMap) {
         googleMap = map.apply {
-            if (countryDescriptionFromApi[0].latlng.size == 2) {
-                val startLocation = LatLng(
-                    countryDescriptionFromApi[0].latlng[0],
-                    countryDescriptionFromApi[0].latlng[1])
-                val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation, 7.0f)
+            val startLocation = LatLng(
+                countryDetailsDto.latlng[0],
+                countryDetailsDto.latlng[1]
+            )
+                val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation,7.0f)
                 this.moveCamera(cameraLocation)
-            }
         }
     }
 
@@ -73,6 +76,10 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     countryDescriptionFromApi =
                         (response.body() as MutableList<CountryDescriptionItem>)
 
+                    //трансформируем в DTO
+                    val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
+                    countryDetailsDto = countryDetailsDtoTransformer.transform(countryDescriptionFromApi)
+
                     //языки ресайкл
                     linearLayoutManager = LinearLayoutManager(context)
                     recycler_languages.layoutManager = linearLayoutManager
@@ -82,7 +89,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountry>)
 
                     //флаг
-                    binding?.itemFlag?.loadSvg(countryDescriptionFromApi[0].flag)
+                    binding?.itemFlag?.loadSvg(countryDetailsDto.flag)
 
                     //карта гугл
                     mapFragment =
