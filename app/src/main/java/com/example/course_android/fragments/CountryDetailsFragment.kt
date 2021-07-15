@@ -17,7 +17,6 @@ import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
-import com.example.course_android.model.oneCountry.LanguageOfOneCountry
 import com.example.course_android.utils.loadSvg
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
