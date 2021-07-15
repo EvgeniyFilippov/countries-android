@@ -32,7 +32,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SecondFragment : Fragment(R.layout.fragment_second) {
+class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
     lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
