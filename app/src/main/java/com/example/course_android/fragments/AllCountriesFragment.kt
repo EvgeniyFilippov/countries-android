@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,11 +23,11 @@ import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.allCountries.CountriesDataItem
-import com.example.course_android.room.*
+import com.example.course_android.room.CountryBaseInfoEntity
+import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
-import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -89,8 +90,12 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                 item.isChecked = false
                 sortStatus = Constants.SORT_STATUS_DOWN
             }
-            saveSortStatus()
+//            saveSortStatus()
         }
+        if (item.itemId == R.id.reset_sort) {
+            showAlertDialog()
+        }
+        saveSortStatus()
         return super.onOptionsItemSelected(item)
     }
 
@@ -188,9 +193,25 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
+    private fun showAlertDialog() {
+        val alertDialog = context?.let { AlertDialog.Builder(it).create() }
+        alertDialog?.setTitle("Сортировка")
+        alertDialog?.setMessage("Сбросить сортировку?")
+        alertDialog?.setButton(AlertDialog.BUTTON_NEUTRAL, "NO") { dialog, which ->
+            dialog.dismiss()
+        }
+        alertDialog?.setButton(AlertDialog.BUTTON_POSITIVE, "YES") { dialog, which ->
+            dialog.dismiss()
+            sortStatus = 0
+            saveSortStatus()
+            myAdapter.resetSorting()
+        }
+        alertDialog?.show()
     }
 
-}
+        override fun onDestroyView() {
+            super.onDestroyView()
+            binding = null
+        }
+
+    }
