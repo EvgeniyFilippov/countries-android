@@ -1,74 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sr_country_details"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-<androidx.core.widget.NestedScrollView
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/list_fragment"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/sr_country_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/list_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_start_heading"
+                android:orientation="vertical"
+                tools:context=".fragments.CountryDetailsFragment">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/mTvCountryName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/default_padding"
+                    android:textSize="@dimen/text_heading_country_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/item_flag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/flag_height"
+                    android:scaleType="fitStart"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mTvCountryName" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/country_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/default_padding"
+                    android:text="@string/country_description_text"
+
+                    android:textSize="@dimen/text_size_country_description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/item_flag" />
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/mapFragmentContainer"
+                    android:name="com.google.android.libraries.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/map_height"
+                    android:layout_marginTop="@dimen/card_recycler_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/country_description" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_languages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_margin"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mapFragmentContainer" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+        android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin_start_heading"
-        android:orientation="vertical"
-        tools:context=".fragments.CountryDetailsFragment">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/mTvCountryName"
-            android:layout_width="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+        <ProgressBar
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_heading_country_info"
-            android:paddingBottom="@dimen/default_padding"
+            android:layout_gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+    </FrameLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/item_flag"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/flag_height"
-            android:scaleType="fitStart"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mTvCountryName"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:paddingVertical="@dimen/default_padding"
-            android:id="@+id/country_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_country_description"
-
-            android:text="@string/country_description_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_flag" />
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/mapFragmentContainer"
-            android:name="com.google.android.libraries.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/map_height"
-            android:layout_marginTop="@dimen/card_recycler_margin"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/country_description"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_languages"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mapFragmentContainer" />
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</FrameLayout>
