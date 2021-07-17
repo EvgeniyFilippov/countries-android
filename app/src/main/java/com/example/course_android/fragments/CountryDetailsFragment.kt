@@ -1,9 +1,20 @@
 package com.example.course_android.fragments
 
+import android.Manifest
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -20,6 +31,7 @@ import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.ext.showDialogWithTwoButton
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.utils.loadSvg
+import com.example.course_android.utils.toast
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
@@ -28,6 +40,8 @@ import kotlinx.android.synthetic.main.fragment_country_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
+private const val LOCATION_PERMISSION_CODE = 1000
 
 class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
@@ -41,7 +55,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private var mSrCountryDetails: SwipeRefreshLayout? = null
     private var progressBar: FrameLayout? = null
 
-    private lateinit var googleMap: GoogleMap
+    private var googleMap: GoogleMap? = null
     var mapFragment: SupportMapFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +65,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
         binding = FragmentCountryDetailsBinding.bind(view)
         binding?.mTvCountryName?.text = mCountryName
         mSrCountryDetails = binding?.srCountryDetails
@@ -68,8 +83,35 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                 countryDetailsDto.latlng[1]
             )
                 val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation,7.0f)
-                this.moveCamera(cameraLocation)
+                moveCamera(cameraLocation)
+            if (checkLocationPermission()) {
+                isMyLocationEnabled = true
+            } else {
+                askLocationPermission()
+            }
         }
+    }
+
+
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PERMISSION_GRANTED) {
+            googleMap?.isMyLocationEnabled = true
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    //проверяем permission
+    private fun checkLocationPermission() =
+        context?.let { ContextCompat.checkSelfPermission(it, ACCESS_FINE_LOCATION) } == PERMISSION_GRANTED
+
+    //запрос permission
+    private fun askLocationPermission() {
+        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
     }
 
     private fun getMyData(isRefresh: Boolean) {
@@ -107,7 +149,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     mapFragment?.run {
                         getMapAsync { map -> initMap(map) }
                     }
-                    activity?.showDialogWithTwoButton("Title", "Description", R.string.dialog_ok, null)
+
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
@@ -120,6 +162,18 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                 progressBar?.visibility = View.GONE
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.country_description_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.gps_distance) {
+            activity?.showDialogWithTwoButton("Title", "Description", R.string.dialog_ok, null)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {
