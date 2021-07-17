@@ -17,6 +17,7 @@ import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
+import com.example.course_android.ext.showDialogWithTwoButton
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.utils.loadSvg
 import com.google.android.libraries.maps.CameraUpdateFactory
@@ -106,6 +107,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     mapFragment?.run {
                         getMapAsync { map -> initMap(map) }
                     }
+                    activity?.showDialogWithTwoButton("Title", "Description", R.string.dialog_ok, null)
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
