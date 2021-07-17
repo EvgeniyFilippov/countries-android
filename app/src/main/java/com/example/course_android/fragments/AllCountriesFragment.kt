@@ -28,6 +28,7 @@ import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -90,7 +91,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                 item.isChecked = false
                 sortStatus = Constants.SORT_STATUS_DOWN
             }
-//            saveSortStatus()
         }
         if (item.itemId == R.id.reset_sort) {
             showAlertDialog()
@@ -194,24 +194,24 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     }
 
     private fun showAlertDialog() {
-        val alertDialog = context?.let { AlertDialog.Builder(it).create() }
-        alertDialog?.setTitle("Сортировка")
-        alertDialog?.setMessage("Сбросить сортировку?")
-        alertDialog?.setButton(AlertDialog.BUTTON_NEUTRAL, "NO") { dialog, which ->
-            dialog.dismiss()
-        }
-        alertDialog?.setButton(AlertDialog.BUTTON_POSITIVE, "YES") { dialog, which ->
-            dialog.dismiss()
-            sortStatus = 0
-            saveSortStatus()
-            myAdapter.resetSorting()
-        }
+        val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
+            ?.setTitle("Сортировка")
+            ?.setMessage("Сбросить сортировку?")
+            ?.setNegativeButton("NO") { dialog, which ->
+                dialog.dismiss()
+            }
+            ?.setPositiveButton("YES") { dialog, which ->
+                dialog.dismiss()
+                sortStatus = 0
+                saveSortStatus()
+                myAdapter.resetSorting()
+            }
         alertDialog?.show()
     }
 
-        override fun onDestroyView() {
-            super.onDestroyView()
-            binding = null
-        }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
+
+}
