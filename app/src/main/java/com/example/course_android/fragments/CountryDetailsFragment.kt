@@ -3,6 +3,8 @@ package com.example.course_android.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -13,6 +15,7 @@ import com.example.course_android.R
 import com.example.course_android.api.CountryDescriptionApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
+import com.example.course_android.dialog.showAlertDialog
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
@@ -37,6 +40,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private lateinit var countryDescriptionFromApi: MutableList<CountryDescriptionItem>
     private lateinit var countryDetailsDto: CountryDescriptionItemDto
     private var mSrCountryDetails: SwipeRefreshLayout? = null
+    private var progressBar: FrameLayout? = null
 
     private lateinit var googleMap: GoogleMap
     var mapFragment: SupportMapFragment? = null
@@ -51,10 +55,12 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         binding = FragmentCountryDetailsBinding.bind(view)
         binding?.mTvCountryName?.text = mCountryName
         mSrCountryDetails = binding?.srCountryDetails
+        progressBar = binding?.progress
         mSrCountryDetails?.setOnRefreshListener {
-            getMyData()
+            getMyData(true)
         }
-        getMyData()
+        getMyData(false)
+        activity?.showAlertDialog()
     }
 
     private fun initMap(map: GoogleMap) {
@@ -68,7 +74,8 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         }
     }
 
-    private fun getMyData() {
+    private fun getMyData(isRefresh: Boolean) {
+        progressBar?.visibility = if (isRefresh) View.GONE else View.VISIBLE
         RetrofitObj.getOkHttp()
         val countryDescrApi = CountriesApp.retrofit.create(CountryDescriptionApi::class.java)
         val countryDescrApiCall = countryDescrApi.getTopHeadlines(mCountryName)
@@ -105,11 +112,13 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
+                Thread.sleep(500)
+                progressBar?.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<List<CountryDescriptionItem>?>, t: Throwable) {
                 Log.d("RETROFIT_COUNTRIES", t.toString())
-                mSrCountryDetails?.isRefreshing = false
+                progressBar?.visibility = View.GONE
             }
         })
     }
