@@ -120,15 +120,16 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
                     myAdapter.repopulate(listCountriesFromApi)
 
-                    progressBar.visibility = ProgressBar.GONE;
                     saveToDBfromApi()
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
+                progressBar.visibility = ProgressBar.GONE;
             }
 
             override fun onFailure(call: Call<List<CountriesDataItem>?>, t: Throwable) {
                 Log.d("RETROFIT_COUNTRIES", t.toString())
+                progressBar.visibility = ProgressBar.GONE;
             }
         })
     }
