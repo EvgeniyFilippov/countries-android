@@ -21,4 +21,5 @@
     <string name="text_of_capital">Столица:\u0020</string>
     <string name="text_of_languages">Языки:\u0020</string>
     <string name="text_of_area">Плащадь:\u0020</string>
+    <string name="dialog_ok">ОК</string>
 </resources>
