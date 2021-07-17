@@ -46,4 +46,9 @@ class MyAdapter : BaseAdapter<CountriesDataItem>() {
         notifyDataSetChanged()
     }
 
+    fun resetSorting() {
+        mDataList.sortBy { it.name }
+        notifyDataSetChanged()
+    }
+
 }
