@@ -60,7 +60,6 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
             getMyData(true)
         }
         getMyData(false)
-        activity?.showAlertDialog()
     }
 
     private fun initMap(map: GoogleMap) {
