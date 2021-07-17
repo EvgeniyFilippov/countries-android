@@ -4,6 +4,7 @@ import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -36,6 +37,7 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
+import com.google.android.libraries.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.fragment_country_details.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -77,12 +79,11 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     }
 
     private fun initMap(map: GoogleMap) {
+        val currentCountryLatLng = LatLng(countryDetailsDto.latlng[0],
+        countryDetailsDto.latlng[1])
         googleMap = map.apply {
-            val startLocation = LatLng(
-                countryDetailsDto.latlng[0],
-                countryDetailsDto.latlng[1]
-            )
-                val cameraLocation = CameraUpdateFactory.newLatLngZoom(startLocation,7.0f)
+
+                val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng,7.0f)
                 moveCamera(cameraLocation)
             if (checkLocationPermission()) {
                 isMyLocationEnabled = true
@@ -90,6 +91,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                 askLocationPermission()
             }
         }
+        addMarkerOnMap(currentCountryLatLng)
     }
 
 
@@ -112,6 +114,14 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     //запрос permission
     private fun askLocationPermission() {
         requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
+    }
+
+    //добавляем маркер
+    private fun addMarkerOnMap(markerPosition: LatLng) {
+        val markerOptions = MarkerOptions()
+            .position(markerPosition)
+            .title("Marker title with position $markerPosition")
+        googleMap?.addMarker(markerOptions)
     }
 
     private fun getMyData(isRefresh: Boolean) {
