@@ -64,6 +64,7 @@ dependencies {
     def room_version = "2.3.0"
     final coil = "0.12.0"
     final maps = "3.1.0-beta"
+    final gms = "18.0.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -87,6 +88,8 @@ dependencies {
     implementation "com.google.android.libraries.maps:maps:$maps"
     implementation("io.coil-kt:coil:$coil")
     implementation("io.coil-kt:coil-svg:$coil")
+    implementation "com.google.android.gms:play-services-location:$gms"
+
 }
 
 apply plugin: 'kotlin-android-extensions'
