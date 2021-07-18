@@ -16,6 +16,7 @@ import com.example.course_android.Constants
 import com.example.course_android.CountriesApp.Companion.base
 import com.example.course_android.CountriesApp.Companion.daoCountry
 import com.example.course_android.CountriesApp.Companion.daoLanguage
+import com.example.course_android.CountriesApp.Companion.myAdapter
 import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.MyAdapter
 import com.example.course_android.R
@@ -36,7 +37,6 @@ import retrofit2.Response
 
 class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
-    lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
@@ -53,8 +53,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
-
-        myAdapter = MyAdapter()
         recyclerView.adapter = myAdapter
 
         if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
@@ -123,7 +121,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                         )
                     }
 
-                    myAdapter.repopulate(listCountriesFromApi)
+                    myAdapter.addList(listCountriesFromApi.subList(20,listCountriesFromApi.size))
 
                     saveToDBfromApi()
                 } else {
