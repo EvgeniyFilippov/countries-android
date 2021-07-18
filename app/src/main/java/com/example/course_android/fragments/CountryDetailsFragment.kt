@@ -2,6 +2,8 @@ package com.example.course_android.fragments
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -28,8 +30,11 @@ import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.ext.showDialogWithTwoButton
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.utils.loadSvg
+import com.example.course_android.utils.toast
+import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.LocationSource
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
@@ -39,6 +44,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 private const val LOCATION_PERMISSION_CODE = 1000
+private const val LOG_TAG = "CountryDetailsFragment"
 
 class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
@@ -54,6 +60,8 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     private var googleMap: GoogleMap? = null
     var mapFragment: SupportMapFragment? = null
+
+    private lateinit var currentCountryLatLng: LatLng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +82,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     }
 
     private fun initMap(map: GoogleMap) {
-        val currentCountryLatLng = LatLng(countryDetailsDto.latlng[0],
+        currentCountryLatLng = LatLng(countryDetailsDto.latlng[0],
         countryDetailsDto.latlng[1])
         googleMap = map.apply {
 
@@ -82,6 +90,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                 moveCamera(cameraLocation)
             if (checkLocationPermission()) {
                 isMyLocationEnabled = true
+                getDistance()
             } else {
                 askLocationPermission()
             }
@@ -90,7 +99,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     }
 
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission")//уже запрашивал пермишены
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -98,6 +107,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     ) {
         if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PERMISSION_GRANTED) {
             googleMap?.isMyLocationEnabled = true
+            getDistance()
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -180,6 +190,22 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    @SuppressLint("MissingPermission")//уже запрашивал пермишены
+    private fun getDistance() {
+        val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+            latitude = currentCountryLatLng.latitude
+            longitude = currentCountryLatLng.longitude
+             }
+        LocationServices.getFusedLocationProviderClient(context)
+            .lastLocation
+            .addOnSuccessListener { location ->
+                val distance = location.distanceTo(currentCountryLocation)/1000
+                context?.toast(distance.toString() + Constants.KILOMETER)
+                Log.d(LOG_TAG, location.toString())
+            }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
