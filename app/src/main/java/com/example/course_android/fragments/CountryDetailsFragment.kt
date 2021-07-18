@@ -1,10 +1,7 @@
 package com.example.course_android.fragments
 
-import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -12,9 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp
+import com.example.course_android.CountriesApp.Companion.adapterLanguages
 import com.example.course_android.R
 import com.example.course_android.api.CountryDescriptionApi
 import com.example.course_android.api.RetrofitObj
@@ -32,7 +28,6 @@ import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.ext.showDialogWithTwoButton
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.utils.loadSvg
-import com.example.course_android.utils.toast
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
@@ -50,7 +45,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private lateinit var mCountryName: String
     private var binding: FragmentCountryDetailsBinding? = null
     private var mLanguageList: List<LanguageOfOneCountryDto>? = null
-    lateinit var adapterLanguages: AdapterLanguages
+//    lateinit var adapterLanguages: AdapterLanguages
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var countryDescriptionFromApi: MutableList<CountryDescriptionItem>
     private lateinit var countryDetailsDto: CountryDescriptionItemDto
@@ -145,7 +140,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     //языки ресайкл
                     linearLayoutManager = LinearLayoutManager(context)
                     recycler_languages.layoutManager = linearLayoutManager
-                    adapterLanguages = AdapterLanguages()
+
                     mLanguageList = countryDetailsDto.languages
                     recycler_languages.adapter = adapterLanguages
                     adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountryDto>)
