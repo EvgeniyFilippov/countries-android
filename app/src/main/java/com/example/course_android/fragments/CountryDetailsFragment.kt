@@ -60,6 +60,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     private var googleMap: GoogleMap? = null
     var mapFragment: SupportMapFragment? = null
+    private var distance: Int = 0
 
     private lateinit var currentCountryLatLng: LatLng
 
@@ -186,7 +187,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.gps_distance) {
-            activity?.showDialogWithTwoButton("Title", "Description", R.string.dialog_ok, null)
+            activity?.showDialogWithTwoButton(null, getString(R.string.distanceToYou, mCountryName, distance), R.string.dialog_ok, null)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -200,8 +201,8 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         LocationServices.getFusedLocationProviderClient(context)
             .lastLocation
             .addOnSuccessListener { location ->
-                val distance = location.distanceTo(currentCountryLocation)/1000
-                context?.toast(distance.toString() + Constants.KILOMETER)
+                distance = location.distanceTo(currentCountryLocation).toInt()/1000
+//                context?.toast(distance.toString() + Constants.KILOMETER)
                 Log.d(LOG_TAG, location.toString())
             }
     }
