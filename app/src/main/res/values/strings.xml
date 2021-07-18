@@ -24,4 +24,5 @@
     <string name="text_of_languages">Языки:\u0020</string>
     <string name="text_of_area">Плащадь:\u0020</string>
     <string name="dialog_ok">ОК</string>
+    <string name="distanceToYou">Расстояние от вас до %1$s составляет %2$d км </string>
 </resources>
