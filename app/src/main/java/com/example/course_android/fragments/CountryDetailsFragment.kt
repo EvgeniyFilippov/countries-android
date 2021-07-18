@@ -202,7 +202,6 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
             .lastLocation
             .addOnSuccessListener { location ->
                 distance = location.distanceTo(currentCountryLocation).toInt()/1000
-//                context?.toast(distance.toString() + Constants.KILOMETER)
                 Log.d(LOG_TAG, location.toString())
             }
     }
