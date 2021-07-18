@@ -41,6 +41,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     private var binding: FragmentSecondBinding? = null
 
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
+    private var positionIndex = 0
+    private var topView = 0
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,9 +123,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
                     myAdapter.addList(listCountriesFromApi.subList(Constants.FIRST_ELEMENTS_DB,listCountriesFromApi.size))
 
+
                     saveToDBfromApi()
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
+                }
+                if (positionIndex!= -1) {
+                    linearLayoutManager.scrollToPositionWithOffset(positionIndex, topView);
                 }
                 progressBar.visibility = ProgressBar.GONE;
             }
@@ -203,6 +209,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                 myAdapter.resetSorting()
             }
         alertDialog?.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        positionIndex = linearLayoutManager.findFirstVisibleItemPosition()
+        val startView: View = recyclerView.getChildAt(0)
+        topView = startView.top - recyclerView.paddingTop
     }
 
     override fun onDestroyView() {
