@@ -8,7 +8,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,6 @@ import com.example.course_android.CountriesApp.Companion.daoCountry
 import com.example.course_android.CountriesApp.Companion.daoLanguage
 import com.example.course_android.CountriesApp.Companion.myAdapter
 import com.example.course_android.CountriesApp.Companion.retrofit
-import com.example.course_android.MyAdapter
 import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
@@ -121,7 +119,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                         )
                     }
 
-                    myAdapter.addList(listCountriesFromApi.subList(20,listCountriesFromApi.size))
+                    myAdapter.addList(listCountriesFromApi.subList(Constants.FIRST_ELEMENTS_DB,listCountriesFromApi.size))
 
                     saveToDBfromApi()
                 } else {
@@ -161,7 +159,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
             listOfCountriesFromDB
         )
         listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
-        myAdapter.repopulate(listOfCountriesFromDB.subList(0, 20))
+        myAdapter.repopulate(listOfCountriesFromDB.subList(Constants.DEFAULT_INT, Constants.FIRST_ELEMENTS_DB))
         listOfCountriesFromDB.clear()
     }
 
@@ -200,7 +198,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
             }
             ?.setPositiveButton("YES") { dialog, which ->
                 dialog.dismiss()
-                sortStatus = 0
+                sortStatus = Constants.DEFAULT_INT
                 saveSortStatus()
                 myAdapter.resetSorting()
             }
