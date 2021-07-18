@@ -18,4 +18,5 @@ object Constants {
     const val DEFAULT_LATLNG = 2.0
     const val FIRST_COUNTRY = 0
     const val DEFAULT_LATLNG_SIZE = 2
+    const val FIRST_ELEMENTS_DB = 20
 }
