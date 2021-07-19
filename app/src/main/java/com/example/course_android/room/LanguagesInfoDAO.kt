@@ -8,7 +8,7 @@ import androidx.room.Query
 
 @Dao
 interface LanguagesInfoDAO {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun add(entity: LanguagesInfoEntity)
 
     @Query("SELECT * FROM languages_table")
@@ -17,6 +17,6 @@ interface LanguagesInfoDAO {
     @Query("SELECT language FROM languages_table WHERE countryName = :name")
     fun getLanguageByCountry(name: String): List<String>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addAll(list: List<LanguagesInfoEntity>)
 }

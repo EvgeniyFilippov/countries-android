@@ -1,8 +1,9 @@
-package com.example.course_android.model.oneCountry
+package com.example.course_android.dto.model
 
 import com.example.course_android.model.allCountries.Language
+import com.example.course_android.model.oneCountry.LanguageOfOneCountry
 
-data class CountryDescriptionItem(
+data class CountryDescriptionItemDto(
 //    val alpha2Code: String,
 //    val alpha3Code: String,
 //    val altSpellings: List<String>,
@@ -13,11 +14,11 @@ data class CountryDescriptionItem(
 //    val cioc: String,
 //    val currencies: List<Currency>,
 //    val demonym: String,
-    val flag: String?,
+    var flag: String = "",
 //    val gini: Double,
-    val languages: List<LanguageOfOneCountry>?,
-    val latlng: List<Double>?,
-    val name: String?
+    var languages: MutableList<LanguageOfOneCountryDto> = mutableListOf(),
+    var latlng: List<Double> = arrayListOf(1.0, 1.0),
+    var name: String = ""
 //    val nativeName: String,
 //    val numericCode: String,
 //    val population: Int,

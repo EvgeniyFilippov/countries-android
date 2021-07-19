@@ -1,5 +1,7 @@
 package com.example.course_android.model.allCountries
 
+import com.example.course_android.model.oneCountry.LanguageOfOneCountry
+
 data class CountriesDataItem(
 //    val alpha2Code: String,
 //    val alpha3Code: String,

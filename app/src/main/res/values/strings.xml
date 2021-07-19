@@ -10,7 +10,9 @@
     <string name="menu_item4">item 4</string>
     <string name="sort_population">Соритровка по популяции</string>
     <string name="sort_down">Сортировка по убыванию</string>
+    <string name="reset_sort">Сбросить сортировку</string>
     <string name="sort_up">Сортировка по позврастанию</string>
+    <string name="distance">Расстояние до страны</string>
     <string name="country_description_text">Lorem Ipsum is simply dummy text of the printing and
         typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since
         the 1500s, when an unknown printer took a galley of type and scrambled it to make a type
@@ -21,4 +23,6 @@
     <string name="text_of_capital">Столица:\u0020</string>
     <string name="text_of_languages">Языки:\u0020</string>
     <string name="text_of_area">Плащадь:\u0020</string>
+    <string name="dialog_ok">ОК</string>
+    <string name="distanceToYou">Расстояние от вас до %1$s составляет %2$d км </string>
 </resources>

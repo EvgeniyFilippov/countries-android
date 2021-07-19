@@ -1,8 +1,8 @@
 package com.example.course_android.model.allCountries
 
 data class Language (
-    val iso639_1: String,
-    val iso639_2: String,
-    val name: String,
-    val nativeName: String
+    var iso639_1: String,
+    var iso639_2: String,
+    var name: String,
+    var nativeName: String
 )

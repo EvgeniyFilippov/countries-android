@@ -15,9 +15,9 @@ interface CountryInfoDAO {
     @Query("SELECT * FROM countries_base_info_table WHERE name = :name")
     fun getInfoByCountry(name: String): LiveData<List<CountryBaseInfoEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun add(entity: CountryBaseInfoEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addAll(list: List<CountryBaseInfoEntity>)
 }

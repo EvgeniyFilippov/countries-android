@@ -12,32 +12,37 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
+import com.example.course_android.CountriesApp.Companion.base
+import com.example.course_android.CountriesApp.Companion.daoCountry
+import com.example.course_android.CountriesApp.Companion.daoLanguage
+import com.example.course_android.CountriesApp.Companion.myAdapter
 import com.example.course_android.CountriesApp.Companion.retrofit
-import com.example.course_android.MyAdapter
 import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
 import com.example.course_android.model.allCountries.CountriesDataItem
-import com.example.course_android.room.*
+import com.example.course_android.room.CountryBaseInfoEntity
+import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
-import com.google.gson.GsonBuilder
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SecondFragment : Fragment(R.layout.fragment_second) {
+class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
-    lateinit var myAdapter: MyAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
-    private var base: DatabaseInfo? = null
+
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
+    private var positionIndex = 0
+    private var topView = 0
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,16 +53,12 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
-        base = context?.let { DatabaseInfo.init(it) }
-        val daoCountry = base?.getCountryInfoDAO()
-        val daoLanguage = base?.getLanguageInfoDAO()
-        myAdapter = MyAdapter()
         recyclerView.adapter = myAdapter
 
         if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
             getCountriesFromDB()
         }
-        getMyData(daoCountry, daoLanguage)
+        getMyData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -88,12 +89,15 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 item.isChecked = false
                 sortStatus = Constants.SORT_STATUS_DOWN
             }
-            saveSortStatus()
         }
+        if (item.itemId == R.id.reset_sort) {
+            showAlertDialog()
+        }
+        saveSortStatus()
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMyData(daoCountry: CountryInfoDAO?, daoLanguage: LanguagesInfoDAO?) {
+    private fun getMyData() {
         RetrofitObj.getOkHttp()
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val countriesApiCall = countriesApi.getTopHeadlines()
@@ -106,31 +110,6 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             ) {
                 if (response.body() != null) {
                     listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
-
-                    val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-                    val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-                    listCountriesFromApi.let {
-                        listCountriesFromApi.forEach { item ->
-                            listOfAllCountries.add(
-                                CountryBaseInfoEntity(
-                                    item.name,
-                                    item.capital,
-                                    item.area
-                                )
-                            )
-                            item.languages.forEach { language ->
-                                listOfAllLanguages.add(
-                                    LanguagesInfoEntity(
-                                        item.name,
-                                        language.name
-                                    )
-                                )
-                            }
-                        }
-                        daoCountry?.addAll(listOfAllCountries)
-                        daoLanguage?.addAll(listOfAllLanguages)
-                    }
-
                     listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
                     myAdapter.setItemClick { item ->
@@ -142,16 +121,22 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                         )
                     }
 
-                    myAdapter.repopulate(listCountriesFromApi)
+                    myAdapter.addList(listCountriesFromApi.subList(Constants.FIRST_ELEMENTS_DB,listCountriesFromApi.size))
 
-                    progressBar.visibility = ProgressBar.GONE;
+
+                    saveToDBfromApi()
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
+                if (positionIndex!= -1) {
+                    linearLayoutManager.scrollToPositionWithOffset(positionIndex, topView);
+                }
+                progressBar.visibility = ProgressBar.GONE;
             }
 
             override fun onFailure(call: Call<List<CountriesDataItem>?>, t: Throwable) {
                 Log.d("RETROFIT_COUNTRIES", t.toString())
+                progressBar.visibility = ProgressBar.GONE;
             }
         })
     }
@@ -180,9 +165,58 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             listOfCountriesFromDB
         )
         listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
-        myAdapter.repopulate(listOfCountriesFromDB.subList(0, 20))
+        myAdapter.repopulate(listOfCountriesFromDB.subList(Constants.DEFAULT_INT, Constants.FIRST_ELEMENTS_DB))
+        listOfCountriesFromDB.clear()
     }
 
+    private fun saveToDBfromApi() {
+        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+        listCountriesFromApi.let {
+            listCountriesFromApi.forEach { item ->
+                listOfAllCountries.add(
+                    CountryBaseInfoEntity(
+                        item.name,
+                        item.capital,
+                        item.area
+                    )
+                )
+                item.languages.forEach { language ->
+                    listOfAllLanguages.add(
+                        LanguagesInfoEntity(
+                            item.name,
+                            language.name
+                        )
+                    )
+                }
+            }
+            daoCountry?.addAll(listOfAllCountries)
+            daoLanguage?.addAll(listOfAllLanguages)
+        }
+    }
+
+    private fun showAlertDialog() {
+        val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
+            ?.setTitle("Сортировка")
+            ?.setMessage("Сбросить сортировку?")
+            ?.setNegativeButton("NO") { dialog, which ->
+                dialog.dismiss()
+            }
+            ?.setPositiveButton("YES") { dialog, which ->
+                dialog.dismiss()
+                sortStatus = Constants.DEFAULT_INT
+                saveSortStatus()
+                myAdapter.resetSorting()
+            }
+        alertDialog?.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        positionIndex = linearLayoutManager.findFirstVisibleItemPosition()
+        val startView: View = recyclerView.getChildAt(0)
+        topView = startView.top - recyclerView.paddingTop
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
