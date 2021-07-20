@@ -26,7 +26,7 @@ import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
-import com.example.course_android.ext.showDialogWithTwoButton
+import com.example.course_android.ext.showDialogWithOneButton
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.utils.loadSvg
 import com.google.android.gms.location.LocationServices
@@ -97,8 +97,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         addMarkerOnMap(currentCountryLatLng)
     }
 
-
-    @SuppressLint("MissingPermission")//уже запрашивал пермишены
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -191,16 +190,17 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.gps_distance) {
-            activity?.showDialogWithTwoButton(
+            activity?.showDialogWithOneButton(
                 null,
                 getString(R.string.distanceToYou, mCountryName, distance),
                 R.string.dialog_ok,
-                null)
+                null
+            )
         }
         return super.onOptionsItemSelected(item)
     }
 
-    @SuppressLint("MissingPermission")//уже запрашивал пермишены
+    @SuppressLint("MissingPermission")
     private fun getDistance() {
         val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
             latitude = currentCountryLatLng.latitude
