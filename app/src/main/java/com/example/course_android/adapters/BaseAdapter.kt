@@ -1,4 +1,4 @@
-package com.example.course_android.base.adapter
+package com.example.course_android.adapters
 
 import androidx.recyclerview.widget.RecyclerView
 
