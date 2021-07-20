@@ -25,4 +25,8 @@
     <string name="text_of_area">Плащадь:\u0020</string>
     <string name="dialog_ok">ОК</string>
     <string name="distanceToYou">Расстояние от вас до %1$s составляет %2$d км </string>
+    <string name="sort">Сортировка</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
 </resources>
