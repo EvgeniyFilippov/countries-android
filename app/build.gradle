@@ -65,6 +65,9 @@ dependencies {
     final coil = "0.12.0"
     final maps = "3.1.0-beta"
     final gms = "18.0.0"
+    final rxJavaRetrofit = "3.0.0"
+    final rxJavaAndroid = "3.0.0"
+    final rxJava ="3.0.13"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -77,19 +80,31 @@ dependencies {
     implementation "androidx.cardview:cardview:$cardviewVersion"
     implementation "androidx.legacy:legacy-support-v4:$legacySupportVersion"
     testImplementation "junit:junit:$junitVersion"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$converterGson"
-    implementation"com.squareup.okhttp3:okhttp:$okhttp"
-    implementation("androidx.room:room-runtime:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
     androidTestImplementation "androidx.test.ext:junit:$testJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$testEspressoVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$loggingInterceptor"
-    implementation "com.google.android.libraries.maps:maps:$maps"
+
+    //Room
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
+    //Coil
     implementation("io.coil-kt:coil:$coil")
     implementation("io.coil-kt:coil-svg:$coil")
-    implementation "com.google.android.gms:play-services-location:$gms"
 
+    //Network
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$converterGson"
+    implementation"com.squareup.okhttp3:okhttp:$okhttp"
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:$rxJavaRetrofit"
+
+    //RxJava
+    implementation "io.reactivex.rxjava3:rxandroid:$rxJavaAndroid"
+    implementation "io.reactivex.rxjava3:rxjava:$rxJava"
+
+    //Maps
+    implementation "com.google.android.gms:play-services-location:$gms"
+    implementation "com.google.android.libraries.maps:maps:$maps"
 }
 
 apply plugin: 'kotlin-android-extensions'
