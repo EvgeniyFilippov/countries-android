@@ -16,7 +16,9 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.course_android.Constants
+import com.example.course_android.Constants.COUNTRY_NAME_KEY
+import com.example.course_android.Constants.DEFAULT_SLEEP
+import com.example.course_android.Constants.ERROR
 import com.example.course_android.CountriesApp
 import com.example.course_android.CountriesApp.Companion.adapterLanguages
 import com.example.course_android.R
@@ -62,7 +64,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mCountryName = arguments?.getString(Constants.COUNTRY_NAME_KEY) ?: Constants.ERROR
+        mCountryName = arguments?.getString(COUNTRY_NAME_KEY) ?: ERROR
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -128,7 +130,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private fun addMarkerOnMap(markerPosition: LatLng) {
         val markerOptions = MarkerOptions()
             .position(markerPosition)
-            .title("Marker title with position $markerPosition")
+            .title("$markerPosition")
         googleMap?.addMarker(markerOptions)
     }
 
@@ -172,7 +174,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
-                Thread.sleep(500)
+                Thread.sleep(DEFAULT_SLEEP)
                 progressBar?.visibility = View.GONE
             }
 
