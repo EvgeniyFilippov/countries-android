@@ -28,5 +28,6 @@
     <string name="sort">Сортировка</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="chek_inet">Проверьте подключение к интернету</string>
 
 </resources>
