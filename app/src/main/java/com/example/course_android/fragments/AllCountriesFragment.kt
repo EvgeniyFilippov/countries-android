@@ -128,9 +128,9 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
             }, { throwable ->
                 throwable.printStackTrace()
-//                if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
-//                    getCountriesFromDB()
-//                }
+                if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
+                    getCountriesFromDB()
+                }
                 if (context?.isOnline() == false) {
                     context?.toast("Проверьте подключение к интернету")
                 }
