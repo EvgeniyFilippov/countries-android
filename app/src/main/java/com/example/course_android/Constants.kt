@@ -17,4 +17,6 @@ object Constants {
     const val DEFAULT_LATLNG_SIZE = 2
     const val FIRST_ELEMENTS_DB = 20
     const val SERVER_API = "rest/v2/all"
+    const val DEFAULT_SLEEP = 500L
+    const val MARKER_TITLE = "Marker title with position"
 }
