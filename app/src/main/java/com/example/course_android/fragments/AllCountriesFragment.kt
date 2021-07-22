@@ -28,6 +28,8 @@ import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -98,17 +100,14 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
     private fun getMyData() {
         RetrofitObj.getOkHttp()
-        val countriesApi = retrofit.create(CountriesApi::class.java)
-        val countriesApiCall = countriesApi.getTopHeadlines()
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
-        countriesApiCall.enqueue(object : Callback<List<CountriesDataItem>?> {
-            override fun onResponse(
-                call: Call<List<CountriesDataItem>?>,
-                response: Response<List<CountriesDataItem>?>
-            ) {
-                if (response.body() != null) {
-                    listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
+        val countriesApi = retrofit.create(CountriesApi::class.java)
+        countriesApi.getTopHeadlines()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({response ->
+                    listCountriesFromApi = (response as MutableList<CountriesDataItem>)
                     listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
                     adapterOfAllCountries.setItemClick { item ->
@@ -127,22 +126,16 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                         )
                     )
 
-
                     saveToDBfromApi()
-                } else {
-                    Log.d("RETROFIT_COUNTRIES", response.body().toString())
-                }
+
+                //скролим до сохраненной позиции
                 if (positionIndex != -1) {
                     linearLayoutManager.scrollToPositionWithOffset(positionIndex, topView);
                 }
                 progressBar.visibility = ProgressBar.GONE;
-            }
 
-            override fun onFailure(call: Call<List<CountriesDataItem>?>, t: Throwable) {
-                Log.d("RETROFIT_COUNTRIES", t.toString())
-                progressBar.visibility = ProgressBar.GONE;
-            }
-        })
+            }, { throwable -> throwable.printStackTrace()
+                progressBar.visibility = ProgressBar.GONE;})
     }
 
     private fun saveSortStatus() {
