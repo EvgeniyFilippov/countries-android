@@ -29,10 +29,10 @@ import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.card_layout.*
 import kotlinx.android.synthetic.main.fragment_second.*
-
 
 class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
@@ -41,10 +41,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
-//    private var positionIndex = 0
-//    private var topView = 0
     private lateinit var inet: MenuItem
-
+    private val mCompositeDisposable = CompositeDisposable()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,7 +99,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
         val countriesApi = retrofit.create(CountriesApi::class.java)
-        countriesApi.getTopHeadlines()
+        val subscription = countriesApi.getTopHeadlines()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
@@ -120,10 +118,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                     listCountriesFromApi
                 )
                 saveToDBfromApi()
-                //скролим до сохраненной позиции
-//                if (positionIndex != -1) {
-//                    linearLayoutManager.scrollToPositionWithOffset(positionIndex, topView);
-//                }
+
                 progressBar.visibility = ProgressBar.GONE;
 
             }, { throwable ->
@@ -132,10 +127,11 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                     getCountriesFromDB()
                 }
                 if (context?.isOnline() == false) {
-                    context?.toast("Проверьте подключение к интернету")
+                    context?.toast(getString(R.string.chek_inet))
                 }
                 progressBar.visibility = ProgressBar.GONE;
             })
+        mCompositeDisposable.add(subscription)
     }
 
     private fun saveSortStatus() {
@@ -159,7 +155,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         val languagesFromDB = base?.getLanguageInfoDAO()
         adapterOfAllCountries.setItemClick {
             if (context?.isOnline() == false) {
-                context?.toast("Проверьте подключение к интернету")
+                context?.toast(getString(R.string.chek_inet))
             } else {
                 getMyData()
             }
@@ -217,16 +213,10 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         alertDialog?.show()
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//        positionIndex = linearLayoutManager.findFirstVisibleItemPosition()
-//        val startView: View = recyclerView.getChildAt(0)
-//        topView = startView.top - recyclerView.paddingTop
-//    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        mCompositeDisposable.clear()
     }
 
 }
