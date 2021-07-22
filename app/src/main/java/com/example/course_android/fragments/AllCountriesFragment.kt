@@ -11,6 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
+import com.example.course_android.Constants.COUNTRY_NAME_KEY
+import com.example.course_android.Constants.DEFAULT_INT
+import com.example.course_android.Constants.FILE_NAME_PREF
+import com.example.course_android.Constants.KEY_SORT_STATUS
 import com.example.course_android.CountriesApp.Companion.adapterOfAllCountries
 import com.example.course_android.CountriesApp.Companion.base
 import com.example.course_android.CountriesApp.Companion.daoCountry
@@ -29,7 +33,6 @@ import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_second.*
@@ -62,10 +65,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         if (sortStatus == Constants.SORT_STATUS_UP) {
             menu.findItem(R.id.sort_countries)
                 .setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
-            context?.toast(getString(R.string.sort_up))
         } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
-            context?.toast(getString(R.string.sort_down))
         }
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
@@ -108,13 +109,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
                 adapterOfAllCountries.setItemClick { item ->
                     val bundle = Bundle()
-                    bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
+                    bundle.putString(COUNTRY_NAME_KEY, item.name)
                     findNavController().navigate(
                         R.id.action_secondFragment_to_countryDetailsFragment,
                         bundle
                     )
                 }
-                adapterOfAllCountries.addList(
+                adapterOfAllCountries.repopulate(
                     listCountriesFromApi
                 )
                 saveToDBfromApi()
@@ -135,16 +136,16 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     }
 
     private fun saveSortStatus() {
-        activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
+        activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
             ?.edit()
-            ?.apply { putInt(Constants.KEY_SORT_STATUS, sortStatus) }
+            ?.apply { putInt(KEY_SORT_STATUS, sortStatus) }
             ?.apply()
     }
 
     private fun readSortStatus() {
         val sharedPreference =
-            activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
-        val reader = sharedPreference?.getInt(Constants.KEY_SORT_STATUS, Constants.DEFAULT_INT)
+            activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
+        val reader = sharedPreference?.getInt(KEY_SORT_STATUS, DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
         }
@@ -206,7 +207,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
             }
             ?.setPositiveButton(getString(R.string.yes)) { dialog, which ->
                 dialog.dismiss()
-                sortStatus = Constants.DEFAULT_INT
+                sortStatus = DEFAULT_INT
                 saveSortStatus()
                 adapterOfAllCountries.resetSorting()
             }
