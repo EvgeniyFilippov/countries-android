@@ -15,12 +15,12 @@ import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
-import com.example.course_android.CountriesApp.Companion.adapterOfAllCountries
 import com.example.course_android.CountriesApp.Companion.base
 import com.example.course_android.CountriesApp.Companion.daoCountry
 import com.example.course_android.CountriesApp.Companion.daoLanguage
 import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.R
+import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentSecondBinding
@@ -46,6 +46,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
+
+    var adapterOfAllCountries = AdapterOfAllCountries()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
