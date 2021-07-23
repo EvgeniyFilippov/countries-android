@@ -20,8 +20,8 @@ import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_SLEEP
 import com.example.course_android.Constants.ERROR
 import com.example.course_android.CountriesApp
-import com.example.course_android.CountriesApp.Companion.adapterLanguages
 import com.example.course_android.R
+import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.api.CountryDescriptionApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
@@ -59,6 +59,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private var googleMap: GoogleMap? = null
     var mapFragment: SupportMapFragment? = null
     private var distance: Int = 0
+    private var adapterLanguages = AdapterLanguages()
 
     private lateinit var currentCountryLatLng: LatLng
 
