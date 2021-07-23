@@ -16,8 +16,7 @@ class CountriesApp : Application() {
         var base: DatabaseInfo? = null
         var daoCountry: CountryInfoDAO? = null
         var daoLanguage: LanguagesInfoDAO? = null
-        lateinit var adapterLanguages: AdapterLanguages
-        lateinit var adapterOfAllCountries: AdapterOfAllCountries
+
     }
 
     override fun onCreate() {
@@ -26,7 +25,6 @@ class CountriesApp : Application() {
         base = this.let { DatabaseInfo.init(it) }
         daoCountry = base?.getCountryInfoDAO()
         daoLanguage = base?.getLanguageInfoDAO()
-        adapterLanguages = AdapterLanguages()
-        adapterOfAllCountries = AdapterOfAllCountries()
+
     }
 }
