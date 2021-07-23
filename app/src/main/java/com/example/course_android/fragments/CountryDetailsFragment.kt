@@ -130,7 +130,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private fun addMarkerOnMap(markerPosition: LatLng) {
         val markerOptions = MarkerOptions()
             .position(markerPosition)
-            .title("$markerPosition")
+            .title("$mCountryName")
         googleMap?.addMarker(markerOptions)
     }
 
