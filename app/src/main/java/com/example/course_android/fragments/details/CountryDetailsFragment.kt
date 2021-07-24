@@ -6,10 +6,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
@@ -63,18 +60,21 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     var mapFragment: SupportMapFragment? = null
     private var distance: Int = 0
     private var adapterLanguages = AdapterLanguages()
-
     private lateinit var currentCountryLatLng: LatLng
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         mCountryName = arguments?.getString(COUNTRY_NAME_KEY) ?: ERROR
+        binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getPresenter().attachView(this)
         setHasOptionsMenu(true)
-        binding = FragmentCountryDetailsBinding.bind(view)
         binding?.mTvCountryName?.text = mCountryName
         mSrCountryDetails = binding?.srCountryDetails
         progressBar = binding?.progress
