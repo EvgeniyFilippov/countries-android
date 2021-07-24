@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/countryDetailsFragment"
-        android:name="com.example.course_android.fragments.CountryDetailsFragment"
+        android:name="com.example.course_android.fragments.details.CountryDetailsFragment"
         android:label="fragment_country_details"
         tools:layout="@layout/fragment_country_details" />
 </navigation>
