@@ -1,4 +1,4 @@
-package com.example.course_android.fragments
+package com.example.course_android.fragments.details
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
@@ -13,7 +13,6 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -24,6 +23,7 @@ import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.api.CountryDescriptionApi
 import com.example.course_android.api.RetrofitObj
+import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
@@ -45,7 +45,7 @@ import retrofit2.Response
 private const val LOCATION_PERMISSION_CODE = 1000
 private const val LOG_TAG = "CountryDetailsFragment"
 
-class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
+class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(), CountryDetailsView {
 
     private lateinit var mCountryName: String
     private var binding: FragmentCountryDetailsBinding? = null
@@ -221,4 +221,28 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         super.onDestroyView()
         binding = null
     }
+
+    override fun createPresenter() {
+        mPresenter = CountryDetailsPresenter()
+    }
+
+    override fun getPresenter(): CountryDetailsPresenter = mPresenter
+
+    override fun showCountryInfo(country: CountryDescriptionItemDto, location: LatLng) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showError(error: String, throwable: Throwable) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showProgress() {
+        binding?.progress?.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress() {
+        binding?.progress?.visibility = View.GONE
+        TODO("Not yet implemented")
+    }
+
 }
