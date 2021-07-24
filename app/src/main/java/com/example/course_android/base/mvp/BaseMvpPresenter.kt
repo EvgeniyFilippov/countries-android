@@ -11,7 +11,7 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
     private lateinit var mView: View
     private val mCompositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    fun attacjView(view: View) {
+    fun attachView(view: View) {
         mView = view
     }
 
