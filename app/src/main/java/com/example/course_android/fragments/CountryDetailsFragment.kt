@@ -37,6 +37,9 @@ import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_country_details.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -55,7 +58,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private lateinit var countryDetailsDto: CountryDescriptionItemDto
     private var mSrCountryDetails: SwipeRefreshLayout? = null
     private var progressBar: FrameLayout? = null
-
+    private val mCompositeDisposable = CompositeDisposable()
     private var googleMap: GoogleMap? = null
     var mapFragment: SupportMapFragment? = null
     private var distance: Int = 0
@@ -139,51 +142,41 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         progressBar?.visibility = if (isRefresh) View.GONE else View.VISIBLE
         RetrofitObj.getOkHttp()
         val countryDescrApi = CountriesApp.retrofit.create(CountryDescriptionApi::class.java)
-        val countryDescrApiCall = countryDescrApi.getTopHeadlines(mCountryName)
-        countryDescrApiCall.enqueue(object : Callback<List<CountryDescriptionItem>?> {
-            override fun onResponse(
-                call: Call<List<CountryDescriptionItem>?>,
-                response: Response<List<CountryDescriptionItem>?>
-            ) {
-                if (response.body() != null) {
-                    countryDescriptionFromApi =
-                        (response.body() as MutableList<CountryDescriptionItem>)
-                    mSrCountryDetails?.isRefreshing = false
-                    //трансформируем в DTO
-                    val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-                    countryDetailsDto =
-                        countryDetailsDtoTransformer.transform(countryDescriptionFromApi)
 
-                    //языки ресайкл
-                    linearLayoutManager = LinearLayoutManager(context)
-                    recycler_languages.layoutManager = linearLayoutManager
+        val subscription = countryDescrApi.getTopHeadlines(mCountryName)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({ response ->
+                countryDescriptionFromApi =
+                    (response as MutableList<CountryDescriptionItem>)
+                mSrCountryDetails?.isRefreshing = false
+                //трансформируем в DTO
+                val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
+                countryDetailsDto =
+                    countryDetailsDtoTransformer.transform(countryDescriptionFromApi)
 
-                    mLanguageList = countryDetailsDto.languages
-                    recycler_languages.adapter = adapterLanguages
-                    adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountryDto>)
+                //языки ресайкл
+                linearLayoutManager = LinearLayoutManager(context)
+                recycler_languages.layoutManager = linearLayoutManager
 
-                    //флаг
-                    binding?.itemFlag?.loadSvg(countryDetailsDto.flag)
+                mLanguageList = countryDetailsDto.languages
+                recycler_languages.adapter = adapterLanguages
+                adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountryDto>)
 
-                    //карта гугл
-                    mapFragment =
-                        childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
-                    mapFragment?.run {
-                        getMapAsync { map -> initMap(map) }
-                    }
+                //флаг
+                binding?.itemFlag?.loadSvg(countryDetailsDto.flag)
 
-                } else {
-                    Log.d("RETROFIT_COUNTRIES", response.body().toString())
+                //карта гугл
+                mapFragment =
+                    childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
+                mapFragment?.run {
+                    getMapAsync { map -> initMap(map) }
+                    progressBar?.visibility = View.GONE
                 }
-                Thread.sleep(DEFAULT_SLEEP)
+            }, {
                 progressBar?.visibility = View.GONE
-            }
-
-            override fun onFailure(call: Call<List<CountryDescriptionItem>?>, t: Throwable) {
-                Log.d("RETROFIT_COUNTRIES", t.toString())
-                progressBar?.visibility = View.GONE
-            }
-        })
+            })
+        mCompositeDisposable.add(subscription)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -220,5 +213,6 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        mCompositeDisposable.clear()
     }
 }
