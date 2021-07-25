@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 
 abstract class BaseMvpFragment<View: BaseMvpView, PresenterType : BaseMvpPresenter<View>> : Fragment() {
+
     protected lateinit var mPresenter: PresenterType
 
     abstract  fun createPresenter()
