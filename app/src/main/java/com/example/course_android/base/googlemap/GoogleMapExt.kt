@@ -23,7 +23,7 @@ import com.google.android.libraries.maps.model.MarkerOptions
 
 private lateinit var currentCountryLatLng: LatLng
 private var googleMap: GoogleMap? = null
-private const val LOCATION_PERMISSION_CODE = 1000
+
 private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
 
@@ -36,12 +36,12 @@ fun initMap2(map: GoogleMap, countryDetailsDto: CountryDescriptionItemDto, conte
 
         val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
         moveCamera(cameraLocation)
-        if (checkLocationPermission(context)) {
-            isMyLocationEnabled = true
-            calculateDistance(context)
-        } else {
-//            askLocationPermission()
-        }
+//        if (checkLocationPermission(context)) {
+//            isMyLocationEnabled = true
+//            calculateDistance(context)
+//        } else {
+////            askLocationPermission()
+//        }
     }
     addMarkerOnMap(currentCountryLatLng, countryDetailsDto.name)
 }
@@ -53,33 +53,6 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
         .title(mCountryName)
     googleMap?.addMarker(markerOptions)
 }
-
-//проверяем permission
-private fun checkLocationPermission(context: Context) =
-    context.let {
-        ContextCompat.checkSelfPermission(
-            it,
-            ACCESS_FINE_LOCATION
-        )
-    } == PermissionChecker.PERMISSION_GRANTED
-
-////запрос permission
-//private fun askLocationPermission() {
-//    requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
-//}
-
-//@SuppressLint("MissingPermission")
-//fun onRequestPermissionsResult(
-//    requestCode: Int,
-//    permissions: Array<out String>,
-//    grantResults: IntArray
-//) {
-//    if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
-//        googleMap?.isMyLocationEnabled = true
-//        getDistance(con)
-//    }
-//    onRequestPermissionsResult(requestCode, permissions, grantResults)
-//}
 
 @SuppressLint("MissingPermission")
 private fun calculateDistance(context: Context) {
