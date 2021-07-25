@@ -27,7 +27,8 @@ private var googleMap: GoogleMap? = null
 private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
 
-fun initMap2(map: GoogleMap, countryDetailsDto: CountryDescriptionItemDto, context: Context) {
+@SuppressLint("MissingPermission")
+fun initMap2(map: GoogleMap, countryDetailsDto: CountryDescriptionItemDto, context: Context, permissionGps: Boolean) {
     currentCountryLatLng = LatLng(
         countryDetailsDto.latlng[0],
         countryDetailsDto.latlng[1]
@@ -36,12 +37,10 @@ fun initMap2(map: GoogleMap, countryDetailsDto: CountryDescriptionItemDto, conte
 
         val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
         moveCamera(cameraLocation)
-//        if (checkLocationPermission(context)) {
-//            isMyLocationEnabled = true
+      if (permissionGps) {
+            isMyLocationEnabled = true
             calculateDistance(context)
-//        } else {
-////            askLocationPermission()
-//        }
+        }
     }
     addMarkerOnMap(currentCountryLatLng, countryDetailsDto.name)
 }
