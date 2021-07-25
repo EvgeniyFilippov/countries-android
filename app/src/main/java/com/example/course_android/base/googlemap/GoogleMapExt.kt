@@ -38,7 +38,7 @@ fun initMap2(map: GoogleMap, countryDetailsDto: CountryDescriptionItemDto, conte
         moveCamera(cameraLocation)
 //        if (checkLocationPermission(context)) {
 //            isMyLocationEnabled = true
-//            calculateDistance(context)
+            calculateDistance(context)
 //        } else {
 ////            askLocationPermission()
 //        }
