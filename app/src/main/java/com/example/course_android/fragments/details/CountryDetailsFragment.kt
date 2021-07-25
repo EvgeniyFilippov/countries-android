@@ -1,51 +1,34 @@
 package com.example.course_android.fragments.details
 
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.annotation.SuppressLint
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
-import com.example.course_android.Constants.DEFAULT_SLEEP
 import com.example.course_android.Constants.ERROR
 import com.example.course_android.CountriesApp
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.api.CountryDescriptionApi
 import com.example.course_android.api.RetrofitObj
+import com.example.course_android.base.googlemap.getDistance
+import com.example.course_android.base.googlemap.initMap2
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
-import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.ext.showDialogWithOneButton
-import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.utils.loadSvg
-import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.MarkerOptions
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_country_details.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-private const val LOCATION_PERMISSION_CODE = 1000
-private const val LOG_TAG = "CountryDetailsFragment"
+//private const val LOCATION_PERMISSION_CODE = 1000
+//private const val LOG_TAG = "CountryDetailsFragment"
 
 class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(), CountryDetailsView {
 
@@ -57,7 +40,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     private val mCompositeDisposable = CompositeDisposable()
     private var googleMap: GoogleMap? = null
     var mapFragment: SupportMapFragment? = null
-    private var distance: Int = 0
     private var adapterLanguages = AdapterLanguages()
     private lateinit var currentCountryLatLng: LatLng
 
@@ -66,6 +48,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         savedInstanceState: Bundle?
     ): View? {
         mCountryName = arguments?.getString(COUNTRY_NAME_KEY) ?: ERROR
+
         binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
         return binding?.root
     }
@@ -87,59 +70,59 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     }
 
-    private fun initMap(map: GoogleMap) {
-        currentCountryLatLng = LatLng(
-            countryDetailsDto.latlng[0],
-            countryDetailsDto.latlng[1]
-        )
-        googleMap = map.apply {
+//    private fun initMap(map: GoogleMap) {
+//        currentCountryLatLng = LatLng(
+//            countryDetailsDto.latlng[0],
+//            countryDetailsDto.latlng[1]
+//        )
+//        googleMap = map.apply {
+//
+//            val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
+//            moveCamera(cameraLocation)
+//            if (checkLocationPermission()) {
+//                isMyLocationEnabled = true
+//                getDistance()
+//            } else {
+//                askLocationPermission()
+//            }
+//        }
+////        addMarkerOnMap(currentCountryLatLng)
+//    }
 
-            val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
-            moveCamera(cameraLocation)
-            if (checkLocationPermission()) {
-                isMyLocationEnabled = true
-                getDistance()
-            } else {
-                askLocationPermission()
-            }
-        }
-        addMarkerOnMap(currentCountryLatLng)
-    }
+//    @SuppressLint("MissingPermission")
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PERMISSION_GRANTED) {
+//            googleMap?.isMyLocationEnabled = true
+//            getDistance()
+//        }
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//    }
 
-    @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PERMISSION_GRANTED) {
-            googleMap?.isMyLocationEnabled = true
-            getDistance()
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
+//    //проверяем permission
+//    private fun checkLocationPermission() =
+//        context?.let {
+//            ContextCompat.checkSelfPermission(
+//                it,
+//                ACCESS_FINE_LOCATION
+//            )
+//        } == PERMISSION_GRANTED
 
-    //проверяем permission
-    private fun checkLocationPermission() =
-        context?.let {
-            ContextCompat.checkSelfPermission(
-                it,
-                ACCESS_FINE_LOCATION
-            )
-        } == PERMISSION_GRANTED
-
-    //запрос permission
-    private fun askLocationPermission() {
-        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
-    }
+//    //запрос permission
+//    private fun askLocationPermission() {
+//        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
+//    }
 
     //добавляем маркер
-    private fun addMarkerOnMap(markerPosition: LatLng) {
-        val markerOptions = MarkerOptions()
-            .position(markerPosition)
-            .title("$mCountryName")
-        googleMap?.addMarker(markerOptions)
-    }
+//    private fun addMarkerOnMap(markerPosition: LatLng) {
+//        val markerOptions = MarkerOptions()
+//            .position(markerPosition)
+//            .title("$mCountryName")
+//        googleMap?.addMarker(markerOptions)
+//    }
 
     private fun getMyData(isRefresh: Boolean) {
         progressBar?.visibility = if (isRefresh) View.GONE else View.VISIBLE
@@ -164,12 +147,12 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 //                binding?.itemFlag?.loadSvg(countryDetailsDto.flag)
 
                 //карта гугл
-                mapFragment =
-                    childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
-                mapFragment?.run {
-                    getMapAsync { map -> initMap(map) }
-                    progressBar?.visibility = View.GONE
-                }
+//                mapFragment =
+//                    childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
+//                mapFragment?.run {
+//                    getMapAsync { map -> initMap(map) }
+//                    progressBar?.visibility = View.GONE
+//                }
             }, {
                 progressBar?.visibility = View.GONE
             })
@@ -185,7 +168,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         if (item.itemId == R.id.gps_distance) {
             activity?.showDialogWithOneButton(
                 null,
-                getString(R.string.distanceToYou, mCountryName, distance),
+                getString(R.string.distanceToYou, mCountryName, getDistance()),
                 R.string.dialog_ok,
                 null
             )
@@ -193,19 +176,19 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         return super.onOptionsItemSelected(item)
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getDistance() {
-        val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
-            latitude = currentCountryLatLng.latitude
-            longitude = currentCountryLatLng.longitude
-        }
-        LocationServices.getFusedLocationProviderClient(context)
-            .lastLocation
-            .addOnSuccessListener { location ->
-                distance = location.distanceTo(currentCountryLocation).toInt() / 1000
-                Log.d(LOG_TAG, location.toString())
-            }
-    }
+//    @SuppressLint("MissingPermission")
+//    private fun getDistance() {
+//        val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+//            latitude = currentCountryLatLng.latitude
+//            longitude = currentCountryLatLng.longitude
+//        }
+//        LocationServices.getFusedLocationProviderClient(context)
+//            .lastLocation
+//            .addOnSuccessListener { location ->
+//                distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+//                Log.d(LOG_TAG, location.toString())
+//            }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -227,6 +210,13 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
         //флаг
         binding?.itemFlag?.loadSvg(country.flag)
+
+        //карта гугл
+        mapFragment =
+            childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
+        mapFragment?.run {
+            getMapAsync { map -> activity?.let { initMap2(map, country, it.applicationContext) } }
+        }
     }
 
     override fun showError(error: String, throwable: Throwable) {
