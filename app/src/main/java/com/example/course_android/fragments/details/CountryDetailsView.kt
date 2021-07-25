@@ -6,6 +6,7 @@ import com.google.android.libraries.maps.model.LatLng
 
 interface CountryDetailsView : BaseMvpView {
 
-    fun showCountryInfo(country: CountryDescriptionItemDto, location: LatLng)
+//    fun showCountryInfo(country: CountryDescriptionItemDto, location: LatLng)
+    fun showCountryInfo(country: CountryDescriptionItemDto)
 
 }
