@@ -46,6 +46,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     var mapFragment: SupportMapFragment? = null
     private var adapterLanguages = AdapterLanguages()
     private lateinit var currentCountryLatLng: LatLng
+    private var permissionGps = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -217,6 +218,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
         if (checkLocationPermission()) {
 //                isMyLocationEnabled = true
+    permissionGps = true
                 getDistance()
             } else {
                 askLocationPermission()
@@ -227,7 +229,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         mapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
         mapFragment?.run {
-            getMapAsync { map -> activity?.let { initMap2(map, country, it.applicationContext) } }
+            getMapAsync { map -> activity?.let { initMap2(map, country, it.applicationContext, permissionGps) } }
         }
     }
 
