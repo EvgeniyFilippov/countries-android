@@ -51,7 +51,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        readSortStatus()
         binding = FragmentSecondBinding.bind(view)
         recyclerView.setHasFixedSize(true)
         linearLayoutManager = LinearLayoutManager(context)
@@ -106,6 +105,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
+                readSortStatus()
                 listCountriesFromApi = (response as MutableList<CountriesDataItem>)
                 listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
