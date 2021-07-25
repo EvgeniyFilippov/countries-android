@@ -1,8 +1,12 @@
 package com.example.course_android.fragments.details
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.view.*
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -27,7 +31,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_country_details.*
 
-//private const val LOCATION_PERMISSION_CODE = 1000
+private const val LOCATION_PERMISSION_CODE = 1000
 //private const val LOG_TAG = "CountryDetailsFragment"
 
 class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(), CountryDetailsView {
@@ -89,32 +93,32 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 ////        addMarkerOnMap(currentCountryLatLng)
 //    }
 
-//    @SuppressLint("MissingPermission")
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PERMISSION_GRANTED) {
-//            googleMap?.isMyLocationEnabled = true
-//            getDistance()
-//        }
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//    }
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PERMISSION_GRANTED) {
+            googleMap?.isMyLocationEnabled = true
+            getDistance()
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 
-//    //проверяем permission
-//    private fun checkLocationPermission() =
-//        context?.let {
-//            ContextCompat.checkSelfPermission(
-//                it,
-//                ACCESS_FINE_LOCATION
-//            )
-//        } == PERMISSION_GRANTED
+    //проверяем permission
+    private fun checkLocationPermission() =
+        context?.let {
+            ContextCompat.checkSelfPermission(
+                it,
+                ACCESS_FINE_LOCATION
+            )
+        } == PERMISSION_GRANTED
 
-//    //запрос permission
-//    private fun askLocationPermission() {
-//        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
-//    }
+    //запрос permission
+    private fun askLocationPermission() {
+        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
+    }
 
     //добавляем маркер
 //    private fun addMarkerOnMap(markerPosition: LatLng) {
@@ -210,6 +214,14 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
         //флаг
         binding?.itemFlag?.loadSvg(country.flag)
+
+        if (checkLocationPermission()) {
+//                isMyLocationEnabled = true
+                getDistance()
+            } else {
+                askLocationPermission()
+            }
+
 
         //карта гугл
         mapFragment =
