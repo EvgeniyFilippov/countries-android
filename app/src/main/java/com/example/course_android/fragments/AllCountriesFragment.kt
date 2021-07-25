@@ -39,14 +39,12 @@ import kotlinx.android.synthetic.main.fragment_second.*
 
 class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
-    lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
-
     var adapterOfAllCountries = AdapterOfAllCountries()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,10 +52,9 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         readSortStatus()
         binding = FragmentSecondBinding.bind(view)
         recyclerView.setHasFixedSize(true)
-        linearLayoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = linearLayoutManager
-        setHasOptionsMenu(true)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
+        setHasOptionsMenu(true)
         getMyData()
     }
 
