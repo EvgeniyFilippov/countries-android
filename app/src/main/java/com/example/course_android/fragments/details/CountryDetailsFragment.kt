@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_SLEEP
 import com.example.course_android.Constants.ERROR
@@ -34,6 +35,7 @@ import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -49,9 +51,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     private lateinit var mCountryName: String
     private var binding: FragmentCountryDetailsBinding? = null
-    private var mLanguageList: List<LanguageOfOneCountryDto>? = null
-    lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var countryDescriptionFromApi: MutableList<CountryDescriptionItem>
     private lateinit var countryDetailsDto: CountryDescriptionItemDto
     private var mSrCountryDetails: SwipeRefreshLayout? = null
     private var progressBar: FrameLayout? = null
@@ -78,10 +77,14 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         binding?.mTvCountryName?.text = mCountryName
         mSrCountryDetails = binding?.srCountryDetails
         progressBar = binding?.progress
+        recycler_languages.layoutManager = LinearLayoutManager(context)
+        recycler_languages.adapter = adapterLanguages
+
         mSrCountryDetails?.setOnRefreshListener {
-            getMyData(true)
+            getPresenter().getMyData(mCountryName, true)
         }
-        getMyData(false)
+        getPresenter().getMyData(mCountryName, false)
+
     }
 
     private fun initMap(map: GoogleMap) {
@@ -147,24 +150,18 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
-                countryDescriptionFromApi =
-                    (response as MutableList<CountryDescriptionItem>)
+//                countryDescriptionFromApi =
+//                    (response as MutableList<CountryDescriptionItem>)
                 mSrCountryDetails?.isRefreshing = false
                 //трансформируем в DTO
-                val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-                countryDetailsDto =
-                    countryDetailsDtoTransformer.transform(countryDescriptionFromApi)
+//                val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
+//                countryDetailsDto =
+//                    countryDetailsDtoTransformer.transform(response)
 
-                //языки ресайкл
-                linearLayoutManager = LinearLayoutManager(context)
-                recycler_languages.layoutManager = linearLayoutManager
 
-                mLanguageList = countryDetailsDto.languages
-                recycler_languages.adapter = adapterLanguages
-                adapterLanguages.repopulate(mLanguageList as MutableList<LanguageOfOneCountryDto>)
 
                 //флаг
-                binding?.itemFlag?.loadSvg(countryDetailsDto.flag)
+//                binding?.itemFlag?.loadSvg(countryDetailsDto.flag)
 
                 //карта гугл
                 mapFragment =
@@ -222,12 +219,18 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun getPresenter(): CountryDetailsPresenter = mPresenter
 
-    override fun showCountryInfo(country: CountryDescriptionItemDto, location: LatLng) {
-        TODO("Not yet implemented")
+    override fun showCountryInfo(country: CountryDescriptionItemDto) {
+        //языки ресайкл
+        adapterLanguages.repopulate(country.languages)
+
+        binding?.srCountryDetails?.isRefreshing = false
+
+        //флаг
+        binding?.itemFlag?.loadSvg(country.flag)
     }
 
     override fun showError(error: String, throwable: Throwable) {
-        TODO("Not yet implemented")
+//        showAlertDialog()
     }
 
     override fun showProgress() {
@@ -236,7 +239,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun hideProgress() {
         binding?.progress?.visibility = View.GONE
-        TODO("Not yet implemented")
     }
 
 }
