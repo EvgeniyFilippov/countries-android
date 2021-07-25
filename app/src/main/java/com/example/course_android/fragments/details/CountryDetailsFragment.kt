@@ -18,6 +18,7 @@ import com.example.course_android.base.googlemap.initMap2
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.showDialogWithOneButton
 import com.example.course_android.utils.loadSvg
 import com.google.android.libraries.maps.GoogleMap
@@ -25,6 +26,7 @@ import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_country_details.*
+import com.example.course_android.ext.checkLocationPermission
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
@@ -81,19 +83,13 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    //проверяем permission
-    private fun checkLocationPermission() =
-        context?.let {
-            ContextCompat.checkSelfPermission(
-                it,
-                ACCESS_FINE_LOCATION
-            )
-        } == PERMISSION_GRANTED
 
     //запрос permission
-    private fun askLocationPermission() {
-        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
-    }
+
+
+//    private fun askLocationPermission() {
+//        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.country_description_menu, menu)
@@ -134,11 +130,11 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         binding?.itemFlag?.loadSvg(country.flag)
 
         //проверяем пермишен Gps
-        if (checkLocationPermission()) {
+        if (context?.checkLocationPermission() == true) {
     permissionGps = true
                 getDistance()
             } else {
-                askLocationPermission()
+                activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
             }
 
         //карта гугл
