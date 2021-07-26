@@ -7,37 +7,38 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.R
-import com.example.course_android.base.googlemap.initMap2
 import com.example.course_android.base.googlemap.initMap3
 import com.example.course_android.base.mvp.BaseMvpFragment
-import com.example.course_android.databinding.FragmentCountryDetailsBinding
+
 
 import com.example.course_android.databinding.FragmentMapOfAllCountriesBinding
 import com.example.course_android.fragments.details.CountryDetailsPresenter
 import com.example.course_android.model.allCountries.CountriesDataItem
 import com.google.android.libraries.maps.SupportMapFragment
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_country_details.*
 
 class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(), MapAllCountriesView {
 
     private var binding: FragmentMapOfAllCountriesBinding? = null
-    var mapFragment: SupportMapFragment? = null
+    private var mapFragment2: SupportMapFragment? = null
+    private val mCompositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapOfAllCountriesBinding.inflate(inflater, container, false)
-        return inflater.inflate(R.layout.fragment_map_of_all_countries, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getPresenter().attachView(this)
         setHasOptionsMenu(true)
-        binding?.srCountryMap?.setOnRefreshListener {
-            getPresenter().getAllCountries(true)
-        }
+//        binding?.srCountryMap?.setOnRefreshListener {
+//            getPresenter().getAllCountries(true)
+//        }
         getPresenter().getAllCountries(false)
 
     }
@@ -50,9 +51,9 @@ class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCou
 
     override fun showAllCountriesOnMap(listOfCountries: List<CountriesDataItem>) {
         //карта гугл
-        mapFragment =
+        mapFragment2 =
             childFragmentManager.findFragmentById(R.id.allMapFragmentContainer) as? SupportMapFragment?
-        mapFragment?.run {
+        mapFragment2?.run {
             getMapAsync { map -> activity?.let { initMap3(map, listOfCountries, it.applicationContext) } }
         }
     }
@@ -69,5 +70,9 @@ class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCou
         binding?.progressMap?.visibility = View.GONE
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+        mCompositeDisposable.clear()
+    }
 }
