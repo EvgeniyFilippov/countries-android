@@ -35,6 +35,8 @@ class StartFragment : Fragment(R.layout.fragment_start) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.item1) {
             findNavController().navigate(R.id.action_startFragment_to_secondFragment)
+        } else if (item.itemId == R.id.item2) {
+            findNavController().navigate(R.id.action_startFragment_to_mapOfAllCountriesFragment2)
         }
         return super.onOptionsItemSelected(item)
     }
