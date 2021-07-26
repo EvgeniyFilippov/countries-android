@@ -83,7 +83,7 @@ fun initMap3(map: GoogleMap, listOfCountries: List<CountriesDataItem>, context: 
         val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
         moveCamera(cameraLocation)
 
-            isMyLocationEnabled = true
+
             calculateDistance(context)
 
     }
