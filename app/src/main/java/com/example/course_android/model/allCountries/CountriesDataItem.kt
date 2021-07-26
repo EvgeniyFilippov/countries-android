@@ -16,7 +16,7 @@ data class CountriesDataItem(
 //    val flag: String,
 //    val gini: Double,
     val languages: List<Language>,
-//    val latlng: List<Double>,
+    val latlng: List<Double>,
     val name: String
 //    val nativeName: String,
 //    val numericCode: String,
