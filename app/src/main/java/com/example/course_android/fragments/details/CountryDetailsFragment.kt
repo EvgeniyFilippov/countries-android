@@ -37,10 +37,8 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     private var mSrCountryDetails: SwipeRefreshLayout? = null
     private var progressBar: FrameLayout? = null
     private val mCompositeDisposable = CompositeDisposable()
-    private var googleMap: GoogleMap? = null
     var mapFragment: SupportMapFragment? = null
     private var adapterLanguages = AdapterLanguages()
-    private lateinit var currentCountryLatLng: LatLng
     private var permissionGps = false
 
     override fun onCreateView(
@@ -69,27 +67,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         getPresenter().getMyData(mCountryName, false)
 
     }
-
-    @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == LOCATION_PERMISSION_CODE && grantResults[0] == PERMISSION_GRANTED) {
-            googleMap?.isMyLocationEnabled = true
-            getDistance()
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-
-    //запрос permission
-
-
-//    private fun askLocationPermission() {
-//        requestPermissions(arrayOf(ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
-//    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.country_description_menu, menu)
@@ -129,7 +106,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         //флаг
         binding?.itemFlag?.loadSvg(country.flag)
 
-        //проверяем пермишен Gps
+        //проверяем и запрашиваем пермишен Gps
         if (context?.checkLocationPermission() == true) {
     permissionGps = true
                 getDistance()
