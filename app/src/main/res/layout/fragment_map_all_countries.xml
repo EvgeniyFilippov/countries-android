@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/sr_country_details"
+        android:id="@+id/sr_country_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
