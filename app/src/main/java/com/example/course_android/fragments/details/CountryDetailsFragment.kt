@@ -49,7 +49,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         getPresenter().attachView(this)
         setHasOptionsMenu(true)
         binding?.mTvCountryName?.text = mCountryName
-//        progressBar = binding?.progress
         recycler_languages.layoutManager = LinearLayoutManager(context)
         recycler_languages.adapter = adapterLanguages
 
@@ -57,7 +56,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
             getPresenter().getMyData(mCountryName, true)
         }
         getPresenter().getMyData(mCountryName, false)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
