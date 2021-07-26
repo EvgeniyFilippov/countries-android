@@ -21,7 +21,7 @@ class StartFragment : Fragment(R.layout.fragment_start) {
             findNavController().navigate(R.id.action_startFragment_to_secondFragment)
         }
         binding?.btnMap?.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_mapAllCountriesFragment)
+            findNavController().navigate(R.id.action_startFragment_to_mapOfAllCountriesFragment2)
         }
         setHasOptionsMenu(true)
     }
