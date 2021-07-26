@@ -20,6 +20,9 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         binding?.btnMain?.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_secondFragment)
         }
+        binding?.btnMap?.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_mapAllCountriesFragment)
+        }
         setHasOptionsMenu(true)
     }
 
