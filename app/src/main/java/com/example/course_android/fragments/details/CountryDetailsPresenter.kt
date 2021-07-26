@@ -27,10 +27,8 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
             inBackground(
                 handleProgress(countryDescrApi.getTopHeadlines(mCountryName), isRefresh)
             ).subscribe({ response ->
-
                 getView()?.showCountryInfo(
                     countryDetailsDtoTransformer.transform(response))
-
             }, {
                 it.message?.let { it1 -> getView()?.showError(it1, it) }
             })
