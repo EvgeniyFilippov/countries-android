@@ -36,9 +36,9 @@ class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCou
         super.onViewCreated(view, savedInstanceState)
         getPresenter().attachView(this)
         setHasOptionsMenu(true)
-//        binding?.srCountryMap?.setOnRefreshListener {
-//            getPresenter().getAllCountries(true)
-//        }
+        binding?.srCountryMap?.setOnRefreshListener {
+            getPresenter().getAllCountries(true)
+        }
         getPresenter().getAllCountries(false)
 
     }
@@ -50,6 +50,8 @@ class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCou
     override fun getPresenter(): MapAllCountriesPresenter = mPresenter
 
     override fun showAllCountriesOnMap(listOfCountries: List<CountriesDataItem>) {
+        binding?.srCountryMap?.isRefreshing = false
+
         //карта гугл
         mapFragment2 =
             childFragmentManager.findFragmentById(R.id.allMapFragmentContainer) as? SupportMapFragment?
