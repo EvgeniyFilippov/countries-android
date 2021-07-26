@@ -24,6 +24,7 @@ fun List<CountryBaseInfoEntity>?.convertDBdataToRetrofitModel(
             countryDB.area,
             countryDB.capital,
             listOfLanguagesFromDB,
+            listOf(0.0, 0.0),
             countryDB.name
         )
         listOfCountriesFromDB.add(countryDataItem)
