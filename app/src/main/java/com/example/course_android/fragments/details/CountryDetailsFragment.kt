@@ -11,6 +11,7 @@ import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.base.googlemap.getDistance
 import com.example.course_android.base.googlemap.initMap2
+//import com.example.course_android.base.googlemap.initMap2
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
