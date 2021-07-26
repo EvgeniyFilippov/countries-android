@@ -73,25 +73,22 @@ private fun calculateDistance(context: Context) {
 
 @SuppressLint("MissingPermission")
 fun initMap3(map: GoogleMap, listOfCountries: List<CountriesDataItem>, context: Context) {
-    currentCountryLatLng = LatLng(
-        listOfCountries[0].latlng[0],
-        listOfCountries[0].latlng[1]
-    )
+//    currentCountryLatLng = LatLng(
+//        listOfCountries[0].latlng[0],
+//        listOfCountries[0].latlng[1]
+//    )
+    googleMap = map
 
-    googleMap = map.apply {
-
-        val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
-        moveCamera(cameraLocation)
-
-
-            calculateDistance(context)
-
+    listOfCountries.forEach { country ->
+        if (country.latlng.size == 2) {
+            addMarkerOnMap(LatLng(
+                country.latlng[0],
+                country.latlng[1]), country.name)
+        }
     }
-    addMarkerOnMap(currentCountryLatLng, listOfCountries[0].name)
 
-//    listOfCountries.forEach { country ->
-//        addMarkerOnMap(LatLng(
-//            country.latlng[0],
-//            country.latlng[1]), country.name)
-//    }
+
+//    addMarkerOnMap(currentCountryLatLng, listOfCountries[0].name)
+
+
 }
