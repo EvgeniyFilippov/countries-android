@@ -22,7 +22,7 @@
         android:id="@+id/secondFragment"
         android:name="com.example.course_android.fragments.AllCountriesFragment"
         android:label="fragment_second"
-        tools:layout="@layout/fragment_second" >
+        tools:layout="@layout/fragment_all_countries" >
         <action
             android:id="@+id/action_secondFragment_to_countryDetailsFragment"
             app:destination="@id/countryDetailsFragment" />
@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_country_details"/>
     <fragment
         android:id="@+id/mapOfAllCountriesFragment2"
-        android:name="com.example.course_android.fragments.map.MapOfAllCountriesFragment"
+        android:name="com.example.course_android.fragments.map.MapAllCountriesFragment"
         android:label="fragment_map_of_all_countries"
-        tools:layout="@layout/fragment_map_of_all_countries" />
+        tools:layout="@layout/fragment_map_all_countries" />
 </navigation>
