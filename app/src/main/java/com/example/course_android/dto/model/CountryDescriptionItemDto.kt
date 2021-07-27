@@ -1,16 +1,13 @@
 package com.example.course_android.dto.model
 
-import com.example.course_android.model.allCountries.Language
-import com.example.course_android.model.oneCountry.LanguageOfOneCountry
-
 data class CountryDescriptionItemDto(
 //    val alpha2Code: String,
 //    val alpha3Code: String,
 //    val altSpellings: List<String>,
-//    val area: Double,
+    var area: Double = 0.0,
 //    val borders: List<String>,
 //    val callingCodes: List<String>,
-//    val capital: String,
+    var capital: String = "",
 //    val cioc: String,
 //    val currencies: List<Currency>,
 //    val demonym: String,
