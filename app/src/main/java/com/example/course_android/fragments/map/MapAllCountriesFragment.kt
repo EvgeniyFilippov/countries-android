@@ -11,16 +11,16 @@ import com.example.course_android.base.googlemap.initMap3
 import com.example.course_android.base.mvp.BaseMvpFragment
 
 
-import com.example.course_android.databinding.FragmentMapOfAllCountriesBinding
+import com.example.course_android.databinding.FragmentMapAllCountriesBinding
 import com.example.course_android.fragments.details.CountryDetailsPresenter
 import com.example.course_android.model.allCountries.CountriesDataItem
 import com.google.android.libraries.maps.SupportMapFragment
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_country_details.*
 
-class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(), MapAllCountriesView {
+class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(), MapAllCountriesView {
 
-    private var binding: FragmentMapOfAllCountriesBinding? = null
+    private var binding: FragmentMapAllCountriesBinding? = null
     private var mapFragment2: SupportMapFragment? = null
     private val mCompositeDisposable = CompositeDisposable()
 
@@ -28,7 +28,7 @@ class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCou
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMapOfAllCountriesBinding.inflate(inflater, container, false)
+        binding = FragmentMapAllCountriesBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
@@ -56,7 +56,7 @@ class MapOfAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCou
         mapFragment2 =
             childFragmentManager.findFragmentById(R.id.allMapFragmentContainer) as? SupportMapFragment?
         mapFragment2?.run {
-            getMapAsync { map -> activity?.let { initMap3(map, listOfCountries, it.applicationContext) } }
+            getMapAsync { map -> activity?.let { initMap3(map, listOfCountries) } }
         }
     }
 
