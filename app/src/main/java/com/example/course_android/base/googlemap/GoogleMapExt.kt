@@ -1,21 +1,12 @@
 package com.example.course_android.base.googlemap
 
-import android.Manifest
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
-import android.os.Bundle
 import android.util.Log
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
-import com.example.course_android.Constants
-import com.example.course_android.Constants.DISTANCE_KEY
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.model.allCountries.CountriesDataItem
-
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
@@ -29,7 +20,12 @@ private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
 
 @SuppressLint("MissingPermission")
-fun initMap2(map: GoogleMap, countryDetailsDto: CountryDescriptionItemDto, context: Context, permissionGps: Boolean) {
+fun initMap2(
+    map: GoogleMap,
+    countryDetailsDto: CountryDescriptionItemDto,
+    context: Context,
+    permissionGps: Boolean
+) {
     currentCountryLatLng = LatLng(
         countryDetailsDto.latlng[0],
         countryDetailsDto.latlng[1]
@@ -38,7 +34,7 @@ fun initMap2(map: GoogleMap, countryDetailsDto: CountryDescriptionItemDto, conte
 
         val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
         moveCamera(cameraLocation)
-      if (permissionGps) {
+        if (permissionGps) {
             isMyLocationEnabled = true
             calculateDistance(context)
         }
@@ -68,27 +64,20 @@ private fun calculateDistance(context: Context) {
         }
 }
 
- fun getDistance() : Int = distance
-
+fun getDistance(): Int = distance
 
 @SuppressLint("MissingPermission")
-fun initMap3(map: GoogleMap, listOfCountries: List<CountriesDataItem>, context: Context) {
-//    currentCountryLatLng = LatLng(
-//        listOfCountries[0].latlng[0],
-//        listOfCountries[0].latlng[1]
-//    )
+fun initMap3(map: GoogleMap, listOfCountries: List<CountriesDataItem>) {
     googleMap = map
 
     listOfCountries.forEach { country ->
         if (country.latlng.size == 2) {
-            addMarkerOnMap(LatLng(
-                country.latlng[0],
-                country.latlng[1]), country.name)
+            addMarkerOnMap(
+                LatLng(
+                    country.latlng[0],
+                    country.latlng[1]
+                ), country.name
+            )
         }
     }
-
-
-//    addMarkerOnMap(currentCountryLatLng, listOfCountries[0].name)
-
-
 }
