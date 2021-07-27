@@ -43,6 +43,8 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     ): View? {
         mCountryName = arguments?.getString(COUNTRY_NAME_KEY) ?: ERROR
         binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
+        mapFragment =
+            childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
         return binding?.root
     }
 
@@ -107,8 +109,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         }
 
         //карта гугл
-        mapFragment =
-            childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
         mapFragment?.run {
             getMapAsync { map ->
                 activity?.let {
