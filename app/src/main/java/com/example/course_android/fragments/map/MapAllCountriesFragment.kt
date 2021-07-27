@@ -8,8 +8,8 @@ import com.example.course_android.R
 import com.example.course_android.base.googlemap.initMap3
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentMapAllCountriesBinding
+import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
-import com.example.course_android.model.allCountries.CountriesDataItem
 import com.example.course_android.utils.toast
 import com.google.android.libraries.maps.SupportMapFragment
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -47,7 +47,7 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
 
     override fun getPresenter(): MapAllCountriesPresenter = mPresenter
 
-    override fun showAllCountriesOnMap(listOfCountries: List<CountriesDataItem>) {
+    override fun showAllCountriesOnMap(listOfCountries: List<CountryDescriptionItemDto>) {
         binding?.srCountryMap?.isRefreshing = false
 
         //карта гугл
