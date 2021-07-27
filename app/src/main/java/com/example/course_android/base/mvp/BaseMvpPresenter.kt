@@ -26,7 +26,7 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
     }
 
     fun <Data> inBackground(flowable: Flowable<Data>): Flowable<Data> {
-        return  flowable.observeOn(AndroidSchedulers.mainThread())
+        return flowable.observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
     }
 
