@@ -5,6 +5,6 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 
 interface CountryDetailsView : BaseMvpView {
 
-    fun showCountryInfo(country: CountryDescriptionItemDto)
+    fun showCountryInfo(country: List<CountryDescriptionItemDto>)
 
 }
