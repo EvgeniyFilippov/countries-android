@@ -8,6 +8,7 @@ import com.example.course_android.dto.CountryDetailsDtoTransformer
 
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
+
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
 
     fun getMyData(mCountryName: String, isRefresh: Boolean) {
