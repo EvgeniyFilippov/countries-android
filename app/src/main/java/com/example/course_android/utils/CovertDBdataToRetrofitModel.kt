@@ -1,30 +1,32 @@
 package com.example.course_android.utils
 
-import com.example.course_android.Constants
-import com.example.course_android.model.allCountries.CountriesDataItem
-import com.example.course_android.model.allCountries.Language
+import com.example.course_android.Constants.DEFAULT_DOUBLE
+import com.example.course_android.Constants.DEFAULT_STRING
+import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoDAO
 
 fun List<CountryBaseInfoEntity>?.convertDBdataToRetrofitModel(
-    languagesFromDB: LanguagesInfoDAO?, listOfCountriesFromDB: MutableList<CountriesDataItem>
-): MutableList<CountriesDataItem> {
+    languagesFromDB: LanguagesInfoDAO?, listOfCountriesFromDB: MutableList<CountryDescriptionItemDto>
+): MutableList<CountryDescriptionItemDto> {
     this?.forEach { countryDB ->
-        val listOfLanguagesFromDB: MutableList<Language> = mutableListOf()
+        val listOfLanguagesFromDB: MutableList<LanguageOfOneCountryDto> = mutableListOf()
         languagesFromDB?.getLanguageByCountry(countryDB.name)?.forEach { languageDB ->
-            val languageItem = Language(
-                Constants.DEFAULT_STRING,
-                Constants.DEFAULT_STRING,
+            val languageItem = LanguageOfOneCountryDto(
+                DEFAULT_STRING,
+                DEFAULT_STRING,
                 languageDB,
-                Constants.DEFAULT_STRING
+                DEFAULT_STRING
             )
             listOfLanguagesFromDB.add(languageItem)
         }
-        val countryDataItem = CountriesDataItem(
+        val countryDataItem = CountryDescriptionItemDto(
             countryDB.area,
             countryDB.capital,
+            DEFAULT_STRING,
             listOfLanguagesFromDB,
-            listOf(0.0, 0.0),
+            listOf(DEFAULT_DOUBLE, DEFAULT_DOUBLE),
             countryDB.name
         )
         listOfCountriesFromDB.add(countryDataItem)
