@@ -12,7 +12,8 @@ import com.example.course_android.model.allCountries.CountriesDataItem
 import com.google.android.libraries.maps.SupportMapFragment
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
-class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(), MapAllCountriesView {
+class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(),
+    MapAllCountriesView {
 
     private var binding: FragmentMapAllCountriesBinding? = null
     private var mapFragment2: SupportMapFragment? = null
@@ -23,6 +24,8 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapAllCountriesBinding.inflate(inflater, container, false)
+        mapFragment2 =
+            childFragmentManager.findFragmentById(R.id.allMapFragmentContainer) as? SupportMapFragment?
         return binding?.root
     }
 
@@ -46,8 +49,6 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
         binding?.srCountryMap?.isRefreshing = false
 
         //карта гугл
-        mapFragment2 =
-            childFragmentManager.findFragmentById(R.id.allMapFragmentContainer) as? SupportMapFragment?
         mapFragment2?.run {
             getMapAsync { map -> activity?.let { initMap3(map, listOfCountries) } }
         }
