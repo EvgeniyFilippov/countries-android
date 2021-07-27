@@ -93,14 +93,14 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun getPresenter(): CountryDetailsPresenter = mPresenter
 
-    override fun showCountryInfo(country: CountryDescriptionItemDto) {
+    override fun showCountryInfo(country: List<CountryDescriptionItemDto>) {
         //языки ресайкл
-        adapterLanguages.repopulate(country.languages)
+        adapterLanguages.repopulate(country[0].languages)
 
         binding?.srCountryDetails?.isRefreshing = false
 
         //флаг
-        binding?.itemFlag?.loadSvg(country.flag)
+        binding?.itemFlag?.loadSvg(country[0].flag)
 
         //проверяем и запрашиваем пермишен Gps
         if (context?.checkLocationPermission() == true) {
@@ -116,7 +116,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
                 activity?.let {
                     initMap2(
                         map,
-                        country,
+                        country[0],
                         it.applicationContext,
                         permissionGps
                     )
