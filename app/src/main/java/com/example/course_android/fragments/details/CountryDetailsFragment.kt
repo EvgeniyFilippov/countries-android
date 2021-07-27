@@ -2,16 +2,14 @@ package com.example.course_android.fragments.details
 
 import android.os.Bundle
 import android.view.*
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.ERROR
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
-import com.example.course_android.base.googlemap.getDistance
-import com.example.course_android.base.googlemap.initMap2
-//import com.example.course_android.base.googlemap.initMap2
+import com.example.course_android.utils.getDistance
+import com.example.course_android.utils.initMap2
+//import com.example.course_android.utils.initMap2
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto

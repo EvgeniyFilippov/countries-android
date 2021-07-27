@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.course_android.R
-import com.example.course_android.base.googlemap.initMap3
+import com.example.course_android.utils.initMap3
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentMapAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto

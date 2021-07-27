@@ -1,4 +1,4 @@
-package com.example.course_android.base.googlemap
+package com.example.course_android.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
