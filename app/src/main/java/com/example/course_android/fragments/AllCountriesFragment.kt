@@ -24,8 +24,9 @@ import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentAllCountriesBinding
+import com.example.course_android.dto.CountryDetailsDtoTransformer
+import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
-import com.example.course_android.model.allCountries.CountriesDataItem
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertDBdataToRetrofitModel
@@ -39,13 +40,14 @@ import kotlinx.android.synthetic.main.fragment_all_countries.*
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
 
-    private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
-    private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
+    private lateinit var listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>
+    private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
+    private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,8 +105,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
-                listCountriesFromApi = (response as MutableList<CountriesDataItem>)
-                listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
+                listCountriesFromApiDto = countryDetailsDtoTransformer.transform(response)
+                listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
 
                 adapterOfAllCountries.setItemClick { item ->
                     val bundle = Bundle()
@@ -115,7 +117,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                     )
                 }
                 adapterOfAllCountries.repopulate(
-                    listCountriesFromApi
+                    listCountriesFromApiDto
                 )
                 saveToDBfromApi()
 
@@ -174,8 +176,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private fun saveToDBfromApi() {
         val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
         val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-        listCountriesFromApi.let {
-            listCountriesFromApi.forEach { item ->
+        listCountriesFromApiDto.let {
+            listCountriesFromApiDto.forEach { item ->
                 listOfAllCountries.add(
                     CountryBaseInfoEntity(
                         item.name,
