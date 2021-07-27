@@ -6,7 +6,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.util.Log
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.model.allCountries.CountriesDataItem
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
@@ -67,7 +66,7 @@ private fun calculateDistance(context: Context) {
 fun getDistance(): Int = distance
 
 @SuppressLint("MissingPermission")
-fun initMap3(map: GoogleMap, listOfCountries: List<CountriesDataItem>) {
+fun initMap3(map: GoogleMap, listOfCountries: List<CountryDescriptionItemDto>) {
     googleMap = map
 
     listOfCountries.forEach { country ->
