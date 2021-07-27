@@ -25,11 +25,13 @@ import kotlinx.android.synthetic.main.fragment_country_details.*
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
-class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(), CountryDetailsView {
+class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(),
+    CountryDetailsView {
 
     private lateinit var mCountryName: String
     private var binding: FragmentCountryDetailsBinding? = null
-//    private var progressBar: FrameLayout? = null
+
+    //    private var progressBar: FrameLayout? = null
     private val mCompositeDisposable = CompositeDisposable()
     var mapFragment: SupportMapFragment? = null
     private var adapterLanguages = AdapterLanguages()
@@ -98,17 +100,26 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
         //проверяем и запрашиваем пермишен Gps
         if (context?.checkLocationPermission() == true) {
-    permissionGps = true
-                getDistance()
-            } else {
-                activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
-            }
+            permissionGps = true
+            getDistance()
+        } else {
+            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+        }
 
         //карта гугл
         mapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragmentContainer) as? SupportMapFragment?
         mapFragment?.run {
-            getMapAsync { map -> activity?.let { initMap2(map, country, it.applicationContext, permissionGps) } }
+            getMapAsync { map ->
+                activity?.let {
+                    initMap2(
+                        map,
+                        country,
+                        it.applicationContext,
+                        permissionGps
+                    )
+                }
+            }
         }
     }
 
