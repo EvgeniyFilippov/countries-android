@@ -15,7 +15,7 @@ import com.example.course_android.Constants
 import com.example.course_android.CountriesApp.Companion.base
 import com.example.course_android.CountriesApp.Companion.daoCountry
 import com.example.course_android.CountriesApp.Companion.daoLanguage
-import com.example.course_android.CountriesApp.Companion.myAdapter
+import com.example.course_android.CountriesApp.Companion.adapterOfAllCountries
 import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.R
 import com.example.course_android.api.CountriesApi
@@ -39,7 +39,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
     private var binding: FragmentSecondBinding? = null
-
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
     private var positionIndex = 0
     private var topView = 0
@@ -53,7 +52,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         setHasOptionsMenu(true)
-        recyclerView.adapter = myAdapter
+        recyclerView.adapter = adapterOfAllCountries
 
         if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
             getCountriesFromDB()
@@ -77,13 +76,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sort_countries) {
             if (!item.isChecked) {
-                myAdapter.sortAndReplaceItem()
+                adapterOfAllCountries.sortAndReplaceItem()
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
                 sortStatus = Constants.SORT_STATUS_UP
             } else {
-                myAdapter.sortDescendingAndReplaceItem()
+                adapterOfAllCountries.sortDescendingAndReplaceItem()
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
@@ -112,7 +111,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                     listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
                     listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
 
-                    myAdapter.setItemClick { item ->
+                    adapterOfAllCountries.setItemClick { item ->
                         val bundle = Bundle()
                         bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
                         findNavController().navigate(
@@ -121,14 +120,19 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
                         )
                     }
 
-                    myAdapter.addList(listCountriesFromApi.subList(Constants.FIRST_ELEMENTS_DB,listCountriesFromApi.size))
+                    adapterOfAllCountries.addList(
+                        listCountriesFromApi.subList(
+                            Constants.FIRST_ELEMENTS_DB,
+                            listCountriesFromApi.size
+                        )
+                    )
 
 
                     saveToDBfromApi()
                 } else {
                     Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
-                if (positionIndex!= -1) {
+                if (positionIndex != -1) {
                     linearLayoutManager.scrollToPositionWithOffset(positionIndex, topView);
                 }
                 progressBar.visibility = ProgressBar.GONE;
@@ -165,7 +169,12 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
             listOfCountriesFromDB
         )
         listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
-        myAdapter.repopulate(listOfCountriesFromDB.subList(Constants.DEFAULT_INT, Constants.FIRST_ELEMENTS_DB))
+        adapterOfAllCountries.repopulate(
+            listOfCountriesFromDB.subList(
+                Constants.DEFAULT_INT,
+                Constants.FIRST_ELEMENTS_DB
+            )
+        )
         listOfCountriesFromDB.clear()
     }
 
@@ -197,16 +206,16 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
     private fun showAlertDialog() {
         val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
-            ?.setTitle("Сортировка")
-            ?.setMessage("Сбросить сортировку?")
-            ?.setNegativeButton("NO") { dialog, which ->
+            ?.setTitle(getString(R.string.sort))
+            ?.setMessage(getString(R.string.reset_sort))
+            ?.setNegativeButton(getString(R.string.no)) { dialog, which ->
                 dialog.dismiss()
             }
-            ?.setPositiveButton("YES") { dialog, which ->
+            ?.setPositiveButton(getString(R.string.yes)) { dialog, which ->
                 dialog.dismiss()
                 sortStatus = Constants.DEFAULT_INT
                 saveSortStatus()
-                myAdapter.resetSorting()
+                adapterOfAllCountries.resetSorting()
             }
         alertDialog?.show()
     }

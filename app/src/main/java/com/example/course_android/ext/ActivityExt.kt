@@ -37,7 +37,7 @@ private fun Activity.initBaseOneButtonContent(
     val dialog = createDialog(this)
     dialog.setCanceledOnTouchOutside(false)
     val contentView = LayoutInflater.from(this)
-        .inflate(R.layout.dialog_with_two_buttons, null)
+        .inflate(R.layout.dialog_with_one_button, null)
 
     val tvTitle: TextView = contentView.findViewById(R.id.tvTitle)
     title?.let {
@@ -64,7 +64,7 @@ private fun setContentView(dialog: Dialog, contentView: View) {
     contentView.layoutParams = params
 }
 
-fun Activity.showDialogWithTwoButton(
+fun Activity.showDialogWithOneButton(
     title: String?, description: String?,
     @StringRes leftButtonTextId: Int,
     leftClickListener: View.OnClickListener?

@@ -16,7 +16,6 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.course_android.AdapterLanguages
 import com.example.course_android.Constants
 import com.example.course_android.CountriesApp
 import com.example.course_android.CountriesApp.Companion.adapterLanguages
@@ -27,14 +26,12 @@ import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
-import com.example.course_android.ext.showDialogWithTwoButton
+import com.example.course_android.ext.showDialogWithOneButton
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.utils.loadSvg
-import com.example.course_android.utils.toast
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.LocationSource
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
@@ -51,7 +48,6 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     private lateinit var mCountryName: String
     private var binding: FragmentCountryDetailsBinding? = null
     private var mLanguageList: List<LanguageOfOneCountryDto>? = null
-//    lateinit var adapterLanguages: AdapterLanguages
     lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var countryDescriptionFromApi: MutableList<CountryDescriptionItem>
     private lateinit var countryDetailsDto: CountryDescriptionItemDto
@@ -83,12 +79,14 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
     }
 
     private fun initMap(map: GoogleMap) {
-        currentCountryLatLng = LatLng(countryDetailsDto.latlng[0],
-        countryDetailsDto.latlng[1])
+        currentCountryLatLng = LatLng(
+            countryDetailsDto.latlng[0],
+            countryDetailsDto.latlng[1]
+        )
         googleMap = map.apply {
 
-                val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng,7.0f)
-                moveCamera(cameraLocation)
+            val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
+            moveCamera(cameraLocation)
             if (checkLocationPermission()) {
                 isMyLocationEnabled = true
                 getDistance()
@@ -99,8 +97,7 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
         addMarkerOnMap(currentCountryLatLng)
     }
 
-
-    @SuppressLint("MissingPermission")//уже запрашивал пермишены
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -115,7 +112,12 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     //проверяем permission
     private fun checkLocationPermission() =
-        context?.let { ContextCompat.checkSelfPermission(it, ACCESS_FINE_LOCATION) } == PERMISSION_GRANTED
+        context?.let {
+            ContextCompat.checkSelfPermission(
+                it,
+                ACCESS_FINE_LOCATION
+            )
+        } == PERMISSION_GRANTED
 
     //запрос permission
     private fun askLocationPermission() {
@@ -146,7 +148,8 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
                     mSrCountryDetails?.isRefreshing = false
                     //трансформируем в DTO
                     val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-                    countryDetailsDto = countryDetailsDtoTransformer.transform(countryDescriptionFromApi)
+                    countryDetailsDto =
+                        countryDetailsDtoTransformer.transform(countryDescriptionFromApi)
 
                     //языки ресайкл
                     linearLayoutManager = LinearLayoutManager(context)
@@ -187,25 +190,29 @@ class CountryDetailsFragment : Fragment(R.layout.fragment_country_details) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.gps_distance) {
-            activity?.showDialogWithTwoButton(null, getString(R.string.distanceToYou, mCountryName, distance), R.string.dialog_ok, null)
+            activity?.showDialogWithOneButton(
+                null,
+                getString(R.string.distanceToYou, mCountryName, distance),
+                R.string.dialog_ok,
+                null
+            )
         }
         return super.onOptionsItemSelected(item)
     }
 
-    @SuppressLint("MissingPermission")//уже запрашивал пермишены
+    @SuppressLint("MissingPermission")
     private fun getDistance() {
         val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
             latitude = currentCountryLatLng.latitude
             longitude = currentCountryLatLng.longitude
-             }
+        }
         LocationServices.getFusedLocationProviderClient(context)
             .lastLocation
             .addOnSuccessListener { location ->
-                distance = location.distanceTo(currentCountryLocation).toInt()/1000
+                distance = location.distanceTo(currentCountryLocation).toInt() / 1000
                 Log.d(LOG_TAG, location.toString())
             }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,6 +1,8 @@
 package com.example.course_android
 
 import android.app.Application
+import com.example.course_android.adapters.AdapterLanguages
+import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.room.CountryInfoDAO
 import com.example.course_android.room.DatabaseInfo
@@ -15,7 +17,7 @@ class CountriesApp : Application() {
         var daoCountry: CountryInfoDAO? = null
         var daoLanguage: LanguagesInfoDAO? = null
         lateinit var adapterLanguages: AdapterLanguages
-        lateinit var myAdapter: MyAdapter
+        lateinit var adapterOfAllCountries: AdapterOfAllCountries
     }
 
     override fun onCreate() {
@@ -25,6 +27,6 @@ class CountriesApp : Application() {
         daoCountry = base?.getCountryInfoDAO()
         daoLanguage = base?.getLanguageInfoDAO()
         adapterLanguages = AdapterLanguages()
-        myAdapter = MyAdapter()
+        adapterOfAllCountries = AdapterOfAllCountries()
     }
 }

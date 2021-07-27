@@ -1,15 +1,15 @@
-package com.example.course_android
+package com.example.course_android.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.course_android.base.adapter.BaseAdapter
+import com.example.course_android.R
 import com.example.course_android.model.allCountries.CountriesDataItem
 import com.example.course_android.utils.getLanguageByKey
 
-class MyAdapter : BaseAdapter<CountriesDataItem>() {
+class AdapterOfAllCountries : BaseAdapter<CountriesDataItem>() {
 
     class CountryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
