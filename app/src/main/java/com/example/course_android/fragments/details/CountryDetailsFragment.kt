@@ -17,8 +17,10 @@ import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
+import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showDialogWithOneButton
 import com.example.course_android.utils.loadSvg
+import com.example.course_android.utils.toast
 import com.google.android.libraries.maps.SupportMapFragment
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_country_details.*
@@ -124,7 +126,9 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     }
 
     override fun showError(error: String, throwable: Throwable) {
-//        showAlertDialog()
+        if (context?.isOnline() == false) {
+            context?.toast(getString(R.string.chek_inet))
+        }
     }
 
     override fun showProgress() {
