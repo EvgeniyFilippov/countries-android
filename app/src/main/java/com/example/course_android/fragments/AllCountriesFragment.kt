@@ -2,7 +2,6 @@ package com.example.course_android.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -12,51 +11,52 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
+import com.example.course_android.Constants.COUNTRY_NAME_KEY
+import com.example.course_android.Constants.DEFAULT_INT
+import com.example.course_android.Constants.FILE_NAME_PREF
+import com.example.course_android.Constants.KEY_SORT_STATUS
 import com.example.course_android.CountriesApp.Companion.base
 import com.example.course_android.CountriesApp.Companion.daoCountry
 import com.example.course_android.CountriesApp.Companion.daoLanguage
-import com.example.course_android.CountriesApp.Companion.adapterOfAllCountries
 import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.R
+import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
-import com.example.course_android.databinding.FragmentSecondBinding
-import com.example.course_android.model.allCountries.CountriesDataItem
+import com.example.course_android.databinding.FragmentAllCountriesBinding
+import com.example.course_android.dto.CountryDetailsDtoTransformer
+import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.ext.isOnline
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.fragment_second.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_all_countries.*
 
-class AllCountriesFragment : Fragment(R.layout.fragment_second) {
+class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
 
-    lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
-    private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
-    private var binding: FragmentSecondBinding? = null
+    private lateinit var listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>
+    private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
+    private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
-    private var positionIndex = 0
-    private var topView = 0
-
+    private lateinit var inet: MenuItem
+    private val mCompositeDisposable = CompositeDisposable()
+    var adapterOfAllCountries = AdapterOfAllCountries()
+    private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
-        binding = FragmentSecondBinding.bind(view)
+        binding = FragmentAllCountriesBinding.bind(view)
         recyclerView.setHasFixedSize(true)
-        linearLayoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = linearLayoutManager
-        setHasOptionsMenu(true)
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
-
-        if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
-            getCountriesFromDB()
-        }
+        setHasOptionsMenu(true)
         getMyData()
     }
 
@@ -66,11 +66,11 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         if (sortStatus == Constants.SORT_STATUS_UP) {
             menu.findItem(R.id.sort_countries)
                 .setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
-            context?.toast(getString(R.string.sort_up))
         } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
-            context?.toast(getString(R.string.sort_down))
         }
+        inet = menu.findItem(R.id.online)
+        inet.isVisible = context?.isOnline() != true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -98,64 +98,55 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
 
     private fun getMyData() {
         RetrofitObj.getOkHttp()
-        val countriesApi = retrofit.create(CountriesApi::class.java)
-        val countriesApiCall = countriesApi.getTopHeadlines()
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
-        countriesApiCall.enqueue(object : Callback<List<CountriesDataItem>?> {
-            override fun onResponse(
-                call: Call<List<CountriesDataItem>?>,
-                response: Response<List<CountriesDataItem>?>
-            ) {
-                if (response.body() != null) {
-                    listCountriesFromApi = (response.body() as MutableList<CountriesDataItem>)
-                    listCountriesFromApi.sortBySortStatusFromPref(sortStatus)
+        val countriesApi = retrofit.create(CountriesApi::class.java)
+        val subscription = countriesApi.getTopHeadlines()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({ response ->
+                listCountriesFromApiDto = countryDetailsDtoTransformer.transform(response)
+                listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
 
-                    adapterOfAllCountries.setItemClick { item ->
-                        val bundle = Bundle()
-                        bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
-                        findNavController().navigate(
-                            R.id.action_secondFragment_to_countryDetailsFragment,
-                            bundle
-                        )
-                    }
-
-                    adapterOfAllCountries.addList(
-                        listCountriesFromApi.subList(
-                            Constants.FIRST_ELEMENTS_DB,
-                            listCountriesFromApi.size
-                        )
+                adapterOfAllCountries.setItemClick { item ->
+                    val bundle = Bundle()
+                    bundle.putString(COUNTRY_NAME_KEY, item.name)
+                    findNavController().navigate(
+                        R.id.action_secondFragment_to_countryDetailsFragment,
+                        bundle
                     )
-
-
-                    saveToDBfromApi()
-                } else {
-                    Log.d("RETROFIT_COUNTRIES", response.body().toString())
                 }
-                if (positionIndex != -1) {
-                    linearLayoutManager.scrollToPositionWithOffset(positionIndex, topView);
+                adapterOfAllCountries.repopulate(
+                    listCountriesFromApiDto
+                )
+                saveToDBfromApi()
+
+                progressBar.visibility = ProgressBar.GONE;
+
+            }, { throwable ->
+                throwable.printStackTrace()
+                if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
+                    getCountriesFromDB()
+                }
+                if (context?.isOnline() == false) {
+                    context?.toast(getString(R.string.chek_inet))
                 }
                 progressBar.visibility = ProgressBar.GONE;
-            }
-
-            override fun onFailure(call: Call<List<CountriesDataItem>?>, t: Throwable) {
-                Log.d("RETROFIT_COUNTRIES", t.toString())
-                progressBar.visibility = ProgressBar.GONE;
-            }
-        })
+            })
+        mCompositeDisposable.add(subscription)
     }
 
     private fun saveSortStatus() {
-        activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
+        activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
             ?.edit()
-            ?.apply { putInt(Constants.KEY_SORT_STATUS, sortStatus) }
+            ?.apply { putInt(KEY_SORT_STATUS, sortStatus) }
             ?.apply()
     }
 
     private fun readSortStatus() {
         val sharedPreference =
-            activity?.getSharedPreferences(Constants.FILE_NAME_PREF, Context.MODE_PRIVATE)
-        val reader = sharedPreference?.getInt(Constants.KEY_SORT_STATUS, Constants.DEFAULT_INT)
+            activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
+        val reader = sharedPreference?.getInt(KEY_SORT_STATUS, DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
         }
@@ -164,16 +155,20 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     private fun getCountriesFromDB() {
         val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = base?.getLanguageInfoDAO()
+        adapterOfAllCountries.setItemClick {
+            if (context?.isOnline() == false) {
+                context?.toast(getString(R.string.chek_inet))
+            } else {
+                getMyData()
+            }
+        }
         listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
             languagesFromDB,
             listOfCountriesFromDB
         )
         listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
         adapterOfAllCountries.repopulate(
-            listOfCountriesFromDB.subList(
-                Constants.DEFAULT_INT,
-                Constants.FIRST_ELEMENTS_DB
-            )
+            listOfCountriesFromDB
         )
         listOfCountriesFromDB.clear()
     }
@@ -181,8 +176,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     private fun saveToDBfromApi() {
         val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
         val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-        listCountriesFromApi.let {
-            listCountriesFromApi.forEach { item ->
+        listCountriesFromApiDto.let {
+            listCountriesFromApiDto.forEach { item ->
                 listOfAllCountries.add(
                     CountryBaseInfoEntity(
                         item.name,
@@ -208,28 +203,22 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
             ?.setTitle(getString(R.string.sort))
             ?.setMessage(getString(R.string.reset_sort))
-            ?.setNegativeButton(getString(R.string.no)) { dialog, which ->
+            ?.setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss()
             }
-            ?.setPositiveButton(getString(R.string.yes)) { dialog, which ->
+            ?.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 dialog.dismiss()
-                sortStatus = Constants.DEFAULT_INT
+                sortStatus = DEFAULT_INT
                 saveSortStatus()
                 adapterOfAllCountries.resetSorting()
             }
         alertDialog?.show()
     }
 
-    override fun onPause() {
-        super.onPause()
-        positionIndex = linearLayoutManager.findFirstVisibleItemPosition()
-        val startView: View = recyclerView.getChildAt(0)
-        topView = startView.top - recyclerView.paddingTop
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        mCompositeDisposable.clear()
     }
 
 }

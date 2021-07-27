@@ -1,0 +1,28 @@
+package com.example.course_android.fragments.map
+
+import com.example.course_android.CountriesApp
+import com.example.course_android.api.CountriesApi
+import com.example.course_android.api.RetrofitObj
+import com.example.course_android.base.mvp.BaseMvpPresenter
+import com.example.course_android.dto.CountryDetailsDtoTransformer
+
+class MapAllCountriesPresenter : BaseMvpPresenter<MapAllCountriesView>() {
+
+    private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
+
+    fun getAllCountries(isRefresh: Boolean) {
+        RetrofitObj.getOkHttp()
+        val countriesApi = CountriesApp.retrofit.create(CountriesApi::class.java)
+        addDisposable(
+            inBackground(
+                handleProgress(countriesApi.getTopHeadlines(), isRefresh)
+            ).subscribe({ response ->
+                getView()?.showAllCountriesOnMap(
+                    countryDetailsDtoTransformer.transform(response))
+            }, {
+                it.message?.let { it1 -> getView()?.showError(it1, it) }
+            })
+        )
+    }
+
+}

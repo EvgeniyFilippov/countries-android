@@ -1,9 +1,9 @@
 package com.example.course_android.utils
 
 import com.example.course_android.Constants
-import com.example.course_android.model.allCountries.CountriesDataItem
+import com.example.course_android.dto.model.CountryDescriptionItemDto
 
-fun MutableList<CountriesDataItem>.sortBySortStatusFromPref(sortStatus: Int) {
+fun MutableList<CountryDescriptionItemDto>.sortBySortStatusFromPref(sortStatus: Int) {
     when (sortStatus) {
         Constants.SORT_STATUS_UP -> {
             this.sortBy { it.area }

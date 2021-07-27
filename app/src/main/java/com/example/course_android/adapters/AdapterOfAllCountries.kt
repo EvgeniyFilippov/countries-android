@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.R
-import com.example.course_android.model.allCountries.CountriesDataItem
+import com.example.course_android.base.adapter.BaseAdapter
+import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.utils.getLanguageByKey
 
-class AdapterOfAllCountries : BaseAdapter<CountriesDataItem>() {
+class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
 
     class CountryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -21,7 +22,7 @@ class AdapterOfAllCountries : BaseAdapter<CountriesDataItem>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_country_layout, parent, false)
         return CountryViewHolder(itemView)
     }
 
