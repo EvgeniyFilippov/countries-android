@@ -1,22 +1,16 @@
 package com.example.course_android.fragments.map
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.R
 import com.example.course_android.base.googlemap.initMap3
 import com.example.course_android.base.mvp.BaseMvpFragment
-
-
 import com.example.course_android.databinding.FragmentMapAllCountriesBinding
-import com.example.course_android.fragments.details.CountryDetailsPresenter
 import com.example.course_android.model.allCountries.CountriesDataItem
 import com.google.android.libraries.maps.SupportMapFragment
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_country_details.*
 
 class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(), MapAllCountriesView {
 
@@ -40,7 +34,6 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
             getPresenter().getAllCountries(true)
         }
         getPresenter().getAllCountries(false)
-
     }
 
     override fun createPresenter() {
