@@ -22,7 +22,7 @@ class AdapterOfAllCountries : BaseAdapter<CountriesDataItem>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_country_layout, parent, false)
         return CountryViewHolder(itemView)
     }
 
