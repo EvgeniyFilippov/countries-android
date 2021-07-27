@@ -23,7 +23,7 @@ import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
-import com.example.course_android.databinding.FragmentSecondBinding
+import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.ext.isOnline
 import com.example.course_android.model.allCountries.CountriesDataItem
 import com.example.course_android.room.CountryBaseInfoEntity
@@ -35,13 +35,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_second.*
+import kotlinx.android.synthetic.main.fragment_all_countries.*
 
-class AllCountriesFragment : Fragment(R.layout.fragment_second) {
+class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
 
     private lateinit var listCountriesFromApi: MutableList<CountriesDataItem>
     private var listOfCountriesFromDB: MutableList<CountriesDataItem> = arrayListOf()
-    private var binding: FragmentSecondBinding? = null
+    private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
@@ -50,7 +50,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
-        binding = FragmentSecondBinding.bind(view)
+        binding = FragmentAllCountriesBinding.bind(view)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
@@ -201,10 +201,10 @@ class AllCountriesFragment : Fragment(R.layout.fragment_second) {
         val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
             ?.setTitle(getString(R.string.sort))
             ?.setMessage(getString(R.string.reset_sort))
-            ?.setNegativeButton(getString(R.string.no)) { dialog, which ->
+            ?.setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss()
             }
-            ?.setPositiveButton(getString(R.string.yes)) { dialog, which ->
+            ?.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 dialog.dismiss()
                 sortStatus = DEFAULT_INT
                 saveSortStatus()
