@@ -7,10 +7,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.R
 import com.example.course_android.base.adapter.BaseAdapter
-import com.example.course_android.model.allCountries.CountriesDataItem
+import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.utils.getLanguageByKey
 
-class AdapterOfAllCountries : BaseAdapter<CountriesDataItem>() {
+class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
 
     class CountryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
