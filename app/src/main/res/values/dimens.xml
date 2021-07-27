@@ -11,7 +11,14 @@
     <dimen name="short_descr_recycler_layout">20dp</dimen>
     <dimen name="margin_top_shot_descr_recycler">8dp</dimen>
     <dimen name="text_heading">20sp</dimen>
+    <dimen name="text_heading_country_info">32sp</dimen>
     <dimen name="text_name_fragment">24sp</dimen>
     <dimen name="margin_button">40dp</dimen>
     <dimen name="margin_top_name_fragment">200dp</dimen>
+    <dimen name="default_padding">10dp</dimen>
+    <dimen name="default_margin">24dp</dimen>
+    <dimen name="text_size_country_description">14sp</dimen>
+    <dimen name="flag_height">100dp</dimen>
+    <dimen name="map_height">250dp</dimen>
+    <dimen name="zero_size">0dp</dimen>
 </resources>

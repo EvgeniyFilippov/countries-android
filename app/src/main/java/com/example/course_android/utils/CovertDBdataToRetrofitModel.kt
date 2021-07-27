@@ -1,8 +1,8 @@
 package com.example.course_android.utils
 
 import com.example.course_android.Constants
-import com.example.course_android.model.CountriesDataItem
-import com.example.course_android.model.Language
+import com.example.course_android.model.allCountries.CountriesDataItem
+import com.example.course_android.model.allCountries.Language
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoDAO
 

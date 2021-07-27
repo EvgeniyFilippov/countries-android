@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/gps_distance"
+        android:icon="@drawable/ic_baseline_transfer_within_a_station_24"
+        app:showAsAction="ifRoom"
+        android:title="@string/distance"/>
+</menu>

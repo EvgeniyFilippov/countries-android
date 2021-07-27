@@ -8,4 +8,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background_color_recycler">#00BCD4</color>
+    <color name="ok_button">#00BCD4</color>
 </resources>
