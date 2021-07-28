@@ -5,12 +5,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.reactivex.rxjava3.core.Flowable
 
 @Dao
 interface CountryInfoDAO {
 
     @Query("SELECT * FROM countries_base_info_table")
-    fun getAllInfo(): List<CountryBaseInfoEntity>
+    fun getAllInfo(): Flowable<List<CountryBaseInfoEntity>>
 
     @Query("SELECT * FROM countries_base_info_table WHERE name = :name")
     fun getInfoByCountry(name: String): LiveData<List<CountryBaseInfoEntity>>
