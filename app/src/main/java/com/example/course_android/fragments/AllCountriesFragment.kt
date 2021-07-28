@@ -102,12 +102,17 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         progressBar.visibility = ProgressBar.VISIBLE
         val countriesApi = retrofit.create(CountriesApi::class.java)
         val subscription = countriesApi.getTopHeadlines()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe({ response ->
-                listCountriesFromApiDto = countryDetailsDtoTransformer.transform(response)
+            .doOnNext { list ->
+                listCountriesFromApiDto = countryDetailsDtoTransformer.transform(list)
                 listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
-
+                saveToDBfromApi()
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ _ ->
+                adapterOfAllCountries.repopulate(
+                    listCountriesFromApiDto
+                )
                 adapterOfAllCountries.setItemClick { item ->
                     val bundle = Bundle()
                     bundle.putString(COUNTRY_NAME_KEY, item.name)
@@ -116,18 +121,11 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                         bundle
                     )
                 }
-                adapterOfAllCountries.repopulate(
-                    listCountriesFromApiDto
-                )
-                saveToDBfromApi()
-
                 progressBar.visibility = ProgressBar.GONE;
-
             }, { throwable ->
+                println("POTOK: ОШИБКА " + Thread.currentThread().name)
                 throwable.printStackTrace()
-                if (!daoCountry?.getAllInfo().isNullOrEmpty()) {
                     getCountriesFromDB()
-                }
                 if (context?.isOnline() == false) {
                     context?.toast(getString(R.string.chek_inet))
                 }
@@ -155,22 +153,31 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private fun getCountriesFromDB() {
         val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = base?.getLanguageInfoDAO()
-        adapterOfAllCountries.setItemClick {
-            if (context?.isOnline() == false) {
-                context?.toast(getString(R.string.chek_inet))
-            } else {
-                getMyData()
+        countriesFromDB
+            ?.doOnNext { list ->
+                listOfCountriesFromDB = list.convertDBdataToRetrofitModel(
+                    languagesFromDB,
+                    listOfCountriesFromDB
+                )
+                listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
             }
-        }
-        listOfCountriesFromDB = countriesFromDB.convertDBdataToRetrofitModel(
-            languagesFromDB,
-            listOfCountriesFromDB
-        )
-        listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
-        adapterOfAllCountries.repopulate(
-            listOfCountriesFromDB
-        )
-        listOfCountriesFromDB.clear()
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
+                adapterOfAllCountries.repopulate(
+                    listOfCountriesFromDB
+                )
+                listOfCountriesFromDB.clear()
+                adapterOfAllCountries.setItemClick {
+                    if (context?.isOnline() == false) {
+                        context?.toast(getString(R.string.chek_inet))
+                    } else {
+                        getMyData()
+                    }
+                }
+            }, { throwable ->
+                throwable.printStackTrace()
+            })
     }
 
     private fun saveToDBfromApi() {
