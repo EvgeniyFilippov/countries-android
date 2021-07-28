@@ -124,7 +124,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                 progressBar.visibility = ProgressBar.GONE;
             }, { throwable ->
                 throwable.printStackTrace()
-                    getCountriesFromDB()
+                getCountriesFromDB()
                 if (context?.isOnline() == false) {
                     context?.toast(getString(R.string.chek_inet))
                 }
@@ -152,7 +152,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private fun getCountriesFromDB() {
         val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = base?.getLanguageInfoDAO()
-        countriesFromDB
+        val subscription = countriesFromDB
             ?.doOnNext { list ->
                 listOfCountriesFromDB = list.convertDBdataToRetrofitModel(
                     languagesFromDB,
@@ -177,6 +177,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             }, { throwable ->
                 throwable.printStackTrace()
             })
+        mCompositeDisposable.add(subscription)
     }
 
     private fun saveToDBfromApi() {
