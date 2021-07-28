@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.reactivex.rxjava3.core.Flowable
 
 @Dao
 interface LanguagesInfoDAO {
@@ -12,7 +13,7 @@ interface LanguagesInfoDAO {
     fun add(entity: LanguagesInfoEntity)
 
     @Query("SELECT * FROM languages_table")
-    fun getAllInfo(): List<LanguagesInfoEntity>
+    fun getAllInfo(): Flowable<List<LanguagesInfoEntity>>
 
     @Query("SELECT language FROM languages_table WHERE countryName = :name")
     fun getLanguageByCountry(name: String): List<String>
