@@ -123,7 +123,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                 }
                 progressBar.visibility = ProgressBar.GONE;
             }, { throwable ->
-                println("POTOK: ОШИБКА " + Thread.currentThread().name)
                 throwable.printStackTrace()
                     getCountriesFromDB()
                 if (context?.isOnline() == false) {
