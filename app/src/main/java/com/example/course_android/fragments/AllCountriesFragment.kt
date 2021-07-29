@@ -86,7 +86,12 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         inet.isVisible = context?.isOnline() != true
 
         val disposable = getSearchSubject()
+            .subscribe({
+                adapterOfAllCountries.repopulate(it)
+            }, {
 
+            })
+        mCompositeDisposable.add(disposable)
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
