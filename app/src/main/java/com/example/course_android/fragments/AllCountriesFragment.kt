@@ -80,7 +80,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         }
         mSearchView = menu.findItem(R.id.search_item).actionView as SearchView
         search()
-            inet = menu.findItem(R.id.online)
+        inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
     }
 
@@ -279,7 +279,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                     }
                 }
             }
-            mCompositeDisposable.add(subscribe)
+        mCompositeDisposable.add(subscribe)
     }
 
     override fun onDestroyView() {
