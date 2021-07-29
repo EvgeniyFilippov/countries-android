@@ -37,9 +37,8 @@ import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.fragment_all_countries.*
@@ -86,11 +85,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         inet.isVisible = context?.isOnline() != true
 
         val disposable = getSearchSubject()
-            .subscribe({
-                adapterOfAllCountries.repopulate(it)
-            }, {
-
-            })
         mCompositeDisposable.add(disposable)
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
@@ -102,7 +96,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                //myAdapter.filterByName(newText)
                 mSearchSubject.onNext(newText)
                 return true
             }
@@ -157,14 +150,14 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                         bundle
                     )
                 }
-                progressBar.visibility = ProgressBar.GONE;
+                progressBar.visibility = ProgressBar.GONE
             }, { throwable ->
                 throwable.printStackTrace()
                 getCountriesFromDB()
                 if (context?.isOnline() == false) {
                     context?.toast(getString(R.string.chek_inet))
                 }
-                progressBar.visibility = ProgressBar.GONE;
+                progressBar.visibility = ProgressBar.GONE
             })
         mCompositeDisposable.add(subscription)
     }
@@ -258,56 +251,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         alertDialog?.show()
     }
 
-//    private fun search() {
-//        val subscribe = Observable.create(ObservableOnSubscribe<String> { subscriber ->
-//            mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//                override fun onQueryTextChange(newText: String?): Boolean {
-//                    subscriber.onNext(newText)
-//                    return false
-//                }
-//
-//                override fun onQueryTextSubmit(query: String?): Boolean {
-//                    subscriber.onNext(query)
-//                    return false
-//                }
-//            })
-//        })
-//            .map { text -> text.toLowerCase().trim() }
-//            .debounce(500, TimeUnit.MILLISECONDS)
-//            .doOnNext {
-//                if (it.length >= 3) {
-//                    listCountriesFromSearch.clear()
-//                    listCountriesFromApiDto.forEach { country ->
-//                        if (country.name.contains(it, ignoreCase = true)) {
-//                            listCountriesFromSearch.add(country)
-//                        }
-//                    }
-//                }
-//            }
-//            .distinctUntilChanged()
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe { text ->
-//                when {
-//                    text.length >= 3 -> {
-//                        adapterOfAllCountries.repopulate(
-//                            listCountriesFromSearch
-//                        )
-//                    }
-//                    text.length in 1..2 -> {
-//                        adapterOfAllCountries.clear()
-//                    }
-//                    else -> {
-//                        adapterOfAllCountries.repopulate(
-//                            listCountriesFromApiDto
-//                        )
-//                    }
-//                }
-//            }
-//        mCompositeDisposable.add(subscribe)
-//    }
-
-    private fun getSearchSubject(): Observable<MutableList<CountryDescriptionItemDto>> = mSearchSubject
+    private fun getSearchSubject(): Disposable = mSearchSubject
         .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
         .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
         .distinctUntilChanged()
@@ -320,9 +264,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                     }
                 }
         }
-        .flatMap { Observable.just(listCountriesFromSearch)  }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+            adapterOfAllCountries.repopulate(listCountriesFromSearch)
+        }, {
+
+        })
 
     override fun onDestroyView() {
         super.onDestroyView()
