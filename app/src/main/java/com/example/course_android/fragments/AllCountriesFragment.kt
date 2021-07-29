@@ -254,7 +254,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         })
             .map { text -> text.toLowerCase().trim() }
             .debounce(10, TimeUnit.MILLISECONDS)
-            .distinct()
+            .distinctUntilChanged()
 //            .filter { text -> text.length >=3 }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -266,17 +266,20 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
 
     private fun searchInAdapter(text: String) {
         listCountriesFromSearch.clear()
-        listCountriesFromApiDto.forEach { country ->
-            if (country.name.contains(text, ignoreCase = true) && text.length >=3) {
-                listCountriesFromSearch.add(country)
-            } else {
-                adapterOfAllCountries.repopulate(
-                    listCountriesFromApiDto)
+        if (text.length >= 3) {
+            listCountriesFromApiDto.forEach { country ->
+                if (country.name.contains(text, ignoreCase = true)) {
+                    listCountriesFromSearch.add(country)
+                }
             }
+            adapterOfAllCountries.repopulate(
+                listCountriesFromSearch
+            )
+        } else {
+            adapterOfAllCountries.repopulate(
+                listCountriesFromApiDto
+            )
         }
-
-        adapterOfAllCountries.repopulate(
-            listCountriesFromSearch)
     }
 
 
