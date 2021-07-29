@@ -1,12 +1,15 @@
 package com.example.course_android.fragments
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,13 +37,22 @@ import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.observers.TestObserver.create
+import io.reactivex.rxjava3.processors.PublishProcessor.create
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_all_countries.*
+import java.net.URI.create
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
 
     private lateinit var listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>
+    private var listCountriesFromSearch: MutableList<CountryDescriptionItemDto> = arrayListOf()
+
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = Constants.DEFAULT_SORT_STATUS
@@ -48,20 +60,24 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
+    private lateinit var mSearchView: SearchView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
+        mSearchView = binding!!.appBarSearch
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
         setHasOptionsMenu(true)
         getMyData()
+        search()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_sort_menu, menu)
+
         super.onCreateOptionsMenu(menu, inflater)
         if (sortStatus == Constants.SORT_STATUS_UP) {
             menu.findItem(R.id.sort_countries)
@@ -221,6 +237,48 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             }
         alertDialog?.show()
     }
+
+    private fun search() {
+        Observable.create(ObservableOnSubscribe<String> { subscriber ->
+            mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    subscriber.onNext(newText!!)
+                    return false
+                }
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    subscriber.onNext(query!!)
+                    return false
+                }
+            })
+        })
+            .map { text -> text.toLowerCase().trim() }
+            .debounce(10, TimeUnit.MILLISECONDS)
+            .distinct()
+//            .filter { text -> text.length >=3 }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { text ->
+                Log.d(TAG, "subscriber: $text")
+                searchInAdapter(text)
+            }
+    }
+
+    private fun searchInAdapter(text: String) {
+        listCountriesFromSearch.clear()
+        listCountriesFromApiDto.forEach { country ->
+            if (country.name.contains(text, ignoreCase = true) && text.length >=3) {
+                listCountriesFromSearch.add(country)
+            } else {
+                adapterOfAllCountries.repopulate(
+                    listCountriesFromApiDto)
+            }
+        }
+
+        adapterOfAllCountries.repopulate(
+            listCountriesFromSearch)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
