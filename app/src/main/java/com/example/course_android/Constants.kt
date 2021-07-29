@@ -20,4 +20,6 @@ object Constants {
     const val SERVER_API = "rest/v2/all"
     const val DEFAULT_SLEEP = 500L
     const val MARKER_TITLE = "Marker title with position"
+    const val MIN_SEARCH_STRING_LENGTH = 3
+    const val DEBOUNCE_TIME_MILLIS = 500L
 }
