@@ -87,6 +87,10 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         val disposable = getSearchSubject()
         mCompositeDisposable.add(disposable)
 
+
+
+
+
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -100,6 +104,11 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                 return true
             }
         })
+
+        mSvMenu.setOnCloseListener {
+            adapterOfAllCountries.repopulate(listCountriesFromApiDto)
+            false
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
