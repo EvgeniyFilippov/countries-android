@@ -9,7 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
-import androidx.appcompat.widget.SearchView
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,13 +62,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
-        mSearchView = binding?.appBarSearch!!
+//        mSearchView = binding?.appBarSearch!!
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
         setHasOptionsMenu(true)
         getMyData()
-        search()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -81,7 +81,9 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
         }
-        inet = menu.findItem(R.id.online)
+        mSearchView = menu.findItem(R.id.search_item).actionView as SearchView
+        search()
+            inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
     }
 
@@ -280,19 +282,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             }
             mCompositeDisposable.add(subscribe)
     }
-
-    private fun searchInAdapter(text: String) {
-
-        Observable.just(text)
-
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Log.d(TAG, "subscriberSubscribe: " + Thread.currentThread().name)
-
-            }
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
