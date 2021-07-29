@@ -1,9 +1,7 @@
 package com.example.course_android.fragments
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -62,12 +60,11 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
-//        mSearchView = binding?.appBarSearch!!
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
         setHasOptionsMenu(true)
-        getMyData()
+        getCountriesFromApi()
 
     }
 
@@ -110,7 +107,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMyData() {
+    private fun getCountriesFromApi() {
         RetrofitObj.getOkHttp()
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
@@ -185,7 +182,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                     if (context?.isOnline() == false) {
                         context?.toast(getString(R.string.chek_inet))
                     } else {
-                        getMyData()
+                        getCountriesFromApi()
                     }
                 }
             }, { throwable ->
@@ -251,11 +248,10 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             })
         })
             .map { text -> text.toLowerCase().trim() }
-            .debounce(10, TimeUnit.MILLISECONDS)
+            .debounce(500, TimeUnit.MILLISECONDS)
             .doOnNext {
-                listCountriesFromSearch.clear()
                 if (it.length >= 3) {
-                    Log.d(TAG, "subscriberIO: " + Thread.currentThread().name)
+                    listCountriesFromSearch.clear()
                     listCountriesFromApiDto.forEach { country ->
                         if (country.name.contains(it, ignoreCase = true)) {
                             listCountriesFromSearch.add(country)
@@ -264,20 +260,23 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                 }
             }
             .distinctUntilChanged()
-//            .filter { text -> text.length >=3 }
-
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { text ->
-                Log.d(TAG, "subscriber: $text")
-                if (text.length >= 3) {
-                    adapterOfAllCountries.repopulate(
-                        listCountriesFromSearch
-                    )
-                } else {
-                    adapterOfAllCountries.repopulate(
-                        listCountriesFromApiDto
-                    )
+                when {
+                    text.length >= 3 -> {
+                        adapterOfAllCountries.repopulate(
+                            listCountriesFromSearch
+                        )
+                    }
+                    text.length in 1..2 -> {
+                        adapterOfAllCountries.clear()
+                    }
+                    else -> {
+                        adapterOfAllCountries.repopulate(
+                            listCountriesFromApiDto
+                        )
+                    }
                 }
             }
             mCompositeDisposable.add(subscribe)
