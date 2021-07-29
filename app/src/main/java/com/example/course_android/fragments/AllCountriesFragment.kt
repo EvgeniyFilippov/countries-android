@@ -13,9 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
+import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
+import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.CountriesApp.Companion.base
 import com.example.course_android.CountriesApp.Companion.daoCountry
 import com.example.course_android.CountriesApp.Companion.daoLanguage
@@ -39,6 +41,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.fragment_all_countries.*
 import java.util.concurrent.TimeUnit
 
@@ -54,7 +57,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-    private lateinit var mSearchView: SearchView
+    private val mSearchSubject = BehaviorSubject.create<String>()
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,7 +69,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         recyclerView.adapter = adapterOfAllCountries
         setHasOptionsMenu(true)
         getCountriesFromApi()
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -78,10 +81,27 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
         }
-        mSearchView = menu.findItem(R.id.search_item).actionView as SearchView
-        search()
+
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
+
+        val disposable = getSearchSubject()
+
+
+        val menuSearchItem = menu.findItem(R.id.menu_search_button)
+        val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+        mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { mSearchSubject.onNext(query) }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                //myAdapter.filterByName(newText)
+                mSearchSubject.onNext(newText)
+                return true
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -233,54 +253,71 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         alertDialog?.show()
     }
 
-    private fun search() {
-        val subscribe = Observable.create(ObservableOnSubscribe<String> { subscriber ->
-            mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    subscriber.onNext(newText)
-                    return false
-                }
+//    private fun search() {
+//        val subscribe = Observable.create(ObservableOnSubscribe<String> { subscriber ->
+//            mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    subscriber.onNext(newText)
+//                    return false
+//                }
+//
+//                override fun onQueryTextSubmit(query: String?): Boolean {
+//                    subscriber.onNext(query)
+//                    return false
+//                }
+//            })
+//        })
+//            .map { text -> text.toLowerCase().trim() }
+//            .debounce(500, TimeUnit.MILLISECONDS)
+//            .doOnNext {
+//                if (it.length >= 3) {
+//                    listCountriesFromSearch.clear()
+//                    listCountriesFromApiDto.forEach { country ->
+//                        if (country.name.contains(it, ignoreCase = true)) {
+//                            listCountriesFromSearch.add(country)
+//                        }
+//                    }
+//                }
+//            }
+//            .distinctUntilChanged()
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe { text ->
+//                when {
+//                    text.length >= 3 -> {
+//                        adapterOfAllCountries.repopulate(
+//                            listCountriesFromSearch
+//                        )
+//                    }
+//                    text.length in 1..2 -> {
+//                        adapterOfAllCountries.clear()
+//                    }
+//                    else -> {
+//                        adapterOfAllCountries.repopulate(
+//                            listCountriesFromApiDto
+//                        )
+//                    }
+//                }
+//            }
+//        mCompositeDisposable.add(subscribe)
+//    }
 
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    subscriber.onNext(query)
-                    return false
-                }
-            })
-        })
-            .map { text -> text.toLowerCase().trim() }
-            .debounce(500, TimeUnit.MILLISECONDS)
-            .doOnNext {
-                if (it.length >= 3) {
-                    listCountriesFromSearch.clear()
-                    listCountriesFromApiDto.forEach { country ->
-                        if (country.name.contains(it, ignoreCase = true)) {
-                            listCountriesFromSearch.add(country)
-                        }
+    private fun getSearchSubject(): Observable<MutableList<CountryDescriptionItemDto>> = mSearchSubject
+        .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+        .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+        .distinctUntilChanged()
+        .map { it.trim() }
+        .doOnNext {
+                listCountriesFromSearch.clear()
+                listCountriesFromApiDto.forEach { country ->
+                    if (country.name.contains(it, ignoreCase = true)) {
+                        listCountriesFromSearch.add(country)
                     }
                 }
-            }
-            .distinctUntilChanged()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { text ->
-                when {
-                    text.length >= 3 -> {
-                        adapterOfAllCountries.repopulate(
-                            listCountriesFromSearch
-                        )
-                    }
-                    text.length in 1..2 -> {
-                        adapterOfAllCountries.clear()
-                    }
-                    else -> {
-                        adapterOfAllCountries.repopulate(
-                            listCountriesFromApiDto
-                        )
-                    }
-                }
-            }
-        mCompositeDisposable.add(subscribe)
-    }
+        }
+        .flatMap { Observable.just(listCountriesFromSearch)  }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 
     override fun onDestroyView() {
         super.onDestroyView()
