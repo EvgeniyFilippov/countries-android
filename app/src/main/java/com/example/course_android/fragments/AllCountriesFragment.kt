@@ -40,12 +40,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.observers.TestObserver.create
-import io.reactivex.rxjava3.processors.PublishProcessor.create
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_all_countries.*
-import java.net.URI.create
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
@@ -66,7 +62,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
-        mSearchView = binding!!.appBarSearch
+        mSearchView = binding?.appBarSearch!!
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
@@ -125,7 +121,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ _ ->
+            .subscribe({
                 adapterOfAllCountries.repopulate(
                     listCountriesFromApiDto
                 )
@@ -239,47 +235,62 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     }
 
     private fun search() {
-        Observable.create(ObservableOnSubscribe<String> { subscriber ->
+        val subscribe = Observable.create(ObservableOnSubscribe<String> { subscriber ->
             mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    subscriber.onNext(newText!!)
+                    subscriber.onNext(newText)
                     return false
                 }
 
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    subscriber.onNext(query!!)
+                    subscriber.onNext(query)
                     return false
                 }
             })
         })
             .map { text -> text.toLowerCase().trim() }
             .debounce(10, TimeUnit.MILLISECONDS)
+            .doOnNext {
+                listCountriesFromSearch.clear()
+                if (it.length >= 3) {
+                    Log.d(TAG, "subscriberIO: " + Thread.currentThread().name)
+                    listCountriesFromApiDto.forEach { country ->
+                        if (country.name.contains(it, ignoreCase = true)) {
+                            listCountriesFromSearch.add(country)
+                        }
+                    }
+                }
+            }
             .distinctUntilChanged()
 //            .filter { text -> text.length >=3 }
+
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { text ->
                 Log.d(TAG, "subscriber: $text")
-                searchInAdapter(text)
+                if (text.length >= 3) {
+                    adapterOfAllCountries.repopulate(
+                        listCountriesFromSearch
+                    )
+                } else {
+                    adapterOfAllCountries.repopulate(
+                        listCountriesFromApiDto
+                    )
+                }
             }
+            mCompositeDisposable.add(subscribe)
     }
 
     private fun searchInAdapter(text: String) {
-        listCountriesFromSearch.clear()
-        if (text.length >= 3) {
-            listCountriesFromApiDto.forEach { country ->
-                if (country.name.contains(text, ignoreCase = true)) {
-                    listCountriesFromSearch.add(country)
-                }
+
+        Observable.just(text)
+
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.d(TAG, "subscriberSubscribe: " + Thread.currentThread().name)
+
             }
-            adapterOfAllCountries.repopulate(
-                listCountriesFromSearch
-            )
-        } else {
-            adapterOfAllCountries.repopulate(
-                listCountriesFromApiDto
-            )
-        }
     }
 
 
