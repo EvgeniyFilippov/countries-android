@@ -12,11 +12,9 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
 
     fun getMyData(mCountryName: String, isRefresh: Boolean) {
-        RetrofitObj.getOkHttp()
-        val countryDescrApi = CountriesApp.retrofit.create(CountryDescriptionApi::class.java)
         addDisposable(
             inBackground(
-                handleProgress(countryDescrApi.getTopHeadlines(mCountryName), isRefresh)
+                handleProgress(RetrofitObj.countryDescriptionApi.getTopHeadlines(mCountryName), isRefresh)
             ).subscribe({ response ->
                 getView()?.showCountryInfo(
                     countryDetailsDtoTransformer.transform(response))
