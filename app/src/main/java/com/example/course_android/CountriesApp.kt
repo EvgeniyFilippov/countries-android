@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 class CountriesApp : Application() {
 
     companion object {
-//        lateinit var retrofit: Retrofit
+        lateinit var retrofit: Retrofit
         var base: DatabaseInfo? = null
         var daoCountry: CountryInfoDAO? = null
         var daoLanguage: LanguagesInfoDAO? = null
@@ -18,7 +18,7 @@ class CountriesApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-//        retrofit = RetrofitObj.retrofitInit
+        retrofit = RetrofitObj.getRetrofit()
         base = this.let { DatabaseInfo.init(it) }
         daoCountry = base?.getCountryInfoDAO()
         daoLanguage = base?.getLanguageInfoDAO()
