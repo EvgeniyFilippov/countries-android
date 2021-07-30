@@ -134,7 +134,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private fun getCountriesFromApi() {
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
-        val subscription = RetrofitObj.countriesApi.getTopHeadlines()
+        val subscription = RetrofitObj.getCountriesApi().getTopHeadlines()
             .doOnNext { list ->
                 listCountriesFromApiDto = countryDetailsDtoTransformer.transform(list)
                 listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
@@ -263,7 +263,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             .map { it.trim() }
             .doOnNext { searchText = it }
             .flatMap { text ->
-                RetrofitObj.countryDescriptionApi.getTopHeadlines(text).toObservable()
+                RetrofitObj.getCountryDescriptionApi().getTopHeadlines(text).toObservable()
                     .onErrorResumeNext { Observable.just(mutableListOf()) }
             }
             .doOnNext { list ->
