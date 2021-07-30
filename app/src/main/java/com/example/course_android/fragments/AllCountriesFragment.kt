@@ -21,15 +21,14 @@ import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.CountriesApp.Companion.base
 import com.example.course_android.CountriesApp.Companion.daoCountry
 import com.example.course_android.CountriesApp.Companion.daoLanguage
-import com.example.course_android.CountriesApp.Companion.retrofit
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
-import com.example.course_android.api.CountriesApi
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
+import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertDBdataToRetrofitModel
@@ -37,6 +36,7 @@ import com.example.course_android.utils.sortBySortStatusFromPref
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
 
     private lateinit var listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>
-    private var listCountriesFromSearch: MutableList<CountryDescriptionItemDto> = arrayListOf()
+    private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var binding: FragmentAllCountriesBinding? = null
@@ -57,7 +57,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
     private val mSearchSubject = BehaviorSubject.create<String>()
-
+    private var searchText: String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -102,6 +102,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         })
 
         mSvMenu.setOnCloseListener {
+            listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
             adapterOfAllCountries.repopulate(listCountriesFromApiDto)
             false
         }
@@ -131,11 +132,9 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     }
 
     private fun getCountriesFromApi() {
-        RetrofitObj.getOkHttp()
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
-        val countriesApi = retrofit.create(CountriesApi::class.java)
-        val subscription = countriesApi.getTopHeadlines()
+        val subscription = RetrofitObj.countriesApi.getTopHeadlines()
             .doOnNext { list ->
                 listCountriesFromApiDto = countryDetailsDtoTransformer.transform(list)
                 listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
@@ -256,26 +255,33 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         alertDialog?.show()
     }
 
-    private fun getSearchSubject(): Disposable = mSearchSubject
-        .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
-        .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
-        .distinctUntilChanged()
-        .map { it.trim() }
-        .doOnNext {
+    private fun getSearchSubject(): Disposable =
+        mSearchSubject
+            .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+            .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .map { it.trim() }
+            .doOnNext { searchText = it}
+            .flatMap { text ->
+                RetrofitObj.countryDescriptionApi.getTopHeadlines(text).toObservable()
+                    .onErrorResumeNext { Observable.just(mutableListOf())}
+
+            }
+            .doOnNext { list ->
                 listCountriesFromSearch.clear()
-                listCountriesFromApiDto.forEach { country ->
-                    if (country.name.contains(it, ignoreCase = true)) {
+                list.forEach { country ->
+                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
                         listCountriesFromSearch.add(country)
                     }
                 }
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-            adapterOfAllCountries.repopulate(listCountriesFromSearch)
-        }, {
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                adapterOfAllCountries.repopulate(countryDetailsDtoTransformer.transform(listCountriesFromSearch))
+            }, {
 
-        })
+            })
 
     override fun onDestroyView() {
         super.onDestroyView()
