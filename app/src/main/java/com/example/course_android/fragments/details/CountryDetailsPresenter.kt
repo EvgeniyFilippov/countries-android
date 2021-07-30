@@ -14,7 +14,7 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
     fun getMyData(mCountryName: String, isRefresh: Boolean) {
         addDisposable(
             inBackground(
-                handleProgress(RetrofitObj.countryDescriptionApi.getTopHeadlines(mCountryName), isRefresh)
+                handleProgress(RetrofitObj.getCountryDescriptionApi().getTopHeadlines(mCountryName), isRefresh)
             ).subscribe({ response ->
                 getView()?.showCountryInfo(
                     countryDetailsDtoTransformer.transform(response))
