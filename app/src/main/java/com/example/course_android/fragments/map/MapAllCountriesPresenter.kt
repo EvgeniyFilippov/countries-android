@@ -11,11 +11,9 @@ class MapAllCountriesPresenter : BaseMvpPresenter<MapAllCountriesView>() {
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
 
     fun getAllCountries(isRefresh: Boolean) {
-        RetrofitObj.getOkHttp()
-        val countriesApi = CountriesApp.retrofit.create(CountriesApi::class.java)
         addDisposable(
             inBackground(
-                handleProgress(countriesApi.getTopHeadlines(), isRefresh)
+                handleProgress(RetrofitObj.countriesApi.getTopHeadlines(), isRefresh)
             ).subscribe({ response ->
                 getView()?.showAllCountriesOnMap(
                     countryDetailsDtoTransformer.transform(response))
