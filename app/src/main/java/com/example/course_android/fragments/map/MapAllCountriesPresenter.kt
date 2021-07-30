@@ -13,7 +13,7 @@ class MapAllCountriesPresenter : BaseMvpPresenter<MapAllCountriesView>() {
     fun getAllCountries(isRefresh: Boolean) {
         addDisposable(
             inBackground(
-                handleProgress(RetrofitObj.countriesApi.getTopHeadlines(), isRefresh)
+                handleProgress(RetrofitObj.getCountriesApi().getTopHeadlines(), isRefresh)
             ).subscribe({ response ->
                 getView()?.showAllCountriesOnMap(
                     countryDetailsDtoTransformer.transform(response))
