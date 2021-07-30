@@ -18,15 +18,24 @@ object RetrofitObj {
         .addInterceptor(loggingInterceptor)
         .build()
 
-        val retrofitInit: Retrofit = Retrofit.Builder()
+    fun getRetrofit(): Retrofit {
+      return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .client(okHttpClient)
             .build()
+    }
 
-    val countriesApi: CountriesApi = retrofitInit.create(CountriesApi::class.java)
-    val countryDescriptionApi: CountryDescriptionApi = retrofitInit.create(CountryDescriptionApi::class.java)
+    fun getCountriesApi(): CountriesApi {
+        return CountriesApp.retrofit.create(CountriesApi::class.java)
+    }
+
+    fun getCountryDescriptionApi(): CountryDescriptionApi {
+        return CountriesApp.retrofit.create(CountryDescriptionApi::class.java)
+    }
+
+
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
