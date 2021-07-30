@@ -261,10 +261,10 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .map { it.trim() }
-            .doOnNext { searchText = it}
+            .doOnNext { searchText = it }
             .flatMap { text ->
                 RetrofitObj.countryDescriptionApi.getTopHeadlines(text).toObservable()
-                    .onErrorResumeNext { Observable.just(mutableListOf())}
+                    .onErrorResumeNext { Observable.just(mutableListOf()) }
 
             }
             .doOnNext { list ->
@@ -278,7 +278,11 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                adapterOfAllCountries.repopulate(countryDetailsDtoTransformer.transform(listCountriesFromSearch))
+                adapterOfAllCountries.repopulate(
+                    countryDetailsDtoTransformer.transform(
+                        listCountriesFromSearch
+                    )
+                )
             }, {
 
             })
