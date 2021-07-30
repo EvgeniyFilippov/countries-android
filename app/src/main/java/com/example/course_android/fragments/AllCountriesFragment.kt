@@ -265,7 +265,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             .flatMap { text ->
                 RetrofitObj.countryDescriptionApi.getTopHeadlines(text).toObservable()
                     .onErrorResumeNext { Observable.just(mutableListOf()) }
-
             }
             .doOnNext { list ->
                 listCountriesFromSearch.clear()
