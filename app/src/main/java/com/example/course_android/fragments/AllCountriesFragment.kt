@@ -1,7 +1,9 @@
 package com.example.course_android.fragments
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -84,8 +86,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
 
-        val disposable = getSearchSubject()
-        mCompositeDisposable.add(disposable)
+        getSearchSubject()
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
@@ -134,7 +135,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private fun getCountriesFromApi() {
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
-        val subscription = RetrofitObj.getCountriesApi().getTopHeadlines()
+        RetrofitObj.getCountriesApi().getTopHeadlines()
             .doOnNext { list ->
                 listCountriesFromApiDto = countryDetailsDtoTransformer.transform(list)
                 listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
@@ -162,8 +163,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                     context?.toast(getString(R.string.chek_inet))
                 }
                 progressBar.visibility = ProgressBar.GONE
-            })
-        mCompositeDisposable.add(subscription)
+            }).also { mCompositeDisposable.add(it) }
     }
 
     private fun saveSortStatus() {
@@ -185,7 +185,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private fun getCountriesFromDB() {
         val countriesFromDB = base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = base?.getLanguageInfoDAO()
-        val subscription = countriesFromDB
+        countriesFromDB
             ?.doOnNext { list ->
                 listOfCountriesFromDB = list.convertDBdataToRetrofitModel(
                     languagesFromDB,
@@ -209,8 +209,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                 }
             }, { throwable ->
                 throwable.printStackTrace()
-            })
-        mCompositeDisposable.add(subscription)
+            }).also { mCompositeDisposable.add(it) }
     }
 
     private fun saveToDBfromApi() {
@@ -283,8 +282,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
                     )
                 )
             }, {
-
-            })
+                Log.d(TAG, ("Error"))
+            }).also { mCompositeDisposable.add(it) }
 
     override fun onDestroyView() {
         super.onDestroyView()
