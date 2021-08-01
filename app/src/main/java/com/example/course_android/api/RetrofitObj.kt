@@ -31,12 +31,6 @@ object RetrofitObj {
         return CountriesApp.retrofit.create(CountriesApi::class.java)
     }
 
-    fun getCountryDescriptionApi(): CountryDescriptionApi {
-        return CountriesApp.retrofit.create(CountryDescriptionApi::class.java)
-    }
-
-
-
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
     }
