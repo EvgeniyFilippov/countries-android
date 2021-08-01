@@ -19,7 +19,7 @@ private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
 
 @SuppressLint("MissingPermission")
-fun initMap2(
+fun initMapOfCountryDetails(
     map: GoogleMap,
     countryDetailsDto: CountryDescriptionItemDto,
     context: Context,
@@ -66,7 +66,7 @@ private fun calculateDistance(context: Context) {
 fun getDistance(): Int = distance
 
 @SuppressLint("MissingPermission")
-fun initMap3(map: GoogleMap, listOfCountries: List<CountryDescriptionItemDto>) {
+fun initMapOfAllCountries(map: GoogleMap, listOfCountries: List<CountryDescriptionItemDto>) {
     googleMap = map
 
     listOfCountries.forEach { country ->
