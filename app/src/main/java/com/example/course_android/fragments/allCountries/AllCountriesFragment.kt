@@ -55,7 +55,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
 //    private lateinit var listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>
     private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
 
-    private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
+
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
@@ -176,11 +176,23 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         )
         adapterOfAllCountries.setItemClick { item ->
             val bundle = Bundle()
-            bundle.putString(Constants.COUNTRY_NAME_KEY, item.name)
+            bundle.putString(COUNTRY_NAME_KEY, item.name)
             findNavController().navigate(
                 R.id.action_secondFragment_to_countryDetailsFragment,
                 bundle
             )
+        }
+    }
+
+    private fun showCountryFromDB( listCountriesFromDbDto: MutableList<CountryDescriptionItemDto>) {
+
+        listOfCountriesFromDB.clear()
+        adapterOfAllCountries.setItemClick {
+            if (context?.isOnline() == false) {
+                context?.toast(getString(R.string.chek_inet))
+            } else {
+                getCountriesFromApi()
+            }
         }
     }
 
