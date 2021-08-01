@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/secondFragment"
-        android:name="com.example.course_android.fragments.AllCountriesFragment"
+        android:name="com.example.course_android.fragments.allCountries.AllCountriesFragment"
         android:label="fragment_second"
         tools:layout="@layout/fragment_all_countries" >
         <action
