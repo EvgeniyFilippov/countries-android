@@ -7,9 +7,6 @@ import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.ERROR
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
-import com.example.course_android.utils.getDistance
-import com.example.course_android.utils.initMap2
-//import com.example.course_android.utils.initMap2
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
@@ -17,10 +14,11 @@ import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showDialogWithOneButton
+import com.example.course_android.utils.getDistance
+import com.example.course_android.utils.initMapOfCountryDetails
 import com.example.course_android.utils.loadSvg
 import com.example.course_android.utils.toast
 import com.google.android.libraries.maps.SupportMapFragment
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_country_details.*
 
 private const val LOCATION_PERMISSION_CODE = 1000
@@ -30,9 +28,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     private lateinit var mCountryName: String
     private var binding: FragmentCountryDetailsBinding? = null
-
-    //    private var progressBar: FrameLayout? = null
-    private val mCompositeDisposable = CompositeDisposable()
     var mapFragment: SupportMapFragment? = null
     private var adapterLanguages = AdapterLanguages()
     private var permissionGps = false
@@ -82,7 +77,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        mCompositeDisposable.clear()
     }
 
     override fun createPresenter() {
@@ -112,7 +106,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         mapFragment?.run {
             getMapAsync { map ->
                 activity?.let {
-                    initMap2(
+                    initMapOfCountryDetails(
                         map,
                         country[0],
                         it.applicationContext,
