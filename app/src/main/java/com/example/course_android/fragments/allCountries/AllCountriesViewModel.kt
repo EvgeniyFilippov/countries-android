@@ -22,7 +22,7 @@ class AllCountriesViewModel(private val sortStatus: Int) : BaseViewModel() {
     private val mutableCountriesErrorLiveData = MutableLiveData<String>()
     val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
 
-
+    private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
 
     fun getCountriesFromApi() {
@@ -30,12 +30,12 @@ class AllCountriesViewModel(private val sortStatus: Int) : BaseViewModel() {
 //        progressBar.visibility = ProgressBar.VISIBLE
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { list -> countryDetailsDtoTransformer.transform(list) }
+            .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus)}
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ listDto ->
-                mutableCountriesLiveData.value = listDto
-                mutableCountriesLiveData.sortBySortStatusFromPref(sortStatus)
-                saveToDBfromApi()
+            .subscribe({ sortedListDto ->
+                mutableCountriesLiveData.value = sortedListDto
+//                saveToDBfromApi()
             }, { getCountriesFromDB()
 //                if (cone?.isOnline() == false) {
 //                    mutableCountriesErrorLiveData.value = "Error"
@@ -49,20 +49,14 @@ class AllCountriesViewModel(private val sortStatus: Int) : BaseViewModel() {
         val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = CountriesApp.base?.getLanguageInfoDAO()
         countriesFromDB
-            ?.doOnNext { list ->
-                listOfCountriesFromDB = list.convertDBdataToRetrofitModel(
-                    languagesFromDB,
-                    listOfCountriesFromDB
-                )
-                listOfCountriesFromDB.sortBySortStatusFromPref(sortStatus)
-            }
+            ?.map { list -> list.convertDBdataToRetrofitModel(languagesFromDB,
+                listOfCountriesFromDB) }
+            ?.doOnNext { list -> list.sortBySortStatusFromPref(sortStatus) }
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({
-                adapterOfAllCountries.repopulate(
-                    listOfCountriesFromDB
-                )
-                listOfCountriesFromDB.clear()
+            ?.subscribe({ sortedListDto ->
+                mutableCountriesLiveData.value = sortedListDto
+                sortedListDto.clear()
                 adapterOfAllCountries.setItemClick {
                     if (context?.isOnline() == false) {
                         context?.toast(getString(R.string.chek_inet))
