@@ -104,7 +104,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
 
-        getSearchSubject()
+//        getSearchSubject()
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
@@ -121,8 +121,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         })
 
         mSvMenu.setOnCloseListener {
-            listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
-            adapterOfAllCountries.repopulate(listCountriesFromApiDto)
+            viewModel.countriesLiveData.observe(viewLifecycleOwner, Observer { data -> sortAfterCloseSearching(data) })
             false
         }
     }
@@ -184,43 +183,22 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         }
     }
 
-    private fun showCountryFromDB( listCountriesFromDbDto: MutableList<CountryDescriptionItemDto>) {
-
-        listOfCountriesFromDB.clear()
-        adapterOfAllCountries.setItemClick {
-            if (context?.isOnline() == false) {
-                context?.toast(getString(R.string.chek_inet))
-            } else {
-                getCountriesFromApi()
-            }
-        }
+    private fun sortAfterCloseSearching(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+        listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
+        adapterOfAllCountries.repopulate(listCountriesFromApiDto)
     }
 
-    private fun saveToDBfromApi() {
-        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-        listCountriesFromApiDto.let {
-            listCountriesFromApiDto.forEach { item ->
-                listOfAllCountries.add(
-                    CountryBaseInfoEntity(
-                        item.name,
-                        item.capital,
-                        item.area
-                    )
-                )
-                item.languages.forEach { language ->
-                    listOfAllLanguages.add(
-                        LanguagesInfoEntity(
-                            item.name,
-                            language.name
-                        )
-                    )
-                }
-            }
-            daoCountry?.addAll(listOfAllCountries)
-            daoLanguage?.addAll(listOfAllLanguages)
-        }
-    }
+//    private fun showCountryFromDB( listCountriesFromDbDto: MutableList<CountryDescriptionItemDto>) {
+//
+//        listOfCountriesFromDB.clear()
+//        adapterOfAllCountries.setItemClick {
+//            if (context?.isOnline() == false) {
+//                context?.toast(getString(R.string.chek_inet))
+//            } else {
+//                getCountriesFromApi()
+//            }
+//        }
+//    }
 
     private fun showSortResetDialog() {
         val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
@@ -238,36 +216,36 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         alertDialog?.show()
     }
 
-    private fun getSearchSubject(): Disposable =
-        mSearchSubject
-            .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
-            .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
-            .distinctUntilChanged()
-            .map { it.trim() }
-            .doOnNext { searchText = it }
-            .flatMap { text ->
-                RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
-                    .onErrorResumeNext { Observable.just(mutableListOf()) }
-            }
-            .doOnNext { list ->
-                listCountriesFromSearch.clear()
-                list.forEach { country ->
-                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
-                        listCountriesFromSearch.add(country)
-                    }
-                }
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                adapterOfAllCountries.repopulate(
-                    countryDetailsDtoTransformer.transform(
-                        listCountriesFromSearch
-                    )
-                )
-            }, {
-                Log.d(TAG, ("Error"))
-            }).also { mCompositeDisposable.add(it) }
+//    private fun getSearchSubject(): Disposable =
+//        mSearchSubject
+//            .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+//            .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+//            .distinctUntilChanged()
+//            .map { it.trim() }
+//            .doOnNext { searchText = it }
+//            .flatMap { text ->
+//                RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
+//                    .onErrorResumeNext { Observable.just(mutableListOf()) }
+//            }
+//            .doOnNext { list ->
+//                listCountriesFromSearch.clear()
+//                list.forEach { country ->
+//                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
+//                        listCountriesFromSearch.add(country)
+//                    }
+//                }
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({
+//                adapterOfAllCountries.repopulate(
+//                    countryDetailsDtoTransformer.transform(
+//                        listCountriesFromSearch
+//                    )
+//                )
+//            }, {
+//                Log.d(TAG, ("Error"))
+//            }).also { mCompositeDisposable.add(it) }
 
     override fun onDestroyView() {
         super.onDestroyView()
