@@ -72,14 +72,16 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
 
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())
+        viewModel = ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus))
             .get(AllCountriesViewModel::class.java)
+            .also {
+                it.countriesLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromApi(data) })
+                it.countriesErrorLiveData.observe(viewLifecycleOwner, Observer { error -> showError(error) })
+                it.getCountriesFromApi()
+            }
 
-        //подписываемся на рассылку
         with(viewModel) {
-           countriesLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromApi(data) })
-           countriesErrorLiveData.observe(viewLifecycleOwner, Observer { error -> showError(error) })
-           getCountriesFromApi()
+
         }
 
         recyclerView.setHasFixedSize(true)
