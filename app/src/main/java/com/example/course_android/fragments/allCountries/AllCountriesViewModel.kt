@@ -8,6 +8,8 @@ import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.room.CountryBaseInfoEntity
+import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -35,7 +37,7 @@ class AllCountriesViewModel(private val sortStatus: Int) : BaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ sortedListDto ->
                 mutableCountriesLiveData.value = sortedListDto
-//                saveToDBfromApi()
+                saveToDBfromApi(sortedListDto)
             }, { getCountriesFromDB()
 //                if (cone?.isOnline() == false) {
 //                    mutableCountriesErrorLiveData.value = "Error"
@@ -57,16 +59,42 @@ class AllCountriesViewModel(private val sortStatus: Int) : BaseViewModel() {
             ?.subscribe({ sortedListDto ->
                 mutableCountriesLiveData.value = sortedListDto
                 sortedListDto.clear()
-                adapterOfAllCountries.setItemClick {
-                    if (context?.isOnline() == false) {
-                        context?.toast(getString(R.string.chek_inet))
-                    } else {
-                        getCountriesFromApi()
-                    }
-                }
+//                adapterOfAllCountries.setItemClick {
+//                    if (context?.isOnline() == false) {
+//                        context?.toast(getString(R.string.chek_inet))
+//                    } else {
+//                        getCountriesFromApi()
+//                    }
+//                }
             }, { throwable ->
                 throwable.printStackTrace()
             }).also { mCompositeDisposable.add(it) }
+    }
+
+    private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+        listCountriesFromApiDto.let {
+            listCountriesFromApiDto.forEach { item ->
+                listOfAllCountries.add(
+                    CountryBaseInfoEntity(
+                        item.name,
+                        item.capital,
+                        item.area
+                    )
+                )
+                item.languages.forEach { language ->
+                    listOfAllLanguages.add(
+                        LanguagesInfoEntity(
+                            item.name,
+                            language.name
+                        )
+                    )
+                }
+            }
+            CountriesApp.daoCountry?.addAll(listOfAllCountries)
+            CountriesApp.daoLanguage?.addAll(listOfAllLanguages)
+        }
     }
 
 }
