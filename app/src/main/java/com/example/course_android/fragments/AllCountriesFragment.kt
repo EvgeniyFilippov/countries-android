@@ -126,7 +126,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             }
         }
         if (item.itemId == R.id.reset_sort) {
-            showAlertDialog()
+            showSortResetDialog()
         }
         saveSortStatus()
         return super.onOptionsItemSelected(item)
@@ -135,7 +135,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
     private fun getCountriesFromApi() {
         val progressBar = binding?.progressBar as ProgressBar
         progressBar.visibility = ProgressBar.VISIBLE
-        RetrofitObj.getCountriesApi().getTopHeadlines()
+        RetrofitObj.getCountriesApi().getListOfCountry()
             .doOnNext { list ->
                 listCountriesFromApiDto = countryDetailsDtoTransformer.transform(list)
                 listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
@@ -238,7 +238,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
         }
     }
 
-    private fun showAlertDialog() {
+    private fun showSortResetDialog() {
         val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
             ?.setTitle(getString(R.string.sort))
             ?.setMessage(getString(R.string.reset_sort))
@@ -262,7 +262,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries) {
             .map { it.trim() }
             .doOnNext { searchText = it }
             .flatMap { text ->
-                RetrofitObj.getCountryDescriptionApi().getTopHeadlines(text).toObservable()
+                RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
                     .onErrorResumeNext { Observable.just(mutableListOf()) }
             }
             .doOnNext { list ->
