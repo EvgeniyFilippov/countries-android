@@ -1,8 +1,8 @@
 package com.example.course_android.utils
 
-import com.example.course_android.model.allCountries.Language
+import com.example.course_android.dto.model.LanguageOfOneCountryDto
 
-fun List<Language>.getLanguageByKey(): StringBuilder {
+fun List<LanguageOfOneCountryDto>.getLanguageByKey(): StringBuilder {
     val myStringBuilder = StringBuilder()
     for (n in this.indices) {
         myStringBuilder.append(this[n].name)

@@ -101,6 +101,7 @@ dependencies {
     //RxJava
     implementation "io.reactivex.rxjava3:rxandroid:$rxJavaAndroid"
     implementation "io.reactivex.rxjava3:rxjava:$rxJava"
+    implementation "androidx.room:room-rxjava3:$room_version"
 
     //Maps
     implementation "com.google.android.gms:play-services-location:$gms"

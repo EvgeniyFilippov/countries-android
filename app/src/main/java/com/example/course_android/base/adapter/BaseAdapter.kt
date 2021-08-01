@@ -1,4 +1,4 @@
-package com.example.course_android.adapters
+package com.example.course_android.base.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 
@@ -28,6 +28,11 @@ abstract class BaseAdapter<ItemType> : RecyclerView.Adapter<RecyclerView.ViewHol
     open fun addItem(item: ItemType) {
         mDataList.add(item)
         notifyItemChanged(mDataList.size - 1)
+    }
+
+    open fun clear() {
+        mDataList.clear()
+        notifyDataSetChanged()
     }
 
 }
