@@ -13,6 +13,7 @@
     <string name="wi_fi">wi-fi</string>
     <string name="sort_down">Сортировка по убыванию</string>
     <string name="reset_sort">Сбросить сортировку</string>
+    <string name="error_default">Неизвестная ошибка</string>
     <string name="search">Поиск</string>
     <string name="sort_up">Сортировка по позврастанию</string>
     <string name="distance">Расстояние до страны</string>
@@ -29,6 +30,7 @@
     <string name="dialog_ok">ОК</string>
     <string name="distanceToYou">Расстояние от вас до %1$s составляет %2$d км </string>
     <string name="sort">Сортировка</string>
+    <string name="error">Ошибка</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="chek_inet">Проверьте подключение к интернету</string>
