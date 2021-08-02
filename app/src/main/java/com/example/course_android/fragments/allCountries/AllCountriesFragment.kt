@@ -25,6 +25,7 @@ import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
+import com.example.course_android.fragments.filter.FilterViewModel
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -42,6 +43,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     private val mSearchSubject = BehaviorSubject.create<String>()
 
     private lateinit var viewModel: AllCountriesViewModel
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,6 +66,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                     showProgress()
                     it.getCountriesFromApi()
                 }
+
+
 
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
