@@ -11,6 +11,8 @@ object Constants {
     const val DEFAULT_SORT_STATUS = 0
     const val ERROR = "ERROR"
     const val COUNTRY_NAME_KEY = "COUNTRY_NAME_KEY"
+    const val COUNTRY_AREA_START_KEY = "COUNTRY_NAME_KEY"
+    const val COUNTRY_AREA_END_KEY = "COUNTRY_NAME_KEY"
     const val DISTANCE_KEY = "DISTANCE_KEY"
     const val DEFAULT_FLAG = "https://static.wikia.nocookie.net/science/images/2/2a/Flag_of_None.svg/revision/latest?cb=20091012151312&path-prefix=ru"
     const val DEFAULT_DOUBLE = 0.0
