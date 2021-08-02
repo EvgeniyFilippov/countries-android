@@ -24,6 +24,7 @@ import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
+import com.example.course_android.ext.showAlertDialog
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -60,6 +61,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                     it.countriesFromSearchLiveData.observe(
                         viewLifecycleOwner,
                         Observer { data -> showCountries(data) })
+                    showProgress()
                     it.getCountriesFromApi()
                 }
 
@@ -148,6 +150,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
+        binding?.progressBar?.visibility = View.GONE
         adapterOfAllCountries.setItemClick { item ->
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_KEY, item.name)
@@ -157,19 +160,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             )
         }
     }
-
-
-//    private fun showCountryFromDB( listCountriesFromDbDto: MutableList<CountryDescriptionItemDto>) {
-//
-//        listOfCountriesFromDB.clear()
-//        adapterOfAllCountries.setItemClick {
-//            if (context?.isOnline() == false) {
-//                context?.toast(getString(R.string.chek_inet))
-//            } else {
-//                getCountriesFromApi()
-//            }
-//        }
-//    }
 
     private fun showSortResetDialog() {
         val alertDialog = context?.let { MaterialAlertDialogBuilder(it) }
@@ -194,15 +184,19 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     }
 
     override fun showError(error: String) {
-        TODO("Not yet implemented")
+        if (context?.isOnline() == false) {
+            context?.toast(getString(R.string.chek_inet))
+        } else {
+            activity?.showAlertDialog()
+        }
     }
 
     override fun showProgress() {
-        TODO("Not yet implemented")
+        binding?.progressBar?.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        TODO("Not yet implemented")
+        binding?.progressBar?.visibility = View.GONE
     }
 
 }
