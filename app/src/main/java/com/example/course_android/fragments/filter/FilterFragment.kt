@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_AREA_END_KEY
@@ -15,6 +17,9 @@ import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.databinding.FragmentFilterBinding
+import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.fragments.allCountries.AllCountriesViewModel
+import com.example.course_android.fragments.allCountries.AllCountriesViewModelFactory
 import com.google.android.material.slider.RangeSlider
 import com.google.android.material.slider.Slider
 
@@ -23,11 +28,9 @@ class FilterFragment : Fragment() {
     private var binding: FragmentFilterBinding? = null
     private var slider: RangeSlider? = null
     private var valuesRangeSlider: MutableList<Float> = mutableListOf()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private lateinit var viewModelFilter: FilterViewModel
+    private var start = 0.0F
+    private var end = 0.0F
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,29 +45,32 @@ class FilterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.btnFilterGo?.setOnClickListener {
-            val bundle = Bundle()
-            val t1 = valuesRangeSlider[0]
-            val t2 = valuesRangeSlider[1]
-                bundle.putString(COUNTRY_AREA_START_KEY, t1.toString())
-//            bundle.putFloat(COUNTRY_AREA_END_KEY,t2)
-            findNavController().navigate(R.id.action_filterFragment_to_secondFragment)
+            viewModelFilter =
+                ViewModelProvider(this, FilterViewModelFactory(start, end))
+                    .get(FilterViewModel::class.java)
+                    .also {
+                        it.countriesLiveData.observe(
+                            viewLifecycleOwner,
+                            Observer { data -> showResult(data) })
+//                    it.countriesErrorLiveData.observe(
+//                        viewLifecycleOwner,
+//                        Observer { error -> showError(error) })
+//
+                    }
+//
+//            findNavController().navigate(R.id.action_filterFragment_to_secondFragment)
+            viewModelFilter.getCountriesFromFilter()
         }
 
-//
-//        slider?.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener {
-//            override fun onStartTrackingTouch(slider: RangeSlider) {
-//                // Responds to when slider's touch event is being started
-//            }
-//
-//            override fun onStopTrackingTouch(slider: RangeSlider) {
-//                // Responds to when slider's touch event is being stopped
-//
-//            }
-//        })
+
 
         slider?.addOnChangeListener { rangeSlider, value, fromUser ->
-            valuesRangeSlider = rangeSlider.values
-            // Responds to when slider's value is changed
+            start = rangeSlider.values[0]
+            end = rangeSlider.values[1]
         }
+    }
+
+    private fun showResult(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+        val countrList = listCountriesFromApiDto
     }
 }
