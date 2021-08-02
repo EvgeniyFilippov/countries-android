@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.course_android.Constants
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
+import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.CountriesApp
 import com.example.course_android.R
@@ -43,7 +44,7 @@ class AllCountriesViewModel(
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
 
-    private var searchText: String = ""
+    private var searchText: String = DEFAULT_STRING
 
     private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
 
@@ -117,7 +118,7 @@ class AllCountriesViewModel(
         }
     }
 
-    fun getSearchSubject(it: String): Disposable =
+    fun getSearchSubject(): Disposable =
         mSearchSubject
             .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
             .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
