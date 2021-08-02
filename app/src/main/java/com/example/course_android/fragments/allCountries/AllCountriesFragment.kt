@@ -53,7 +53,6 @@ import java.util.concurrent.TimeUnit
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
 
 //    private lateinit var listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>
-    private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
 
 
     private var binding: FragmentAllCountriesBinding? = null
@@ -72,17 +71,14 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
 
-        viewModel = ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus))
+        viewModel = ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
             .get(AllCountriesViewModel::class.java)
             .also {
                 it.countriesLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromApi(data) })
                 it.countriesErrorLiveData.observe(viewLifecycleOwner, Observer { error -> showError(error) })
+                it.countriesFromSearchLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromSearch(data) })
                 it.getCountriesFromApi()
             }
-
-        with(viewModel) {
-
-        }
 
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -104,13 +100,15 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
 
-//        getSearchSubject()
+        viewModel.getSearchSubject("")
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { mSearchSubject.onNext(query) }
+                query?.let { mSearchSubject.onNext(query)
+                    viewModel.countriesFromSearchLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromSearch(data) })
+                }
                 return false
             }
 
@@ -184,8 +182,12 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     }
 
     private fun sortAfterCloseSearching(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
+//        listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
         adapterOfAllCountries.repopulate(listCountriesFromApiDto)
+    }
+
+    private fun showCountryFromSearch(listCountriesFromSearch: MutableList<CountryDescriptionItemDto>) {
+        adapterOfAllCountries.repopulate(listCountriesFromSearch)
     }
 
 //    private fun showCountryFromDB( listCountriesFromDbDto: MutableList<CountryDescriptionItemDto>) {
