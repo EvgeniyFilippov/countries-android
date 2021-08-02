@@ -23,6 +23,9 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         binding?.btnMap?.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_mapOfAllCountriesFragment2)
         }
+        binding?.btnFilter?.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_filterFragment)
+        }
         setHasOptionsMenu(true)
     }
 
