@@ -65,6 +65,23 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                     it.getCountriesFromApi()
                 }
 
+        viewModel =
+            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
+                .get(AllCountriesViewModel::class.java)
+                .also {
+                    it.countriesLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { data -> showCountries(data) })
+                    it.countriesErrorLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { error -> showError(error) })
+                    it.countriesFromSearchLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { data -> showCountries(data) })
+                    showProgress()
+                    it.getCountriesFromApi()
+                }
+
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
