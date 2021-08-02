@@ -1,7 +1,11 @@
 package com.example.course_android.fragments.allCountries
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.course_android.Constants
@@ -12,6 +16,7 @@ import com.example.course_android.CountriesApp
 import com.example.course_android.R
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
+import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
@@ -49,8 +54,6 @@ class AllCountriesViewModel(
     private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
 
     fun getCountriesFromApi() {
-//        val progressBar = binding?.progressBar as ProgressBar
-//        progressBar.visibility = ProgressBar.VISIBLE
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { list -> countryDetailsDtoTransformer.transform(list) }
             .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus)}
@@ -59,12 +62,12 @@ class AllCountriesViewModel(
             .subscribe({ sortedListDto ->
                 mutableCountriesLiveData.value = sortedListDto
                 saveToDBfromApi(sortedListDto)
-            }, { getCountriesFromDB()
+            }, {
+                getCountriesFromDB()
 //                if (cone?.isOnline() == false) {
 //                    mutableCountriesErrorLiveData.value = "Error"
 //                    context?.toast(getString(R.string.chek_inet))
 //                }
-//                progressBar.visibility = ProgressBar.GONE
             }).also { mCompositeDisposable.add(it) }
     }
 
@@ -80,13 +83,6 @@ class AllCountriesViewModel(
             ?.subscribe({ sortedListDto ->
                 mutableCountriesLiveData.value = sortedListDto
                 sortedListDto.clear()
-//                adapterOfAllCountries.setItemClick {
-//                    if (context?.isOnline() == false) {
-//                        context?.toast(getString(R.string.chek_inet))
-//                    } else {
-//                        getCountriesFromApi()
-//                    }
-//                }
             }, { throwable ->
                 throwable.printStackTrace()
             }).also { mCompositeDisposable.add(it) }
@@ -144,11 +140,6 @@ class AllCountriesViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 mutableCountriesFromSearchLiveData.value = countryDetailsDtoTransformer.transform(listCountriesFromSearch)
-//                adapterOfAllCountries.repopulate(
-//                    countryDetailsDtoTransformer.transform(
-//                        listCountriesFromSearch
-//                    )
-//                )
             }, {
                 Log.d(ContentValues.TAG, ("Error"))
             }).also { mCompositeDisposable.add(it) }
