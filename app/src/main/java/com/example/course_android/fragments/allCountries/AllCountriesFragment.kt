@@ -20,6 +20,7 @@ import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
+import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
@@ -52,9 +53,6 @@ import java.util.concurrent.TimeUnit
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
 
-//    private lateinit var listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>
-
-
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
@@ -62,7 +60,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     var adapterOfAllCountries = AdapterOfAllCountries()
 
     private val mSearchSubject = BehaviorSubject.create<String>()
-    private var searchText: String = ""
 
     private lateinit var viewModel: AllCountriesViewModel
 
@@ -71,14 +68,21 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
 
-        viewModel = ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
-            .get(AllCountriesViewModel::class.java)
-            .also {
-                it.countriesLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromApi(data) })
-                it.countriesErrorLiveData.observe(viewLifecycleOwner, Observer { error -> showError(error) })
-                it.countriesFromSearchLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromSearch(data) })
-                it.getCountriesFromApi()
-            }
+        viewModel =
+            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
+                .get(AllCountriesViewModel::class.java)
+                .also {
+                    it.countriesLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { data -> showCountryFromApi(data) })
+                    it.countriesErrorLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { error -> showError(error) })
+                    it.countriesFromSearchLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { data -> showCountryFromSearch(data) })
+                    it.getCountriesFromApi()
+                }
 
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -100,15 +104,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
 
-        viewModel.getSearchSubject("")
+        viewModel.getSearchSubject()
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { mSearchSubject.onNext(query)
-                    viewModel.countriesFromSearchLiveData.observe(viewLifecycleOwner, Observer { data -> showCountryFromSearch(data) })
-                }
+                query?.let { mSearchSubject.onNext(query) }
                 return false
             }
 
@@ -119,7 +121,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         })
 
         mSvMenu.setOnCloseListener {
-            viewModel.countriesLiveData.observe(viewLifecycleOwner, Observer { data -> sortAfterCloseSearching(data) })
+            viewModel.getCountriesFromApi()
             false
         }
     }
@@ -147,8 +149,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         return super.onOptionsItemSelected(item)
     }
 
-
-
     private fun saveSortStatus() {
         activity?.getSharedPreferences(FILE_NAME_PREF, Context.MODE_PRIVATE)
             ?.edit()
@@ -165,9 +165,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         }
     }
 
-
-
-    private fun showCountryFromApi( listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+    private fun showCountryFromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
@@ -179,11 +177,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                 bundle
             )
         }
-    }
-
-    private fun sortAfterCloseSearching(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-//        listCountriesFromApiDto.sortBySortStatusFromPref(sortStatus)
-        adapterOfAllCountries.repopulate(listCountriesFromApiDto)
     }
 
     private fun showCountryFromSearch(listCountriesFromSearch: MutableList<CountryDescriptionItemDto>) {
@@ -217,37 +210,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             }
         alertDialog?.show()
     }
-
-//    private fun getSearchSubject(): Disposable =
-//        mSearchSubject
-//            .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
-//            .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
-//            .distinctUntilChanged()
-//            .map { it.trim() }
-//            .doOnNext { searchText = it }
-//            .flatMap { text ->
-//                RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
-//                    .onErrorResumeNext { Observable.just(mutableListOf()) }
-//            }
-//            .doOnNext { list ->
-//                listCountriesFromSearch.clear()
-//                list.forEach { country ->
-//                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
-//                        listCountriesFromSearch.add(country)
-//                    }
-//                }
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({
-//                adapterOfAllCountries.repopulate(
-//                    countryDetailsDtoTransformer.transform(
-//                        listCountriesFromSearch
-//                    )
-//                )
-//            }, {
-//                Log.d(TAG, ("Error"))
-//            }).also { mCompositeDisposable.add(it) }
 
     override fun onDestroyView() {
         super.onDestroyView()
