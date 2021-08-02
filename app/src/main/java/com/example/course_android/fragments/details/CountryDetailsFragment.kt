@@ -10,10 +10,7 @@ import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.ext.askLocationPermission
-import com.example.course_android.ext.checkLocationPermission
-import com.example.course_android.ext.isOnline
-import com.example.course_android.ext.showDialogWithOneButton
+import com.example.course_android.ext.*
 import com.example.course_android.utils.getDistance
 import com.example.course_android.utils.initMapOfCountryDetails
 import com.example.course_android.utils.loadSvg
@@ -120,6 +117,8 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     override fun showError(error: String, throwable: Throwable) {
         if (context?.isOnline() == false) {
             context?.toast(getString(R.string.chek_inet))
+        } else {
+            activity?.showAlertDialog()
         }
     }
 
