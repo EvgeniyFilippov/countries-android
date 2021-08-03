@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -44,25 +45,25 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.btnFilterGo?.setOnClickListener {
-            viewModelFilter =
-                ViewModelProvider(this, FilterViewModelFactory(start, end))
-                    .get(FilterViewModel::class.java)
-                    .also {
-                        it.countriesLiveData.observe(
-                            viewLifecycleOwner,
-                            Observer { data -> showResult(data) })
+        viewModelFilter =
+            ViewModelProvider(this, FilterViewModelFactory())
+                .get(FilterViewModel::class.java)
+                .also {
+                    it.countriesLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { data -> showResult(data) })
 //                    it.countriesErrorLiveData.observe(
 //                        viewLifecycleOwner,
 //                        Observer { error -> showError(error) })
 //
-                    }
+                }
 //
-//            findNavController().navigate(R.id.action_filterFragment_to_secondFragment)
-            viewModelFilter.getCountriesFromFilter()
+//
+        binding?.btnFilterGo?.setOnClickListener {
+
+            viewModelFilter.getCountriesFromFilter(start, end)
+//
         }
-
-
 
         slider?.addOnChangeListener { rangeSlider, value, fromUser ->
             start = rangeSlider.values[0]
@@ -71,6 +72,10 @@ class FilterFragment : Fragment() {
     }
 
     private fun showResult(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        val countrList = listCountriesFromApiDto
+
+        findNavController().navigate(R.id.action_filterFragment_to_secondFragment)
+
     }
+
+
 }
