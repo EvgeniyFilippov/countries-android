@@ -18,6 +18,8 @@ import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
 import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
+import com.example.course_android.Constants.SORT_STATUS_DOWN
+import com.example.course_android.Constants.SORT_STATUS_UP
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
@@ -30,6 +32,7 @@ import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_all_countries.*
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
@@ -40,32 +43,35 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
 
-    private val mSearchSubject = BehaviorSubject.create<String>()
+    private val mSearchSubject = PublishSubject.create<String>()
 
     private lateinit var viewModel: AllCountriesViewModel
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel =
+            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
+                .get(AllCountriesViewModel::class.java)
+        viewModel.getSearchSubject()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
 
-        viewModel =
-            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
-                .get(AllCountriesViewModel::class.java)
-                .also {
-                    it.countriesLiveData.observe(
-                        viewLifecycleOwner,
-                        Observer { data -> showCountries(data) })
-                    it.countriesErrorLiveData.observe(
-                        viewLifecycleOwner,
-                        Observer { error -> showError(error) })
-                    it.countriesFromSearchLiveData.observe(
-                        viewLifecycleOwner,
-                        Observer { data -> showCountries(data) })
-                    showProgress()
-                    it.getCountriesFromApi()
-                }
+        viewModel.mutableCountriesLiveData.observe(
+            viewLifecycleOwner,
+            Observer { data -> showCountries(data) })
+        viewModel.mutableCountriesErrorLiveData.observe(
+            viewLifecycleOwner,
+            Observer { error -> showError(error) })
+        viewModel.mutableCountriesFromSearchLiveData.singleObserve(
+            viewLifecycleOwner,
+            Observer { data -> showCountriesFromSearch(data) })
+        showProgress()
+        viewModel.getCountriesFromApi()
 
 
 
@@ -79,17 +85,17 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         inflater.inflate(R.menu.countries_sort_menu, menu)
 
         super.onCreateOptionsMenu(menu, inflater)
-        if (sortStatus == Constants.SORT_STATUS_UP) {
+        if (sortStatus == SORT_STATUS_UP) {
             menu.findItem(R.id.sort_countries)
                 .setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24).isChecked = true
-        } else if (sortStatus == Constants.SORT_STATUS_DOWN) {
+        } else if (sortStatus == SORT_STATUS_DOWN) {
             menu.findItem(R.id.sort_countries).setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
         }
 
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
 
-        viewModel.getSearchSubject()
+
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
@@ -118,13 +124,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_down_24)
                 context?.toast(getString(R.string.sort_up))
                 item.isChecked = true
-                sortStatus = Constants.SORT_STATUS_UP
+                sortStatus = SORT_STATUS_UP
             } else {
                 adapterOfAllCountries.sortDescendingAndReplaceItem()
                 item.setIcon(R.drawable.ic_baseline_keyboard_arrow_up_24)
                 context?.toast(getString(R.string.sort_down))
                 item.isChecked = false
-                sortStatus = Constants.SORT_STATUS_DOWN
+                sortStatus = SORT_STATUS_DOWN
             }
         }
         if (item.itemId == R.id.reset_sort) {
@@ -151,6 +157,21 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     }
 
     private fun showCountries(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+        adapterOfAllCountries.repopulate(
+            listCountriesFromApiDto
+        )
+        binding?.progressBar?.visibility = View.GONE
+        adapterOfAllCountries.setItemClick { item ->
+            val bundle = Bundle()
+            bundle.putString(COUNTRY_NAME_KEY, item.name)
+            findNavController().navigate(
+                R.id.action_secondFragment_to_countryDetailsFragment,
+                bundle
+            )
+        }
+    }
+
+    private fun showCountriesFromSearch(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
