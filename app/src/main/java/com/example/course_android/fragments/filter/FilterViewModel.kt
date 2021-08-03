@@ -23,8 +23,8 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 class FilterViewModel(
-    private val start: Float,
-    private val end: Float
+//    private val start: Float,
+//    private val end: Float
 ) : BaseViewModel() {
 
     private val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
@@ -41,7 +41,7 @@ class FilterViewModel(
 
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
-    fun getCountriesFromFilter() {
+    fun getCountriesFromFilter(start: Float, end: Float) {
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { list -> countryDetailsDtoTransformer.transform(list) }
             .doOnNext { list -> list.forEach {
