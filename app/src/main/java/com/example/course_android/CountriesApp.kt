@@ -1,8 +1,6 @@
 package com.example.course_android
 
 import android.app.Application
-import com.example.course_android.adapters.AdapterLanguages
-import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.room.CountryInfoDAO
 import com.example.course_android.room.DatabaseInfo
@@ -20,7 +18,7 @@ class CountriesApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        retrofit = RetrofitObj.getRetrofit(RetrofitObj.getOkHttp())
+        retrofit = RetrofitObj.getRetrofit()
         base = this.let { DatabaseInfo.init(it) }
         daoCountry = base?.getCountryInfoDAO()
         daoLanguage = base?.getLanguageInfoDAO()

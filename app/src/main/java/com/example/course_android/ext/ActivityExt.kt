@@ -1,6 +1,7 @@
 package com.example.course_android.ext
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,7 +12,9 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.StringRes
+import com.example.course_android.Constants
 import com.example.course_android.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 const val DIALOG_WIDTH_DELTA_7: Float = 0.7F
 
@@ -83,4 +86,14 @@ fun Activity.showDialogWithOneButton(
         dialog.show()
     }
     return dialog
+}
+
+fun Activity.showAlertDialog() {
+    val alertDialog = AlertDialog.Builder(this)
+        .setTitle(getString(R.string.error))
+        .setMessage(getString(R.string.error_default))
+        .setPositiveButton(getString(R.string.dialog_ok)) { dialog, _ ->
+            dialog.dismiss()
+        }
+    alertDialog?.show()
 }

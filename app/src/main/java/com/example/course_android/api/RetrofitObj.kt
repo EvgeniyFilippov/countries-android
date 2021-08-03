@@ -1,6 +1,7 @@
 package com.example.course_android.api
 
 import com.example.course_android.Constants
+import com.example.course_android.CountriesApp
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -10,27 +11,27 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitObj {
 
-    private lateinit var retrofit: Retrofit
-    lateinit var okHttpClientBuilder: OkHttpClient.Builder
-    lateinit var logging: HttpLoggingInterceptor
+    private val loggingInterceptor = HttpLoggingInterceptor()
+    private val okHttpClient = OkHttpClient.Builder()
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(loggingInterceptor)
+        .build()
 
-    fun getRetrofit(okHttp: OkHttpClient.Builder): Retrofit {
-        retrofit = Retrofit.Builder()
+    fun getRetrofit(): Retrofit {
+      return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .client(okHttp.build())
+            .client(okHttpClient)
             .build()
-        return retrofit
     }
 
-    fun getOkHttp(): OkHttpClient.Builder {
-        okHttpClientBuilder = OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-        logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
-        okHttpClientBuilder.addInterceptor(logging)
-        return okHttpClientBuilder
+    fun getCountriesApi(): CountriesApi {
+        return CountriesApp.retrofit.create(CountriesApi::class.java)
+    }
+
+    init {
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
     }
 }

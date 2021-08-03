@@ -30,4 +30,9 @@ abstract class BaseAdapter<ItemType> : RecyclerView.Adapter<RecyclerView.ViewHol
         notifyItemChanged(mDataList.size - 1)
     }
 
+    open fun clear() {
+        mDataList.clear()
+        notifyDataSetChanged()
+    }
+
 }

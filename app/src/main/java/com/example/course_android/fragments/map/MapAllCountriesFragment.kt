@@ -1,11 +1,12 @@
 package com.example.course_android.fragments.map
 
 import android.os.Bundle
+import com.example.course_android.ext.showAlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.course_android.R
-import com.example.course_android.utils.initMap3
+import com.example.course_android.utils.initMapOfAllCountries
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentMapAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
@@ -52,13 +53,15 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
 
         //карта гугл
         mapFragment2?.run {
-            getMapAsync { map -> activity?.let { initMap3(map, listOfCountries) } }
+            getMapAsync { map -> activity?.let { initMapOfAllCountries(map, listOfCountries) } }
         }
     }
 
     override fun showError(error: String, throwable: Throwable) {
         if (context?.isOnline() == false) {
             context?.toast(getString(R.string.chek_inet))
+        } else {
+            activity?.showAlertDialog()
         }
     }
 
