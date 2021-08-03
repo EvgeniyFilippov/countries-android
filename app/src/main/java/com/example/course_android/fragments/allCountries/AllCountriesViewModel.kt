@@ -22,6 +22,7 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
+import com.example.course_android.utils.SingleLiveEvent
 import com.example.course_android.utils.convertDBdataToRetrofitModel
 import com.example.course_android.utils.sortBySortStatusFromPref
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -29,21 +30,22 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     private val sortStatus: Int,
-    private val mSearchSubject: BehaviorSubject<String>
+    private val mSearchSubject: PublishSubject<String>
     ) : BaseViewModel() {
 
-    private val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
+    val mutableCountriesLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
     val countriesLiveData: LiveData<MutableList<CountryDescriptionItemDto>> =
         mutableCountriesLiveData
 
-    private val mutableCountriesErrorLiveData = MutableLiveData<String>()
+    val mutableCountriesErrorLiveData = SingleLiveEvent<String>()
     val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
 
-    private val mutableCountriesFromSearchLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
+    val mutableCountriesFromSearchLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
     val countriesFromSearchLiveData: LiveData<MutableList<CountryDescriptionItemDto>> = mutableCountriesFromSearchLiveData
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
@@ -145,3 +147,4 @@ class AllCountriesViewModel(
             }).also { mCompositeDisposable.add(it) }
 
 }
+
