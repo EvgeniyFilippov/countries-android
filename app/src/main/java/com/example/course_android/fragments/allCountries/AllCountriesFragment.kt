@@ -64,12 +64,12 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         viewModel.mutableCountriesLiveData.observe(
             viewLifecycleOwner,
             Observer { data -> showCountries(data) })
-        viewModel.mutableCountriesErrorLiveData.observe(
-            viewLifecycleOwner,
-            Observer { error -> showError(error) })
+//        viewModel.mutableCountriesErrorLiveData.observe(
+//            viewLifecycleOwner,
+//            Observer { error -> showError(error) })
         viewModel.mutableCountriesFromSearchLiveData.singleObserve(
             viewLifecycleOwner,
-            Observer { data -> showCountriesFromSearch(data) })
+            Observer { data -> showCountries(data) })
         showProgress()
         viewModel.getCountriesFromApi()
 
@@ -157,21 +157,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     }
 
     private fun showCountries(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        adapterOfAllCountries.repopulate(
-            listCountriesFromApiDto
-        )
-        binding?.progressBar?.visibility = View.GONE
-        adapterOfAllCountries.setItemClick { item ->
-            val bundle = Bundle()
-            bundle.putString(COUNTRY_NAME_KEY, item.name)
-            findNavController().navigate(
-                R.id.action_secondFragment_to_countryDetailsFragment,
-                bundle
-            )
-        }
-    }
-
-    private fun showCountriesFromSearch(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
