@@ -38,15 +38,15 @@ class AllCountriesViewModel(
     private val mSearchSubject: PublishSubject<String>
     ) : BaseViewModel() {
 
-    val mutableCountriesLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
-    val countriesLiveData: LiveData<MutableList<CountryDescriptionItemDto>> =
-        mutableCountriesLiveData
+    val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
+//    val countriesLiveData: LiveData<MutableList<CountryDescriptionItemDto>> =
+//        mutableCountriesLiveData
 
     val mutableCountriesErrorLiveData = SingleLiveEvent<String>()
-    val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
+//    val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
 
     val mutableCountriesFromSearchLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
-    val countriesFromSearchLiveData: LiveData<MutableList<CountryDescriptionItemDto>> = mutableCountriesFromSearchLiveData
+//    val countriesFromSearchLiveData: LiveData<MutableList<CountryDescriptionItemDto>> = mutableCountriesFromSearchLiveData
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
