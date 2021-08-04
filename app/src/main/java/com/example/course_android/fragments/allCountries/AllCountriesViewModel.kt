@@ -1,7 +1,6 @@
 package com.example.course_android.fragments.allCountries
 
 import android.content.ContentValues
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
@@ -15,13 +14,11 @@ import com.example.course_android.CountriesApp
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
 import com.example.course_android.dto.CountryDetailsDtoTransformer
-import com.example.course_android.dto.FilterSettingsToDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
-import com.example.course_android.utils.getDistanceForFilter
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -34,7 +31,7 @@ class AllCountriesViewModel(
     private val mSearchSubject: PublishSubject<String>
 ) : BaseViewModel() {
 
-    val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
+    val mutableCountriesLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
     val mutableCountriesFromSearchLiveData =
         SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
 
