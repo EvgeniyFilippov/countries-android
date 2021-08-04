@@ -6,11 +6,15 @@ import android.location.Location
 import android.location.LocationManager
 import android.util.Log
 import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
+
 
 private lateinit var currentCountryLatLng: LatLng
 private var googleMap: GoogleMap? = null
@@ -49,18 +53,42 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
     googleMap?.addMarker(markerOptions)
 }
 
+//@SuppressLint("MissingPermission")
+//private fun calculateDistance(context: Context) {
+//    val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+//        latitude = currentCountryLatLng.latitude
+//        longitude = currentCountryLatLng.longitude
+//    }
+//    LocationServices.getFusedLocationProviderClient(context)
+//        .lastLocation
+//        .addOnSuccessListener { location ->
+//            distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+//            Log.d(LOG_TAG, location.toString())
+//        }
+//}
+
 @SuppressLint("MissingPermission")
 private fun calculateDistance(context: Context) {
     val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
         latitude = currentCountryLatLng.latitude
         longitude = currentCountryLatLng.longitude
     }
-    LocationServices.getFusedLocationProviderClient(context)
-        .lastLocation
-        .addOnSuccessListener { location ->
-            distance = location.distanceTo(currentCountryLocation).toInt() / 1000
-            Log.d(LOG_TAG, location.toString())
+    val mLocationRequest = LocationRequest.create()
+    mLocationRequest.interval = 60000
+    mLocationRequest.fastestInterval = 5000
+    mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    val mLocationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            for (location in locationResult.locations) {
+                if (location != null) {
+                    distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+                    Log.d(LOG_TAG, location.toString())
+                }
+            }
         }
+    }
+    LocationServices.getFusedLocationProviderClient(context)
+        .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
 }
 
 fun getDistance(): Int = distance
