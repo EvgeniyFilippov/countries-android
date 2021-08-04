@@ -62,7 +62,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         if (item.itemId == R.id.gps_distance) {
             activity?.showDialogWithOneButton(
                 null,
-                getString(R.string.distanceToYou, mCountryName, context?.let { getDistance2(it) }),
+                getString(R.string.distanceToYou, mCountryName, context?.let { getDistance(it) }),
                 R.string.dialog_ok,
                 null
             )
@@ -93,7 +93,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         //проверяем и запрашиваем пермишен Gps
         if (context?.checkLocationPermission() == true) {
             permissionGps = true
-            getDistance()
         } else {
             activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
         }
@@ -105,7 +104,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
                     initMapOfCountryDetails(
                         map,
                         country[0],
-                        it.applicationContext,
                         permissionGps
                     )
                 }
