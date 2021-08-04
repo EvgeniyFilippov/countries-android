@@ -10,7 +10,7 @@
     <!-- TODO: Update blank fragment layout -->
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/header1"
+        android:id="@+id/header_of_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -25,7 +25,7 @@
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header1"/>
+        app:layout_constraintTop_toBottomOf="@id/header_of_area"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/header2"
