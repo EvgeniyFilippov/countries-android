@@ -13,7 +13,8 @@ class FilterSettingsToDtoTransformer :
 
         mapSettingsByFilterDto[START_AREA_FILTER_KEY] =
             item?.get(START_AREA_FILTER_KEY) ?: DEFAULT_INT
-        mapSettingsByFilterDto[END_AREA_FILTER_KEY] = item?.get(END_AREA_FILTER_KEY) ?: DEFAULT_INT
+        mapSettingsByFilterDto[END_AREA_FILTER_KEY] =
+            item?.get(END_AREA_FILTER_KEY) ?: DEFAULT_INT
 
         return mapSettingsByFilterDto
     }
