@@ -15,10 +15,8 @@ import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 
-
 private lateinit var currentCountryLatLng: LatLng
 private var googleMap: GoogleMap? = null
-
 private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
 private var currentLocationOfUser = Location("")
@@ -27,7 +25,6 @@ private var currentLocationOfUser = Location("")
 fun initMapOfCountryDetails(
     map: GoogleMap,
     countryDetailsDto: CountryDescriptionItemDto,
-    context: Context,
     permissionGps: Boolean
 ) {
     currentCountryLatLng = LatLng(
@@ -67,11 +64,6 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
 //        }
 //}
 
-
-
-
-
-
 @SuppressLint("MissingPermission")
  private fun getCurrentLocation(context: Context) {
     val mLocationRequest = LocationRequest.create()
@@ -92,13 +84,12 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
         .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
 }
 
-fun getDistance2(context: Context): Int {
+fun getDistance(context: Context): Int {
     getCurrentLocation(context)
     calculateDistance(currentLocationOfUser)
     return distance
 }
 
-@SuppressLint("MissingPermission")
 fun calculateDistance(location: Location) {
     val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
         latitude = currentCountryLatLng.latitude
@@ -109,9 +100,6 @@ fun calculateDistance(location: Location) {
 
 }
 
-fun getDistance(): Int = distance
-
-@SuppressLint("MissingPermission")
 fun initMapOfAllCountries(map: GoogleMap, listOfCountries: List<CountryDescriptionItemDto>) {
     googleMap = map
 
