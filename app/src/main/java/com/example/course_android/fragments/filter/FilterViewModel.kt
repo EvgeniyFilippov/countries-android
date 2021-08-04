@@ -30,14 +30,14 @@ import java.util.concurrent.TimeUnit
 
 class FilterViewModel() : BaseViewModel() {
 
-    val mutableCountriesLiveData = MutableLiveData<HashMap<String, Float>>()
+    val mutableCountriesLiveData = MutableLiveData<HashMap<String, Int>>()
 
-    private val map = hashMapOf<String, Float>()
+    private val map = hashMapOf<String, Int>()
 
     fun getCountriesFromFilter(start: Float, end: Float) {
 
-        map[START_AREA_FILTER_KEY] = start
-        map[END_AREA_FILTER_KEY] = end
+        map[START_AREA_FILTER_KEY] = start.toInt()
+        map[END_AREA_FILTER_KEY] = end.toInt()
         mutableCountriesLiveData.value = map
 
 
