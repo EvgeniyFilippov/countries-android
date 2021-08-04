@@ -21,7 +21,6 @@ class FilterFragment : Fragment() {
 
     private var binding: FragmentFilterBinding? = null
     private var slider: RangeSlider? = null
-    private var valuesRangeSlider: MutableList<Float> = mutableListOf()
     private lateinit var viewModelFilter: FilterViewModel
     private var start = 0.0F
     private var end = 0.0F
@@ -32,8 +31,6 @@ class FilterFragment : Fragment() {
         viewModelFilter =
             ViewModelProvider(this, FilterViewModelFactory())
                 .get(FilterViewModel::class.java)
-
-
     }
 
     override fun onCreateView(
@@ -58,21 +55,13 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         viewModelFilter.mutableFilterLiveData.observe(
             viewLifecycleOwner,
             Observer { data -> sendSettingsOfFilter(data) })
 
-
-
-
-
         binding?.btnFilterGo?.setOnClickListener {
 
-            viewModelFilter.getCountriesFromFilter(start, end)
-
-//
+            viewModelFilter.getValuesFromFilter(start, end)
         }
 
         slider?.addOnChangeListener { rangeSlider, value, fromUser ->
@@ -89,15 +78,17 @@ class FilterFragment : Fragment() {
 
     private fun buildFilterWithConfig(mapOfConfig: HashMap<String, Float>) {
 
-        slider?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY]!!
-        slider?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY]!!
-        slider?.values =
-            listOf(mapOfConfig[FILTER_VALUE_FROM_KEY], mapOfConfig[FILTER_VALUE_TO_KEY])
-        headerOfArea.text = getString(
-            R.string.area,
-            mapOfConfig[FILTER_VALUE_FROM_KEY]?.toInt(),
-            mapOfConfig[FILTER_VALUE_TO_KEY]?.toInt()
-        )
+            slider?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY] ?: 0.0F
+            slider?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY] ?: 0.0F
+            slider?.values =
+                listOf(mapOfConfig[FILTER_VALUE_FROM_KEY], mapOfConfig[FILTER_VALUE_TO_KEY])
+            headerOfArea.text = getString(
+                R.string.area,
+                mapOfConfig[FILTER_VALUE_FROM_KEY]?.toInt(),
+                mapOfConfig[FILTER_VALUE_TO_KEY]?.toInt()
+            )
+
+
 
     }
 }
