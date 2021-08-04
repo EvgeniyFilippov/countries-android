@@ -30,6 +30,7 @@ import com.example.course_android.ext.showAlertDialog
 import com.example.course_android.fragments.filter.FilterViewModel
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -60,6 +61,18 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
+        val argumy = arguments?.getString("tutu") ?: Constants.ERROR
+//        var gson = Gson()
+//        var testModel = gson.fromJson(argumy, MutableList<CountryDescriptionItemDto>::class.java)
+//        val mapper = ObjectMapper().registerKotlinModule()
+//        val genres = mapper.readValue(argumy, List<CountryDescriptionItemDto>)
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String, Float>>(
+            "map"
+        )?.observe(viewLifecycleOwner, Observer { note ->
+            val res = note.toString()
+        })
+
 
         viewModel.mutableCountriesLiveData.observe(
             viewLifecycleOwner,
@@ -136,6 +149,10 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         if (item.itemId == R.id.reset_sort) {
             showSortResetDialog()
         }
+        if (item.itemId == R.id.filter) {
+            findNavController().navigate(R.id.action_allCountriesFragment_to_filterFragment)
+        }
+
         saveSortStatus()
         return super.onOptionsItemSelected(item)
     }
