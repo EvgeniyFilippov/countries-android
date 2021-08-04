@@ -61,16 +61,16 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
-        val argumy = arguments?.getString("tutu") ?: Constants.ERROR
+//        val argumy = arguments?.getString("tutu") ?: Constants.ERROR
 //        var gson = Gson()
 //        var testModel = gson.fromJson(argumy, MutableList<CountryDescriptionItemDto>::class.java)
 //        val mapper = ObjectMapper().registerKotlinModule()
 //        val genres = mapper.readValue(argumy, List<CountryDescriptionItemDto>)
 
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String, Float>>(
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             "map"
-        )?.observe(viewLifecycleOwner, Observer { note ->
-            val res = note.toString()
+        )?.observe(viewLifecycleOwner, Observer { map ->
+            viewModel.getCountriesFromFilter(map)
         })
 
 
