@@ -1,10 +1,13 @@
 package com.example.course_android.fragments.filter
 
 import android.content.ContentValues
+import android.os.Parcel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.course_android.Constants
+import com.example.course_android.Constants.END_AREA_FILTER_KEY
+import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.CountriesApp
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
@@ -20,42 +23,25 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import kotlinx.android.parcel.Parceler
+import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.TypeParceler
 import java.util.concurrent.TimeUnit
 
-class FilterViewModel(
-//    private val start: Float,
-//    private val end: Float
-) : BaseViewModel() {
+class FilterViewModel() : BaseViewModel() {
 
-    private val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
-    val countriesLiveData: LiveData<MutableList<CountryDescriptionItemDto>> =
-        mutableCountriesLiveData
+    val mutableCountriesLiveData = MutableLiveData<HashMap<String, Float>>()
 
-    private val mutableCountriesErrorLiveData = MutableLiveData<String>()
-    val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
-
-    private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
-    private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-
-    private var searchText: String = Constants.DEFAULT_STRING
-
-    private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
+    private val map = hashMapOf<String, Float>()
 
     fun getCountriesFromFilter(start: Float, end: Float) {
-        RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { list -> countryDetailsDtoTransformer.transform(list) }
-            .doOnNext { list -> list.forEach {
-                if (it.area in start..end) {
-                    listCountriesFromFilter.add(it)
-                }
-            } }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                mutableCountriesLiveData.value = listCountriesFromFilter
-                listCountriesFromFilter.clear()
-            }, {
-            }).also { mCompositeDisposable.add(it) }
+
+        map[START_AREA_FILTER_KEY] = start
+        map[END_AREA_FILTER_KEY] = end
+        mutableCountriesLiveData.value = map
+
+
     }
+
 
 }
