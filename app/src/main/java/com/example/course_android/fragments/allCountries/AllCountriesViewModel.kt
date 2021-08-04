@@ -1,23 +1,18 @@
 package com.example.course_android.fragments.allCountries
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.util.Log
-import android.view.View
-import android.widget.ProgressBar
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.course_android.Constants
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.DEFAULT_STRING
+import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
+import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.CountriesApp
-import com.example.course_android.R
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
-import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.CountryDetailsDtoTransformer
+import com.example.course_android.dto.FilterSettingsToDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.room.CountryBaseInfoEntity
@@ -29,7 +24,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
@@ -50,10 +44,12 @@ class AllCountriesViewModel(
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
+    private val filterSettingsToDtoTransformer = FilterSettingsToDtoTransformer()
 
     private var searchText: String = DEFAULT_STRING
 
     private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
+    private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
         RetrofitObj.getCountriesApi().getListOfCountry()
@@ -127,7 +123,7 @@ class AllCountriesViewModel(
                 RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
                     .onErrorResumeNext { Observable.just(mutableListOf()) }
             }
-            .doOnNext {  list: MutableList<CountryDescriptionItem> ->
+            .doOnNext {  list ->
                 listCountriesFromSearch.clear()
                 list.forEach { country ->
                     if (country.name?.contains(searchText, ignoreCase = true) == true) {
@@ -146,5 +142,26 @@ class AllCountriesViewModel(
                 Log.d(ContentValues.TAG, ("Error"))
             }).also { mCompositeDisposable.add(it) }
 
+    fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
+        RetrofitObj.getCountriesApi().getListOfCountry()
+            .map { list -> countryDetailsDtoTransformer.transform(list) }
+            .doOnNext {  list ->
+                listCountriesFromFilter.clear()
+                val mapSettingsByFilterDto = filterSettingsToDtoTransformer.transform(mapSettingsByFilter)
+                list.forEach { country ->
+                    if (country.area >= mapSettingsByFilterDto[START_AREA_FILTER_KEY]!! && country.area <= mapSettingsByFilterDto[END_AREA_FILTER_KEY]!!) { //тут уже Dto
+                        listCountriesFromFilter.add(country)
+                    }
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ sortedListDto ->
+                mutableCountriesLiveData.value = listCountriesFromFilter
+                saveToDBfromApi(sortedListDto)
+            }, {
+
+            }).also { mCompositeDisposable.add(it) }
+    }
 }
 
