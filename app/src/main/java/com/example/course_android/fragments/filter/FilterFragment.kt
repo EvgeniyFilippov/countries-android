@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -20,13 +21,17 @@ import kotlin.collections.HashMap
 class FilterFragment : Fragment() {
 
     private var binding: FragmentFilterBinding? = null
-    private var slideroOfArea: RangeSlider? = null
+    private var sliderOfArea: RangeSlider? = null
     private lateinit var viewModelFilter: FilterViewModel
     private var startArea = 0.0F
     private var endArea = 0.0F
     private var startDistance = 0
     private var endDistance = 0
     private lateinit var headerOfArea: TextView
+    private lateinit var headerOfDistance: TextView
+    private lateinit var viewDistanceFrom: EditText
+    private lateinit var viewDistanceTo: EditText
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +45,13 @@ class FilterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFilterBinding.inflate(inflater, container, false)
-        headerOfArea = binding?.header1 as TextView
-        slideroOfArea = binding?.slider
-        slideroOfArea?.setLabelFormatter { value: Float ->
+        headerOfArea = binding?.headerOfArea as TextView
+        headerOfDistance = binding?.headerOfArea as TextView
+        viewDistanceFrom = binding?.distanceFrom as EditText
+        viewDistanceTo = binding?.distanceTo as EditText
+
+        sliderOfArea = binding?.slider
+        sliderOfArea?.setLabelFormatter { value: Float ->
             val format = NumberFormat.getIntegerInstance()
             format.maximumFractionDigits = 0
             format.format(value.toInt())
@@ -64,11 +73,13 @@ class FilterFragment : Fragment() {
 
         //записываем введенные значения юзером в LiveData
         binding?.btnFilterGo?.setOnClickListener {
+            startDistance = viewDistanceFrom.text.toString().toInt()
+            endDistance = viewDistanceTo.text.toString().toInt()
             viewModelFilter.putValuesFromFilter(startArea, endArea, startDistance, endDistance)
         }
 
         //слушаем слайдер площади
-        slideroOfArea?.addOnChangeListener { rangeSlider, value, fromUser ->
+        sliderOfArea?.addOnChangeListener { rangeSlider, value, fromUser ->
             startArea = rangeSlider.values[0]
             endArea = rangeSlider.values[1]
             headerOfArea.text = getString(R.string.area, startArea.toInt(), endArea.toInt())
@@ -84,9 +95,9 @@ class FilterFragment : Fragment() {
     //формируем начальные и конечные данные фильтра
     private fun buildFilterWithConfig(mapOfConfig: HashMap<String, Float>) {
 
-            slideroOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY] ?: 0.0F
-            slideroOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY] ?: 0.0F
-            slideroOfArea?.values =
+            sliderOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY] ?: 0.0F
+            sliderOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY] ?: 0.0F
+            sliderOfArea?.values =
                 listOf(mapOfConfig[FILTER_VALUE_FROM_KEY], mapOfConfig[FILTER_VALUE_TO_KEY])
             headerOfArea.text = getString(
                 R.string.area,
