@@ -145,11 +145,11 @@ class AllCountriesViewModel(
             }).also { mCompositeDisposable.add(it) }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
-        val myMapa = mapSettingsByFilter
+        val myMapDo = mapSettingsByFilter
         val currentLocationOfUser = getResultOfCurrentLocation()
 
-        val myLatitude = currentLocationOfUser.latitude
-        val myLongitude = currentLocationOfUser.longitude
+//        val myLatitude = currentLocationOfUser.latitude
+//        val myLongitude = currentLocationOfUser.longitude
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { list -> countryDetailsDtoTransformer.transform(list) }
             .doOnNext {  list ->
@@ -159,6 +159,7 @@ class AllCountriesViewModel(
                     if (country.area >= mapSettingsByFilterDto[START_AREA_FILTER_KEY]!! && country.area <= mapSettingsByFilterDto[END_AREA_FILTER_KEY]!!) { //тут уже Dto
                         if (calculateDistanceFiler(currentLocationOfUser, country) >= mapSettingsByFilterDto[START_DISTANCE_FILTER_KEY]!! &&
                             calculateDistanceFiler(currentLocationOfUser, country) <= mapSettingsByFilterDto[END_DISTANCE_FILTER_KEY]!!) {
+                                val myDist = calculateDistanceFiler(currentLocationOfUser, country)
                             listCountriesFromFilter.add(country)
                         }
                     }
