@@ -15,11 +15,13 @@ class FilterSettingsToDtoTransformer :
 
         mapSettingsByFilterDto[START_AREA_FILTER_KEY] =
             item?.get(START_AREA_FILTER_KEY) ?: DEFAULT_INT
+
         mapSettingsByFilterDto[END_AREA_FILTER_KEY] =
             item?.get(END_AREA_FILTER_KEY) ?: DEFAULT_INT
-        mapSettingsByFilterDto[START_DISTANCE_FILTER_KEY] ?:
+
+        mapSettingsByFilterDto[START_DISTANCE_FILTER_KEY] =
         item?.get(START_DISTANCE_FILTER_KEY) ?: DEFAULT_INT
-        mapSettingsByFilterDto[END_DISTANCE_FILTER_KEY] ?:
+        mapSettingsByFilterDto[END_DISTANCE_FILTER_KEY] =
         item?.get(END_DISTANCE_FILTER_KEY) ?: DEFAULT_INT
 
         return mapSettingsByFilterDto
