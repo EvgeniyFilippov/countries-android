@@ -21,6 +21,7 @@ private var googleMap: GoogleMap? = null
 
 private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
+private var currentLocationOfUser = Location("")
 
 @SuppressLint("MissingPermission")
 fun initMapOfCountryDetails(
@@ -39,7 +40,6 @@ fun initMapOfCountryDetails(
         moveCamera(cameraLocation)
         if (permissionGps) {
             isMyLocationEnabled = true
-            calculateDistance(context)
         }
     }
     addMarkerOnMap(currentCountryLatLng, countryDetailsDto.name)
@@ -67,12 +67,13 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
 //        }
 //}
 
+
+
+
+
+
 @SuppressLint("MissingPermission")
-private fun calculateDistance(context: Context) {
-    val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
-        latitude = currentCountryLatLng.latitude
-        longitude = currentCountryLatLng.longitude
-    }
+ private fun getCurrentLocation(context: Context) {
     val mLocationRequest = LocationRequest.create()
     mLocationRequest.interval = 60000
     mLocationRequest.fastestInterval = 5000
@@ -81,7 +82,7 @@ private fun calculateDistance(context: Context) {
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
                 if (location != null) {
-                    distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+                    currentLocationOfUser = location
                     Log.d(LOG_TAG, location.toString())
                 }
             }
@@ -89,6 +90,23 @@ private fun calculateDistance(context: Context) {
     }
     LocationServices.getFusedLocationProviderClient(context)
         .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
+}
+
+fun getDistance2(context: Context): Int {
+    getCurrentLocation(context)
+    calculateDistance(currentLocationOfUser)
+    return distance
+}
+
+@SuppressLint("MissingPermission")
+fun calculateDistance(location: Location) {
+    val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+        latitude = currentCountryLatLng.latitude
+        longitude = currentCountryLatLng.longitude
+    }
+
+                    distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+
 }
 
 fun getDistance(): Int = distance

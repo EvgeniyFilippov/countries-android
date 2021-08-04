@@ -1,5 +1,6 @@
 package com.example.course_android.fragments.details
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,10 +12,7 @@ import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.*
-import com.example.course_android.utils.getDistance
-import com.example.course_android.utils.initMapOfCountryDetails
-import com.example.course_android.utils.loadSvg
-import com.example.course_android.utils.toast
+import com.example.course_android.utils.*
 import com.google.android.libraries.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.fragment_country_details.*
 
@@ -59,11 +57,12 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @SuppressLint("StringFormatMatches")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.gps_distance) {
             activity?.showDialogWithOneButton(
                 null,
-                getString(R.string.distanceToYou, mCountryName, getDistance()),
+                getString(R.string.distanceToYou, mCountryName, context?.let { getDistance2(it) }),
                 R.string.dialog_ok,
                 null
             )
