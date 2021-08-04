@@ -1,6 +1,7 @@
 package com.example.course_android.fragments.allCountries
 
 import android.content.Context
+import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -28,6 +29,8 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
 import com.example.course_android.fragments.filter.FilterViewModel
+import com.example.course_android.utils.getCurrentLocation
+import com.example.course_android.utils.getResultOfCurrentLocation
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
@@ -43,6 +46,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
+    private lateinit var currentLocationOfUser: Location
 
     private val mSearchSubject = PublishSubject.create<String>()
 
@@ -55,17 +59,23 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
                 .get(AllCountriesViewModel::class.java)
         viewModel.getSearchSubject()
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
+        context?.let { getCurrentLocation(it) }
+
+
+
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             "valueOfFilter"
         )?.observe(viewLifecycleOwner, Observer { map ->
             val map222 = map
+
             viewModel.getCountriesFromFilter(map)
         })
 
