@@ -29,4 +29,10 @@ object Constants {
     const val START_AREA_FILTER_KEY = "START_AREA_FILTER_KEY"
     const val END_AREA_FILTER_KEY = "END_AREA_FILTER_KEY"
 
+    const val FILTER_VALUE_FROM_KEY = "FILTER_VALUE_FROM_KEY"
+    const val FILTER_VALUE_TO_KEY = "FILTER_VALUE_TO_KEY"
+    const val FILTER_VALUE_START_KEY = 0.0F
+    const val FILTER_VALUE_END_KEY = 0.0F
+
+
 }
