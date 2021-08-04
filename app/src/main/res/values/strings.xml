@@ -36,7 +36,7 @@
     <string name="no">No</string>
     <string name="chek_inet">Проверьте подключение к интернету</string>
     <string name="marker_title">Проверьте подключение к интернету</string>
-    <string name="area">Площадь</string>
+    <string name="area">Площадь от %1$d до %2$d км.кв.</string>
     <string-array name="rangeSliderValues">
     <item>1000</item>
     <item>5000</item>
