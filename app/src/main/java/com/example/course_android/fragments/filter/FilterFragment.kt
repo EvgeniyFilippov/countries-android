@@ -20,10 +20,12 @@ import kotlin.collections.HashMap
 class FilterFragment : Fragment() {
 
     private var binding: FragmentFilterBinding? = null
-    private var slider: RangeSlider? = null
+    private var slideroOfArea: RangeSlider? = null
     private lateinit var viewModelFilter: FilterViewModel
-    private var start = 0.0F
-    private var end = 0.0F
+    private var startArea = 0.0F
+    private var endArea = 0.0F
+    private var startDistance = 0
+    private var endDistance = 0
     private lateinit var headerOfArea: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +41,8 @@ class FilterFragment : Fragment() {
     ): View? {
         binding = FragmentFilterBinding.inflate(inflater, container, false)
         headerOfArea = binding?.header1 as TextView
-        slider = binding?.slider
-        slider?.setLabelFormatter { value: Float ->
+        slideroOfArea = binding?.slider
+        slideroOfArea?.setLabelFormatter { value: Float ->
             val format = NumberFormat.getIntegerInstance()
             format.maximumFractionDigits = 0
             format.format(value.toInt())
@@ -55,40 +57,41 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //подписываеся на введенные юзером данные
         viewModelFilter.mutableFilterLiveData.observe(
             viewLifecycleOwner,
             Observer { data -> sendSettingsOfFilter(data) })
 
+        //записываем введенные значения юзером в LiveData
         binding?.btnFilterGo?.setOnClickListener {
-
-            viewModelFilter.getValuesFromFilter(start, end)
+            viewModelFilter.putValuesFromFilter(startArea, endArea, startDistance, endDistance)
         }
 
-        slider?.addOnChangeListener { rangeSlider, value, fromUser ->
-            start = rangeSlider.values[0]
-            end = rangeSlider.values[1]
-            headerOfArea.text = getString(R.string.area, start.toInt(), end.toInt())
+        //слушаем слайдер площади
+        slideroOfArea?.addOnChangeListener { rangeSlider, value, fromUser ->
+            startArea = rangeSlider.values[0]
+            endArea = rangeSlider.values[1]
+            headerOfArea.text = getString(R.string.area, startArea.toInt(), endArea.toInt())
         }
     }
 
+    //отправляем конфиг в предыдущий фрагмент
     private fun sendSettingsOfFilter(map: HashMap<String, Int>) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("map", map)
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("valueOfFilter", map)
         findNavController().popBackStack()
     }
 
+    //формируем начальные и конечные данные фильтра
     private fun buildFilterWithConfig(mapOfConfig: HashMap<String, Float>) {
 
-            slider?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY] ?: 0.0F
-            slider?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY] ?: 0.0F
-            slider?.values =
+            slideroOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY] ?: 0.0F
+            slideroOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY] ?: 0.0F
+            slideroOfArea?.values =
                 listOf(mapOfConfig[FILTER_VALUE_FROM_KEY], mapOfConfig[FILTER_VALUE_TO_KEY])
             headerOfArea.text = getString(
                 R.string.area,
                 mapOfConfig[FILTER_VALUE_FROM_KEY]?.toInt(),
                 mapOfConfig[FILTER_VALUE_TO_KEY]?.toInt()
             )
-
-
-
     }
 }
