@@ -11,6 +11,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentFilterBinding
 import com.google.android.material.slider.RangeSlider
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.HashMap
 
 class FilterFragment : Fragment() {
 
@@ -27,6 +30,12 @@ class FilterFragment : Fragment() {
     ): View? {
         binding = FragmentFilterBinding.inflate(inflater, container, false)
         slider = binding?.slider
+        slider?.setLabelFormatter { value: Float ->
+            val format = NumberFormat.getCurrencyInstance()
+            format.maximumFractionDigits = 0
+            format.currency = Currency.getInstance("USD")
+            format.format(value.toInt())
+        }
         return binding?.root
     }
 
@@ -55,7 +64,7 @@ class FilterFragment : Fragment() {
         }
     }
 
-    private fun sendSettingsOfFilter(map: HashMap<String, Float>) {
+    private fun sendSettingsOfFilter(map: HashMap<String, Int>) {
 
 //        var gson = Gson()
 //        var jsonString = gson.toJson(listCountriesFromApiDto)
