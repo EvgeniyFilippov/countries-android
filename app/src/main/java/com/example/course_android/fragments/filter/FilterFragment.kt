@@ -31,9 +31,8 @@ class FilterFragment : Fragment() {
         binding = FragmentFilterBinding.inflate(inflater, container, false)
         slider = binding?.slider
         slider?.setLabelFormatter { value: Float ->
-            val format = NumberFormat.getCurrencyInstance()
+            val format = NumberFormat.getIntegerInstance()
             format.maximumFractionDigits = 0
-            format.currency = Currency.getInstance("USD")
             format.format(value.toInt())
         }
         return binding?.root
