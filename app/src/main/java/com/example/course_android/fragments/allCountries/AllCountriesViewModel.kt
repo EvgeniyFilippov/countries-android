@@ -32,21 +32,14 @@ import java.util.concurrent.TimeUnit
 class AllCountriesViewModel(
     private val sortStatus: Int,
     private val mSearchSubject: PublishSubject<String>
-    ) : BaseViewModel() {
+) : BaseViewModel() {
 
     val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
-//    val countriesLiveData: LiveData<MutableList<CountryDescriptionItemDto>> =
-//        mutableCountriesLiveData
-
-    val mutableCountriesErrorLiveData = SingleLiveEvent<String>()
-//    val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
-
-    val mutableCountriesFromSearchLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
-//    val countriesFromSearchLiveData: LiveData<MutableList<CountryDescriptionItemDto>> = mutableCountriesFromSearchLiveData
+    val mutableCountriesFromSearchLiveData =
+        SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-    private val filterSettingsToDtoTransformer = FilterSettingsToDtoTransformer()
 
     private var searchText: String = DEFAULT_STRING
 
@@ -56,7 +49,7 @@ class AllCountriesViewModel(
     fun getCountriesFromApi() {
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { list -> countryDetailsDtoTransformer.transform(list) }
-            .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus)}
+            .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ sortedListDto ->
@@ -75,8 +68,12 @@ class AllCountriesViewModel(
         val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = CountriesApp.base?.getLanguageInfoDAO()
         countriesFromDB
-            ?.map { list -> list.convertDBdataToRetrofitModel(languagesFromDB,
-                listOfCountriesFromDB) }
+            ?.map { list ->
+                list.convertDBdataToRetrofitModel(
+                    languagesFromDB,
+                    listOfCountriesFromDB
+                )
+            }
             ?.doOnNext { list -> list.sortBySortStatusFromPref(sortStatus) }
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
@@ -125,7 +122,7 @@ class AllCountriesViewModel(
                 RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
                     .onErrorResumeNext { Observable.just(mutableListOf()) }
             }
-            .doOnNext {  list ->
+            .doOnNext { list ->
                 listCountriesFromSearch.clear()
                 list.forEach { country ->
                     if (country.name?.contains(searchText, ignoreCase = true) == true) {
@@ -139,27 +136,26 @@ class AllCountriesViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mutableCountriesFromSearchLiveData.value = countryDetailsDtoTransformer.transform(listCountriesFromSearch)
+                mutableCountriesFromSearchLiveData.value =
+                    countryDetailsDtoTransformer.transform(listCountriesFromSearch)
             }, {
                 Log.d(ContentValues.TAG, ("Error"))
             }).also { mCompositeDisposable.add(it) }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
-        val myMapDo = mapSettingsByFilter
         val currentLocationOfUser = getResultOfCurrentLocation()
-
-//        val myLatitude = currentLocationOfUser.latitude
-//        val myLongitude = currentLocationOfUser.longitude
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { list -> countryDetailsDtoTransformer.transform(list) }
-            .doOnNext {  list ->
+            .doOnNext { list ->
                 listCountriesFromFilter.clear()
-                val mapSettingsByFilterDto = filterSettingsToDtoTransformer.transform(mapSettingsByFilter)
                 list.forEach { country ->
-                    if (country.area >= mapSettingsByFilterDto[START_AREA_FILTER_KEY]!! && country.area <= mapSettingsByFilterDto[END_AREA_FILTER_KEY]!!) { //тут уже Dto
-                        if (calculateDistanceFiler(currentLocationOfUser, country) >= mapSettingsByFilterDto[START_DISTANCE_FILTER_KEY]!! &&
-                            calculateDistanceFiler(currentLocationOfUser, country) <= mapSettingsByFilterDto[END_DISTANCE_FILTER_KEY]!!) {
-                                val myDist = calculateDistanceFiler(currentLocationOfUser, country)
+                    if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
+                        && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
+                    ) {
+                        val distance = calculateDistanceFiler(currentLocationOfUser, country)
+                        if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
+                            distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
+                        ) {
                             listCountriesFromFilter.add(country)
                         }
                     }
@@ -168,7 +164,7 @@ class AllCountriesViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ sortedListDto ->
-                mutableCountriesLiveData.value = listCountriesFromFilter
+                mutableCountriesFromSearchLiveData.value = listCountriesFromFilter
                 saveToDBfromApi(sortedListDto)
             }, {
 
