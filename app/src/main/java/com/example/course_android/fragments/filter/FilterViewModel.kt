@@ -1,47 +1,55 @@
 package com.example.course_android.fragments.filter
 
-import android.content.ContentValues
-import android.os.Parcel
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.course_android.Constants
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
+import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY
+import com.example.course_android.Constants.FILTER_VALUE_TO_KEY
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
-import com.example.course_android.CountriesApp
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
-import com.example.course_android.dto.CountryDetailsDtoTransformer
-import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.model.oneCountry.CountryDescriptionItem
-import com.example.course_android.room.CountryBaseInfoEntity
-import com.example.course_android.room.LanguagesInfoEntity
-import com.example.course_android.utils.convertDBdataToRetrofitModel
-import com.example.course_android.utils.sortBySortStatusFromPref
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import kotlinx.android.parcel.Parceler
-import kotlinx.android.parcel.Parcelize
-import kotlinx.android.parcel.TypeParceler
-import java.util.concurrent.TimeUnit
 
 class FilterViewModel() : BaseViewModel() {
 
-    val mutableCountriesLiveData = MutableLiveData<HashMap<String, Int>>()
+    val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
+    val mutableFilterConfigLiveData = MutableLiveData<HashMap<String, Float>>()
 
-    private val map = hashMapOf<String, Int>()
+    private val mapValuesByFilter = hashMapOf<String, Int>()
+    private val mapConfigFilter = hashMapOf<String, Float>()
 
-    fun getCountriesFromFilter(start: Float, end: Float) {
+    fun getValuesFromFilter(start: Float, end: Float) {
 
-        map[START_AREA_FILTER_KEY] = start.toInt()
-        map[END_AREA_FILTER_KEY] = end.toInt()
-        mutableCountriesLiveData.value = map
-
-
+        mapValuesByFilter[START_AREA_FILTER_KEY] = start.toInt()
+        mapValuesByFilter[END_AREA_FILTER_KEY] = end.toInt()
+        mutableFilterLiveData.value = mapValuesByFilter
     }
 
+    fun makeConfigFilter() {
+        var minArea = 0.0
+        var maxArea = 0.0
+        RetrofitObj.getCountriesApi().getListOfCountry()
+            .doOnNext {  list ->
+                list.forEach { country ->
+                    if (country.area != null) {
+                        if (country.area <= minArea) {
+                            minArea = country.area
+                        }
+                        if (country.area >= maxArea) {
+                            maxArea = country.area
+                        }
+                    }
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                mapConfigFilter[FILTER_VALUE_FROM_KEY] = minArea.toFloat()
+                mapConfigFilter[FILTER_VALUE_TO_KEY] = maxArea.toFloat()
+                mutableFilterConfigLiveData.value = mapConfigFilter
+            }, {
+
+            }).also { mCompositeDisposable.add(it) }
+    }
 
 }
