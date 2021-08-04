@@ -1,28 +1,16 @@
 package com.example.course_android.fragments.filter
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.course_android.Constants
-import com.example.course_android.Constants.COUNTRY_AREA_END_KEY
-import com.example.course_android.Constants.COUNTRY_AREA_START_KEY
-import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.R
-import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.databinding.FragmentFilterBinding
-import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.fragments.allCountries.AllCountriesViewModel
-import com.example.course_android.fragments.allCountries.AllCountriesViewModelFactory
 import com.google.android.material.slider.RangeSlider
-import com.google.android.material.slider.Slider
 
 class FilterFragment : Fragment() {
 
@@ -49,13 +37,9 @@ class FilterFragment : Fragment() {
             ViewModelProvider(this, FilterViewModelFactory())
                 .get(FilterViewModel::class.java)
                 .also {
-                    it.countriesLiveData.observe(
+                    it.mutableCountriesLiveData.observe(
                         viewLifecycleOwner,
-                        Observer { data -> showResult(data) })
-//                    it.countriesErrorLiveData.observe(
-//                        viewLifecycleOwner,
-//                        Observer { error -> showError(error) })
-//
+                        Observer { data -> sendSettingsOfFilter(data) })
                 }
 //
 //
@@ -71,9 +55,22 @@ class FilterFragment : Fragment() {
         }
     }
 
-    private fun showResult(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+    private fun sendSettingsOfFilter(map: HashMap<String, Float>) {
 
-        findNavController().navigate(R.id.action_filterFragment_to_secondFragment)
+//        var gson = Gson()
+//        var jsonString = gson.toJson(listCountriesFromApiDto)
+//        val bundle = Bundle()
+//
+//        val extras = Bundle()
+//        extras.putSerializable("HashMap", map)
+//        intent.putExtras(extras)
+//
+//        bundle.put("tutu", jsonString)
+
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("map", map)
+
+
+        findNavController().popBackStack()
 
     }
 
