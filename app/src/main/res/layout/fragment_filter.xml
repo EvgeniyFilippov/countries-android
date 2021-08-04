@@ -23,10 +23,52 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header1"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/header2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Дистанция"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slider"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/distanceFrom"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/qu_grey_600"
+        android:inputType="number"
+        app:layout_constraintEnd_toStartOf="@id/between"
+        app:layout_constraintTop_toBottomOf="@id/header2"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/between"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="30dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header2">
+
+    </androidx.appcompat.widget.AppCompatImageView>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/distanceTo"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="30dp"
+        android:inputType="number"
+        android:background="@color/qu_grey_600"
+        app:layout_constraintStart_toEndOf="@id/between"
+        app:layout_constraintTop_toBottomOf="@id/header2"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_filter_go"
@@ -36,6 +78,6 @@
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/slider"/>
+        app:layout_constraintTop_toBottomOf="@id/distanceFrom"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
