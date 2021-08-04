@@ -56,7 +56,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
                 .get(AllCountriesViewModel::class.java)
         viewModel.getSearchSubject()
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,9 +63,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
         context?.let { getCurrentLocation(it) }
-
-
-
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             "valueOfFilter"
@@ -80,11 +76,9 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         viewModel.mutableCountriesFromSearchLiveData.singleObserve(
             viewLifecycleOwner,
             Observer { data -> showCountries(data) })
+
         showProgress()
         viewModel.getCountriesFromApi()
-
-
-
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapterOfAllCountries
@@ -104,7 +98,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
 
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
-
 
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
