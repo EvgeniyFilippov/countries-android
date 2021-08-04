@@ -24,4 +24,9 @@ object Constants {
     const val MARKER_TITLE = "Marker title with position"
     const val MIN_SEARCH_STRING_LENGTH = 3
     const val DEBOUNCE_TIME_MILLIS = 500L
+
+    //FILTER
+    const val START_AREA_FILTER_KEY = "START_AREA_FILTER_KEY"
+    const val END_AREA_FILTER_KEY = "END_AREA_FILTER_KEY"
+
 }
