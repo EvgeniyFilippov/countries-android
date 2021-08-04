@@ -65,6 +65,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             "valueOfFilter"
         )?.observe(viewLifecycleOwner, Observer { map ->
+            val map222 = map
             viewModel.getCountriesFromFilter(map)
         })
 
