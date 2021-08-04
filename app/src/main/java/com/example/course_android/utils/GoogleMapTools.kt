@@ -20,6 +20,7 @@ private var googleMap: GoogleMap? = null
 private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
 private var currentLocationOfUser = Location("")
+private lateinit var currentCountryLatLngFilter: LatLng
 
 @SuppressLint("MissingPermission")
 fun initMapOfCountryDetails(
@@ -65,7 +66,7 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
 //}
 
 @SuppressLint("MissingPermission")
- private fun getCurrentLocation(context: Context) {
+ fun getCurrentLocation(context: Context) {
     val mLocationRequest = LocationRequest.create()
     mLocationRequest.interval = 60000
     mLocationRequest.fastestInterval = 5000
@@ -84,6 +85,16 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
         .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
 }
 
+
+fun getResultOfCurrentLocation(): Location {
+    return currentLocationOfUser
+}
+
+fun getDistanceForFilter(location: Location): Int {
+    calculateDistance(location)
+    return distance
+}
+
 fun getDistance(context: Context): Int {
     getCurrentLocation(context)
     calculateDistance(currentLocationOfUser)
@@ -95,9 +106,21 @@ fun calculateDistance(location: Location) {
         latitude = currentCountryLatLng.latitude
         longitude = currentCountryLatLng.longitude
     }
+    distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+}
 
-                    distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+fun calculateDistanceFiler(location: Location, countryDetailsDto: CountryDescriptionItemDto): Int {
+    val currentCountryLatLng = LatLng(
+        countryDetailsDto.latlng[0],
+        countryDetailsDto.latlng[1]
+    )
 
+    val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+        latitude = currentCountryLatLng.latitude
+        longitude = currentCountryLatLng.longitude
+    }
+    distance = location.distanceTo(currentCountryLocation).toInt() / 1000
+    return distance
 }
 
 fun initMapOfAllCountries(map: GoogleMap, listOfCountries: List<CountryDescriptionItemDto>) {
