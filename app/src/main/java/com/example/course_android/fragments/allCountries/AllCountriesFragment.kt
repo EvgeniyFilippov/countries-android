@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,7 +54,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel =
-            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
+            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
                 .get(AllCountriesViewModel::class.java)
         viewModel.getSearchSubject()
     }
