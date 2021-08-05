@@ -2,10 +2,8 @@ package com.example.course_android.fragments.allCountries
 
 import android.content.ContentValues
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
-import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
@@ -18,7 +16,6 @@ import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.transformCountryToDto
-import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
@@ -41,7 +38,6 @@ class AllCountriesViewModel(
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
-    private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
@@ -115,38 +111,21 @@ class AllCountriesViewModel(
             .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .map { it.trim() }
-//            .doOnNext { searchText = it } //PARE
             .flatMap { text: String ->
                 RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
                     .onErrorResumeNext { Observable.just(mutableListOf()) }
-                    .map { it.transformCountryToDto()}
+                    .map { it.transformCountryToDto() }
                     .map {
-                        Pair(it, text)
+                        it.filter { country ->
+                            country.name.contains(text, true)
+                        }
+                            .toMutableList()
                     }
             }
-            .map {
-                it.first.filter { country ->
-                    country.name.contains(it.second, true) }
-                    .toMutableList()
-
-            }
-
-//            .doOnNext { list ->
-//                listCountriesFromSearch.clear()
-//                list.forEach { country ->
-//                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
-//                        listCountriesFromSearch.add(country)
-//                    }
-//                }
-//                countryDetailsDtoTransformer.transform(
-//                    listCountriesFromSearch
-//                )
-//            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mutableCountriesFromSearchLiveData.value =
-                    it
+                mutableCountriesFromSearchLiveData.value = it
             }, {
                 Log.d(ContentValues.TAG, ("Error"))
             }).also { mCompositeDisposable.add(it) }
@@ -184,4 +163,3 @@ class AllCountriesViewModel(
             }).also { mCompositeDisposable.add(it) }
     }
 }
-
