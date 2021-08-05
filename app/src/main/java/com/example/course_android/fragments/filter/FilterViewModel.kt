@@ -1,5 +1,6 @@
 package com.example.course_android.fragments.filter
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
@@ -14,13 +15,16 @@ import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
+import com.example.course_android.base.mvvm.Outcome
+import com.example.course_android.dto.model.CountryDescriptionItemDto
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
-    val mutableFilterConfigLiveData = MutableLiveData<HashMap<String, Float>>()
+//    val mutableFilterConfigLiveData = MutableLiveData<HashMap<String, Float>>()
+    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("countryDto")
 
     private val mapValuesByFilter = hashMapOf<String, Int>()
     private val mapConfigFilter = hashMapOf<String, Float>()
@@ -76,10 +80,16 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
                 mapConfigFilter[FILTER_VALUE_TO_KEY_AREA] = maxArea.toFloat()
                 mapConfigFilter[FILTER_VALUE_FROM_KEY_POPULATION] = minPopilation.toFloat()
                 mapConfigFilter[FILTER_VALUE_TO_KEY_POPULATION] = maxPopulation.toFloat()
-                mutableFilterConfigLiveData.value = mapConfigFilter
+                savedStateHandle["countryDto2"] = mapConfigFilter
+//                mutableFilterConfigLiveData.value = mapConfigFilter
             }, {
 
             }).also { mCompositeDisposable.add(it) }
     }
+
+//    fun getFilteredData(): LiveData<String> = savedStateHandle.getLiveData<String>("query").switchMap { query ->
+//        MutableLiveData()//repository.getFilteredData(query)
+//    }
+
 
 }

@@ -10,12 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
 import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_POPULATION
 import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_AREA
 import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
 import com.example.course_android.R
+import com.example.course_android.base.mvvm.BaseMvvmView
+import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentFilterBinding
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
@@ -23,12 +26,12 @@ import com.google.android.material.slider.RangeSlider
 import java.text.NumberFormat
 import kotlin.collections.HashMap
 
-class FilterFragment : Fragment() {
+class FilterFragment : Fragment(), BaseMvvmView {
 
     private var binding: FragmentFilterBinding? = null
     private var sliderOfArea: RangeSlider? = null
     private var sliderOfPopulation: RangeSlider? = null
-    private lateinit var viewModelFilter: FilterViewModel
+    private val viewModelFilter = FilterViewModel(SavedStateHandle())
     private var startArea = 0.0F
     private var endArea = 0.0F
     private var startPopulation = 0.0F
@@ -43,9 +46,7 @@ class FilterFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelFilter =
-            ViewModelProvider(this, FilterViewModelFactory(SavedStateHandle()))
-                .get(FilterViewModel::class.java)
+
     }
 
     override fun onCreateView(
@@ -75,9 +76,24 @@ class FilterFragment : Fragment() {
             format.format(value.toInt())
         }
 
-        viewModelFilter.mutableFilterConfigLiveData.observe(
-            viewLifecycleOwner,
-            Observer { data -> buildFilterWithConfig(data) })
+        viewModelFilter.mutableFilterConfigLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is Outcome.Progress -> {
+                    showProgress()
+                }
+                is Outcome.Next -> {
+                    buildFilterWithConfig(it.data)
+                    hideProgress()
+                }
+                is Outcome.Failure -> {
+                }
+                is Outcome.Success -> {
+
+                }
+            }
+        }
+
+
         viewModelFilter.makeConfigFilter()
 
         return binding?.root
@@ -95,7 +111,14 @@ class FilterFragment : Fragment() {
         binding?.btnFilterGo?.setOnClickListener {
             startDistance = viewDistanceFrom.text.toString().toInt()
             endDistance = viewDistanceTo.text.toString().toInt()
-            viewModelFilter.putValuesFromFilter(startArea, endArea, startDistance, endDistance, startPopulation, endPopulation)
+            viewModelFilter.putValuesFromFilter(
+                startArea,
+                endArea,
+                startDistance,
+                endDistance,
+                startPopulation,
+                endPopulation
+            )
         }
 
         //слушаем слайдер площади
@@ -109,7 +132,8 @@ class FilterFragment : Fragment() {
         sliderOfPopulation?.addOnChangeListener { rangeSlider, value, fromUser ->
             startPopulation = rangeSlider.values[0]
             endPopulation = rangeSlider.values[1]
-            headerOfPopulation.text = getString(R.string.population, startPopulation.toInt(), endPopulation.toInt())
+            headerOfPopulation.text =
+                getString(R.string.population, startPopulation.toInt(), endPopulation.toInt())
         }
     }
 
@@ -122,24 +146,39 @@ class FilterFragment : Fragment() {
     //формируем начальные и конечные данные фильтра
     private fun buildFilterWithConfig(mapOfConfig: HashMap<String, Float>) {
 
-            sliderOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY_AREA] ?: 0.0F
-            sliderOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY_AREA] ?: 0.0F
-            sliderOfArea?.values =
-                listOf(mapOfConfig[FILTER_VALUE_FROM_KEY_AREA], mapOfConfig[FILTER_VALUE_TO_KEY_AREA])
-            headerOfArea.text = getString(
-                R.string.area,
-                mapOfConfig[FILTER_VALUE_FROM_KEY_AREA]?.toInt(),
-                mapOfConfig[FILTER_VALUE_TO_KEY_AREA]?.toInt()
-            )
+        sliderOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY_AREA] ?: 0.0F
+        sliderOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY_AREA] ?: 0.0F
+        sliderOfArea?.values =
+            listOf(mapOfConfig[FILTER_VALUE_FROM_KEY_AREA], mapOfConfig[FILTER_VALUE_TO_KEY_AREA])
+        headerOfArea.text = getString(
+            R.string.area,
+            mapOfConfig[FILTER_VALUE_FROM_KEY_AREA]?.toInt(),
+            mapOfConfig[FILTER_VALUE_TO_KEY_AREA]?.toInt()
+        )
 
         sliderOfPopulation?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION] ?: 0.0F
         sliderOfPopulation?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION] ?: 0.0F
         sliderOfPopulation?.values =
-            listOf(mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION], mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION])
+            listOf(
+                mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION],
+                mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION]
+            )
         headerOfPopulation.text = getString(
             R.string.population,
             mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION]?.toInt(),
             mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION]?.toInt()
         )
+    }
+
+    override fun showError(error: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showProgress() {
+        binding?.progressFilter?.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress() {
+        binding?.progressFilter?.visibility = View.GONE
     }
 }
