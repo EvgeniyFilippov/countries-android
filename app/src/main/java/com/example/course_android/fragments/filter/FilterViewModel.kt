@@ -16,13 +16,14 @@ import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.dto.transformCountryToDto
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
-//    val mutableFilterConfigLiveData = MutableLiveData<HashMap<String, Float>>()
     val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
 
     private val mapValuesByFilter = hashMapOf<String, Int>()
@@ -47,38 +48,21 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
     }
 
     fun makeConfigFilter() {
-        var minArea = 0.0
-        var maxArea = 0.0
-        var minPopilation = 0
-        var maxPopulation = 0
         RetrofitObj.getCountriesApi().getListOfCountry()
-            .doOnNext {  list ->
-                list.forEach { country ->
-                    if (country.area != null) {
-                        if (country.area <= minArea) {
-                            minArea = country.area
-                        }
-                        if (country.area >= maxArea) {
-                            maxArea = country.area
-                        }
-                    }
-                    if (country.population != null) {
-                        if (country.population <= minPopilation) {
-                            minPopilation = country.population
-                        }
-                        if (country.population >= maxPopulation) {
-                            maxPopulation = country.population
-                        }
-                    }
-                }
-            }
+            .map { it.transformCountryToDto() }
+            .map { list -> listOf(
+                list.minBy { it.area.toInt()}?.area ?: 0.0,
+                list.maxBy { it.area.toInt()}?.area ?: 0.0,
+                list.minBy { it.population}?.population?.toDouble() ?: 0.0,
+                list.maxBy { it.population}?.population?.toDouble() ?: 0.0
+            )}
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mapConfigFilter[FILTER_VALUE_FROM_KEY_AREA] = minArea.toFloat()
-                mapConfigFilter[FILTER_VALUE_TO_KEY_AREA] = maxArea.toFloat()
-                mapConfigFilter[FILTER_VALUE_FROM_KEY_POPULATION] = minPopilation.toFloat()
-                mapConfigFilter[FILTER_VALUE_TO_KEY_POPULATION] = maxPopulation.toFloat()
+                mapConfigFilter[FILTER_VALUE_FROM_KEY_AREA] = it[0].toFloat()
+                mapConfigFilter[FILTER_VALUE_TO_KEY_AREA] = it[1].toFloat()
+                mapConfigFilter[FILTER_VALUE_FROM_KEY_POPULATION] = it[2].toFloat()
+                mapConfigFilter[FILTER_VALUE_TO_KEY_POPULATION] = it[3].toFloat()
                 mutableFilterConfigLiveData.next(mapConfigFilter)
             }, {
                 mutableFilterConfigLiveData.failed(it)
@@ -88,22 +72,10 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
                 }
             }).also { mCompositeDisposable.add(it) }
 
-
-
-//            .subscribe({
-//
-////                savedStateHandle["giveMeYouMoney"] = mapConfigFilter
-//                setConfigFilter(mapConfigFilter)
-//
-////                mutableFilterConfigLiveData.value = mapConfigFilter
-//            }, {
-
-
     }
 
     fun setConfigFilter(config: HashMap<String, Float>) {
         savedStateHandle["configFilter"] = config
     }
-
 
 }
