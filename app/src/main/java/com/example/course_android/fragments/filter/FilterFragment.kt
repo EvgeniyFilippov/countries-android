@@ -77,22 +77,23 @@ class FilterFragment : Fragment(), BaseMvvmView {
         }
         viewModelFilter.makeConfigFilter()
 
-        viewModelFilter.mutableFilterConfigLiveData.observe(viewLifecycleOwner, {
+        viewModelFilter.mutableFilterConfigLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
+                    it.loading
                 }
                 is Outcome.Failure -> {
                     hideProgress()
                 }
                 is Outcome.Success -> {
                     buildFilterWithConfig(it.data)
-
+                    hideProgress()
                 }
                 else -> {
 
                 }
             }
-        })
+        }
 
 
 
