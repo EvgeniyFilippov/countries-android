@@ -14,8 +14,7 @@ import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.api.RetrofitObj
-import com.example.course_android.base.mvvm.BaseViewModel
-import com.example.course_android.base.mvvm.Outcome
+import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -80,12 +79,26 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
                 mapConfigFilter[FILTER_VALUE_TO_KEY_AREA] = maxArea.toFloat()
                 mapConfigFilter[FILTER_VALUE_FROM_KEY_POPULATION] = minPopilation.toFloat()
                 mapConfigFilter[FILTER_VALUE_TO_KEY_POPULATION] = maxPopulation.toFloat()
-//                savedStateHandle["giveMeYouMoney"] = mapConfigFilter
-                setConfigFilter(mapConfigFilter)
-//                mutableFilterConfigLiveData.value = mapConfigFilter
+                mutableFilterConfigLiveData.next(mapConfigFilter)
             }, {
-
+                mutableFilterConfigLiveData.failed(it)
+            }, {
+                if (mutableFilterConfigLiveData.value is Outcome.Next) {
+                    mutableFilterConfigLiveData.success((mutableFilterConfigLiveData.value as Outcome.Next).data)
+                }
             }).also { mCompositeDisposable.add(it) }
+
+
+
+//            .subscribe({
+//
+////                savedStateHandle["giveMeYouMoney"] = mapConfigFilter
+//                setConfigFilter(mapConfigFilter)
+//
+////                mutableFilterConfigLiveData.value = mapConfigFilter
+//            }, {
+
+
     }
 
     fun setConfigFilter(config: HashMap<String, Float>) {
