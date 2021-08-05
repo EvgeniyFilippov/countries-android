@@ -7,9 +7,11 @@ import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
+import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
+import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.CountriesApp
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
@@ -153,7 +155,11 @@ class AllCountriesViewModel(
                         if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
                             distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
                         ) {
-                            listCountriesFromFilter.add(country)
+                            if (country.population >= mapSettingsByFilter[START_POPULATION_FILTER_KEY] ?: 0
+                                && country.population <= mapSettingsByFilter[END_POPULATION_FILTER_KEY] ?: 0
+                            ) {
+                                listCountriesFromFilter.add(country)
+                            }
                         }
                     }
                 }
