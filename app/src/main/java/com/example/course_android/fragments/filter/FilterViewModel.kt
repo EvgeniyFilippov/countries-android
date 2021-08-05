@@ -24,7 +24,8 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
 //    val mutableFilterConfigLiveData = MutableLiveData<HashMap<String, Float>>()
-    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("countryDto")
+    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
+
 
     private val mapValuesByFilter = hashMapOf<String, Int>()
     private val mapConfigFilter = hashMapOf<String, Float>()
@@ -80,16 +81,17 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
                 mapConfigFilter[FILTER_VALUE_TO_KEY_AREA] = maxArea.toFloat()
                 mapConfigFilter[FILTER_VALUE_FROM_KEY_POPULATION] = minPopilation.toFloat()
                 mapConfigFilter[FILTER_VALUE_TO_KEY_POPULATION] = maxPopulation.toFloat()
-                savedStateHandle["countryDto2"] = mapConfigFilter
+//                savedStateHandle["giveMeYouMoney"] = mapConfigFilter
+                setPostCountryItemDto(mapConfigFilter)
 //                mutableFilterConfigLiveData.value = mapConfigFilter
             }, {
 
             }).also { mCompositeDisposable.add(it) }
     }
 
-//    fun getFilteredData(): LiveData<String> = savedStateHandle.getLiveData<String>("query").switchMap { query ->
-//        MutableLiveData()//repository.getFilteredData(query)
-//    }
+    fun setPostCountryItemDto(config: HashMap<String, Float>) {
+        savedStateHandle["configFilter"] = config
+    }
 
 
 }
