@@ -31,7 +31,7 @@
         android:id="@+id/header2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Дистанция"
+        android:text="@string/Distance"
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,6 +70,24 @@
         app:layout_constraintStart_toEndOf="@id/between"
         app:layout_constraintTop_toBottomOf="@id/header2"/>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/header_of_population"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/distanceTo"/>
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/slider_population"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_of_population"/>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_filter_go"
         android:layout_width="wrap_content"
@@ -78,6 +96,6 @@
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/distanceFrom"/>
+        app:layout_constraintTop_toBottomOf="@id/slider_population"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
