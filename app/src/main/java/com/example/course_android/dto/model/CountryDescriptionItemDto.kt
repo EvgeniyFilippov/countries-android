@@ -15,10 +15,10 @@ data class CountryDescriptionItemDto(
 //    val gini: Double,
     var languages: MutableList<LanguageOfOneCountryDto> = mutableListOf(),
     var latlng: List<Double> = arrayListOf(1.0, 1.0),
-    var name: String = ""
+    var name: String = "",
 //    val nativeName: String,
 //    val numericCode: String,
-//    val population: Int,
+    var population: Int = 0
 //    val region: String,
 //    val regionalBlocs: List<RegionalBloc>,
 //    val subregion: String,
