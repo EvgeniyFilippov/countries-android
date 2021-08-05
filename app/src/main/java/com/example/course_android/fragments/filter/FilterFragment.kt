@@ -79,14 +79,13 @@ class FilterFragment : Fragment(), BaseMvvmView {
         viewModelFilter.mutableFilterConfigLiveData.observe(viewLifecycleOwner, {
             when (it) {
                 is Outcome.Progress -> {
-                    it.loading
                 }
                 is Outcome.Failure -> {
                     hideProgress()
                 }
                 is Outcome.Success -> {
                     buildFilterWithConfig(it.data)
-                    hideProgress()
+                    viewModelFilter.makeConfigFilter()
                 }
                 else -> {
 
@@ -94,7 +93,7 @@ class FilterFragment : Fragment(), BaseMvvmView {
             }
         })
 
-        viewModelFilter.makeConfigFilter()
+
 
         return binding?.root
     }
