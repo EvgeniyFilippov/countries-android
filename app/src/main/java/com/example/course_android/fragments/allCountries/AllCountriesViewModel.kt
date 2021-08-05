@@ -16,8 +16,8 @@ import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.CountriesApp
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.BaseViewModel
-import com.example.course_android.dto.CountryDetailsDtoTransformer
 import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
@@ -40,16 +40,13 @@ class AllCountriesViewModel(
         SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
-    private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-
-    private var searchText: String = DEFAULT_STRING
 
     private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
         RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { list -> countryDetailsDtoTransformer.transform(list) }
+            .map { it.transformCountryToDto() }
             .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -118,27 +115,38 @@ class AllCountriesViewModel(
             .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .map { it.trim() }
-            .doOnNext { searchText = it }
+//            .doOnNext { searchText = it } //PARE
             .flatMap { text: String ->
                 RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
                     .onErrorResumeNext { Observable.just(mutableListOf()) }
-            }
-            .doOnNext { list ->
-                listCountriesFromSearch.clear()
-                list.forEach { country ->
-                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
-                        listCountriesFromSearch.add(country)
+                    .map { it.transformCountryToDto()}
+                    .map {
+                        Pair(it, text)
                     }
-                }
-                countryDetailsDtoTransformer.transform(
-                    listCountriesFromSearch
-                )
             }
+            .map {
+                it.first.filter { country ->
+                    country.name.contains(it.second, true) }
+                    .toMutableList()
+
+            }
+
+//            .doOnNext { list ->
+//                listCountriesFromSearch.clear()
+//                list.forEach { country ->
+//                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
+//                        listCountriesFromSearch.add(country)
+//                    }
+//                }
+//                countryDetailsDtoTransformer.transform(
+//                    listCountriesFromSearch
+//                )
+//            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 mutableCountriesFromSearchLiveData.value =
-                    countryDetailsDtoTransformer.transform(listCountriesFromSearch)
+                    it
             }, {
                 Log.d(ContentValues.TAG, ("Error"))
             }).also { mCompositeDisposable.add(it) }
@@ -146,7 +154,7 @@ class AllCountriesViewModel(
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
         val currentLocationOfUser = getResultOfCurrentLocation()
         RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { list -> countryDetailsDtoTransformer.transform(list) }
+            .map { it.transformCountryToDto() }
             .doOnNext { list ->
                 listCountriesFromFilter.clear()
                 list.forEach { country ->
