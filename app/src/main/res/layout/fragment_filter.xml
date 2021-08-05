@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.slider.RangeSlider
-        android:id="@+id/slider"
+        android:id="@+id/slider_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -35,7 +35,7 @@
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/slider"/>
+        app:layout_constraintTop_toBottomOf="@id/slider_area"/>
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/distanceFrom"
@@ -92,7 +92,7 @@
         android:id="@+id/btn_filter_go"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Отфильтровать"
+        android:text="@string/filter_name"
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
