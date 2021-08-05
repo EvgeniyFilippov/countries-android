@@ -75,6 +75,7 @@ class FilterFragment : Fragment(), BaseMvvmView {
             format.maximumFractionDigits = 0
             format.format(value.toInt())
         }
+        viewModelFilter.makeConfigFilter()
 
         viewModelFilter.mutableFilterConfigLiveData.observe(viewLifecycleOwner, {
             when (it) {
@@ -85,7 +86,7 @@ class FilterFragment : Fragment(), BaseMvvmView {
                 }
                 is Outcome.Success -> {
                     buildFilterWithConfig(it.data)
-                    viewModelFilter.makeConfigFilter()
+
                 }
                 else -> {
 
