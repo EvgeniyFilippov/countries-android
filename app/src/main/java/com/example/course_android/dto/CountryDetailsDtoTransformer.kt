@@ -9,15 +9,12 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 
-class CountryDetailsDtoTransformer :
-    Transformer<List<CountryDescriptionItem>, List<CountryDescriptionItemDto>> {
-
-    override fun transform(item: List<CountryDescriptionItem>?): MutableList<CountryDescriptionItemDto> {
+   fun MutableList<CountryDescriptionItem>?.transformCountryToDto(): MutableList<CountryDescriptionItemDto> {
 
         val listCountryDescriptionItemDto: MutableList<CountryDescriptionItemDto> = mutableListOf()
 
 
-        item?.forEach { country ->
+        this?.forEach { country ->
             val countryDescriptionItemDto = CountryDescriptionItemDto()
             val listOfLanguagesDto: MutableList<LanguageOfOneCountryDto> = mutableListOf()
 
@@ -48,8 +45,5 @@ class CountryDetailsDtoTransformer :
         }
 
         return listCountryDescriptionItemDto
-
-    }
-
 
 }
