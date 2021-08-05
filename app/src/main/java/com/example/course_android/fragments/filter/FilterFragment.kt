@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
@@ -16,6 +17,8 @@ import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_AREA
 import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentFilterBinding
+import com.example.course_android.ext.askLocationPermission
+import com.example.course_android.ext.checkLocationPermission
 import com.google.android.material.slider.RangeSlider
 import java.text.NumberFormat
 import kotlin.collections.HashMap
@@ -38,11 +41,10 @@ class FilterFragment : Fragment() {
     private lateinit var viewDistanceFrom: EditText
     private lateinit var viewDistanceTo: EditText
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModelFilter =
-            ViewModelProvider(this, FilterViewModelFactory())
+            ViewModelProvider(this, FilterViewModelFactory(SavedStateHandle()))
                 .get(FilterViewModel::class.java)
     }
 
@@ -77,6 +79,7 @@ class FilterFragment : Fragment() {
             viewLifecycleOwner,
             Observer { data -> buildFilterWithConfig(data) })
         viewModelFilter.makeConfigFilter()
+
         return binding?.root
     }
 

@@ -3,6 +3,7 @@ package com.example.course_android.fragments.allCountries
 import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
@@ -30,8 +31,9 @@ import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     private val sortStatus: Int,
-    private val mSearchSubject: PublishSubject<String>
-) : BaseViewModel() {
+    private val mSearchSubject: PublishSubject<String>,
+    savedStateHandle: SavedStateHandle
+) : BaseViewModel(savedStateHandle) {
 
     val mutableCountriesLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
     val mutableCountriesFromSearchLiveData =

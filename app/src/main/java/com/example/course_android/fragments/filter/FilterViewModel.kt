@@ -1,6 +1,7 @@
 package com.example.course_android.fragments.filter
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
@@ -16,7 +17,7 @@ import com.example.course_android.base.mvvm.BaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class FilterViewModel() : BaseViewModel() {
+class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
     val mutableFilterConfigLiveData = MutableLiveData<HashMap<String, Float>>()
