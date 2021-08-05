@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY
-import com.example.course_android.Constants.FILTER_VALUE_TO_KEY
+import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
+import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_POPULATION
+import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_AREA
+import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentFilterBinding
 import com.google.android.material.slider.RangeSlider
@@ -22,12 +24,16 @@ class FilterFragment : Fragment() {
 
     private var binding: FragmentFilterBinding? = null
     private var sliderOfArea: RangeSlider? = null
+    private var sliderOfPopulation: RangeSlider? = null
     private lateinit var viewModelFilter: FilterViewModel
     private var startArea = 0.0F
     private var endArea = 0.0F
+    private var startPopulation = 0.0F
+    private var endPopulation = 0.0F
     private var startDistance = 0
     private var endDistance = 0
     private lateinit var headerOfArea: TextView
+    private lateinit var headerOfPopulation: TextView
     private lateinit var headerOfDistance: TextView
     private lateinit var viewDistanceFrom: EditText
     private lateinit var viewDistanceTo: EditText
@@ -46,16 +52,27 @@ class FilterFragment : Fragment() {
     ): View? {
         binding = FragmentFilterBinding.inflate(inflater, container, false)
         headerOfArea = binding?.headerOfArea as TextView
+        headerOfPopulation = binding?.headerOfPopulation as TextView
+
+
         headerOfDistance = binding?.headerOfArea as TextView
         viewDistanceFrom = binding?.distanceFrom as EditText
         viewDistanceTo = binding?.distanceTo as EditText
 
-        sliderOfArea = binding?.slider
+        sliderOfArea = binding?.sliderArea
         sliderOfArea?.setLabelFormatter { value: Float ->
             val format = NumberFormat.getIntegerInstance()
             format.maximumFractionDigits = 0
             format.format(value.toInt())
         }
+
+        sliderOfPopulation = binding?.sliderPopulation
+        sliderOfPopulation?.setLabelFormatter { value: Float ->
+            val format = NumberFormat.getIntegerInstance()
+            format.maximumFractionDigits = 0
+            format.format(value.toInt())
+        }
+
         viewModelFilter.mutableFilterConfigLiveData.observe(
             viewLifecycleOwner,
             Observer { data -> buildFilterWithConfig(data) })
@@ -75,7 +92,7 @@ class FilterFragment : Fragment() {
         binding?.btnFilterGo?.setOnClickListener {
             startDistance = viewDistanceFrom.text.toString().toInt()
             endDistance = viewDistanceTo.text.toString().toInt()
-            viewModelFilter.putValuesFromFilter(startArea, endArea, startDistance, endDistance)
+            viewModelFilter.putValuesFromFilter(startArea, endArea, startDistance, endDistance, startPopulation, endPopulation)
         }
 
         //слушаем слайдер площади
@@ -83,6 +100,13 @@ class FilterFragment : Fragment() {
             startArea = rangeSlider.values[0]
             endArea = rangeSlider.values[1]
             headerOfArea.text = getString(R.string.area, startArea.toInt(), endArea.toInt())
+        }
+
+        //слушаем слайдер популяции
+        sliderOfPopulation?.addOnChangeListener { rangeSlider, value, fromUser ->
+            startPopulation = rangeSlider.values[0]
+            endPopulation = rangeSlider.values[1]
+            headerOfPopulation.text = getString(R.string.population, startPopulation.toInt(), endPopulation.toInt())
         }
     }
 
@@ -95,14 +119,24 @@ class FilterFragment : Fragment() {
     //формируем начальные и конечные данные фильтра
     private fun buildFilterWithConfig(mapOfConfig: HashMap<String, Float>) {
 
-            sliderOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY] ?: 0.0F
-            sliderOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY] ?: 0.0F
+            sliderOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY_AREA] ?: 0.0F
+            sliderOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY_AREA] ?: 0.0F
             sliderOfArea?.values =
-                listOf(mapOfConfig[FILTER_VALUE_FROM_KEY], mapOfConfig[FILTER_VALUE_TO_KEY])
+                listOf(mapOfConfig[FILTER_VALUE_FROM_KEY_AREA], mapOfConfig[FILTER_VALUE_TO_KEY_AREA])
             headerOfArea.text = getString(
                 R.string.area,
-                mapOfConfig[FILTER_VALUE_FROM_KEY]?.toInt(),
-                mapOfConfig[FILTER_VALUE_TO_KEY]?.toInt()
+                mapOfConfig[FILTER_VALUE_FROM_KEY_AREA]?.toInt(),
+                mapOfConfig[FILTER_VALUE_TO_KEY_AREA]?.toInt()
             )
+
+        sliderOfPopulation?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION] ?: 0.0F
+        sliderOfPopulation?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION] ?: 0.0F
+        sliderOfPopulation?.values =
+            listOf(mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION], mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION])
+        headerOfPopulation.text = getString(
+            R.string.population,
+            mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION]?.toInt(),
+            mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION]?.toInt()
+        )
     }
 }
