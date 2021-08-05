@@ -2,6 +2,7 @@ package com.example.course_android.dto
 
 import com.example.course_android.Constants.DEFAULT_DOUBLE
 import com.example.course_android.Constants.DEFAULT_FLAG
+import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_LATLNG_SIZE
 import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.dto.model.CountryDescriptionItemDto
@@ -24,6 +25,7 @@ class CountryDetailsDtoTransformer :
             countryDescriptionItemDto.name = country.name ?: DEFAULT_STRING
             countryDescriptionItemDto.area = country.area ?: DEFAULT_DOUBLE
             countryDescriptionItemDto.capital = country.capital ?: DEFAULT_STRING
+            countryDescriptionItemDto.population = country.population ?: DEFAULT_INT
 
             countryDescriptionItemDto.latlng =
                 country.latlng ?: arrayListOf(DEFAULT_DOUBLE, DEFAULT_DOUBLE)
