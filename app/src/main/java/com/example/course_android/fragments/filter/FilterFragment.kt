@@ -171,7 +171,7 @@ class FilterFragment : Fragment(), BaseMvvmView {
         )
     }
 
-    override fun showError(error: String) {
+    override fun showError() {
         TODO("Not yet implemented")
     }
 

@@ -1,7 +1,6 @@
 package com.example.course_android.fragments.allCountries
 
 import android.content.Context
-import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,12 +9,10 @@ import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
@@ -31,15 +28,11 @@ import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
-import com.example.course_android.fragments.filter.FilterViewModel
 import com.example.course_android.utils.getCurrentLocation
-import com.example.course_android.utils.getResultOfCurrentLocation
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.gson.Gson
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_all_countries.*
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
@@ -49,7 +42,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
-
     private val mSearchSubject = BehaviorSubject.create<String>()
     private lateinit var viewModel: AllCountriesViewModel
 
@@ -73,17 +65,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             viewModel.getCountriesFromFilter(map)
         })
 
-//        viewModel.mutableCountriesLiveData.observe(
-//            viewLifecycleOwner,
-//            Observer { data -> showCountries(data) })
-
         viewModel.mutableCountriesLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
-
+                    showProgress()
                 }
                 is Outcome.Failure -> {
-                    hideProgress()
+                 showError()
                 }
                 is Outcome.Success -> {
                     showCountries(it.data)
@@ -99,27 +87,14 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-//        viewModel.mutableCountriesFromSearchLiveData.singleObserve(
-//            viewLifecycleOwner,
-//            Observer { data -> showCountries(data) })
-
 
         viewModel.mutableCountriesFromSearchLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
-
+                    showProgress()
                 }
                 is Outcome.Failure -> {
-                    hideProgress()
+                    showError()
                 }
                 is Outcome.Success -> {
                     showCountries(it.data)
@@ -136,9 +111,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             }
         }
 
-
-
-        showProgress()
+//        showProgress()
         viewModel.getCountriesFromApi()
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -228,7 +201,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
-        hideProgress()
+//        hideProgress()
         adapterOfAllCountries.setItemClick { item ->
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_KEY, item.name)
@@ -261,7 +234,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         mCompositeDisposable.clear()
     }
 
-    override fun showError(error: String) {
+    override fun showError() {
+        hideProgress()
         if (context?.isOnline() == false) {
             context?.toast(getString(R.string.chek_inet))
         } else {

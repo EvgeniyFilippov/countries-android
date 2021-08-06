@@ -7,10 +7,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 open class BaseViewModel(protected val savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    //val vm: BaseViewModel by viewModels()
-    //val mCountryLiveData = MutableLiveData<Outcome<PostCountryItemDto>>()
     protected val mCompositeDisposable: CompositeDisposable = CompositeDisposable()
-
 
     @CallSuper
     override fun onCleared() {

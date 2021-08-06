@@ -1,10 +1,7 @@
 package com.example.course_android.fragments.allCountries
 
-import android.content.ContentValues
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import com.example.course_android.Constants
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
@@ -20,15 +17,15 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
-import com.example.course_android.utils.*
+import com.example.course_android.utils.calculateDistanceFiler
+import com.example.course_android.utils.convertDBdataToRetrofitModel
+import com.example.course_android.utils.getResultOfCurrentLocation
+import com.example.course_android.utils.sortBySortStatusFromPref
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
@@ -38,18 +35,10 @@ class AllCountriesViewModel(
 ) : BaseViewModel(savedStateHandle) {
 
     val mutableCountriesLiveData = MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
-
     val mutableCountriesFromSearchLiveData =
         MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
-//    val mutableCountriesFromSearchLiveData =
-//        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
-//    val mutableCountriesFromSearchLiveData =
-//        SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
-
-//    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
-
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
@@ -63,10 +52,6 @@ class AllCountriesViewModel(
                 saveToDBfromApi(it)
             }, {mutableCountriesLiveData.failed(it)
                 getCountriesFromDB()
-//                if (cone?.isOnline() == false) {
-//                    mutableCountriesErrorLiveData.value = "Error"
-//                    context?.toast(getString(R.string.chek_inet))
-//                }
             }, {
                 if (mutableCountriesLiveData.value is Outcome.Next) {
                     mutableCountriesLiveData.success((mutableCountriesLiveData.value as Outcome.Next).data)
@@ -100,22 +85,6 @@ class AllCountriesViewModel(
         }
             }).also { mCompositeDisposable.add(it) }
     }
-
-
-
-    //    .subscribe({
-//        mapConfigFilter[Constants.FILTER_VALUE_FROM_KEY_AREA] = it[0].toFloat()
-//        mapConfigFilter[Constants.FILTER_VALUE_TO_KEY_AREA] = it[1].toFloat()
-//        mapConfigFilter[Constants.FILTER_VALUE_FROM_KEY_POPULATION] = it[2].toFloat()
-//        mapConfigFilter[Constants.FILTER_VALUE_TO_KEY_POPULATION] = it[3].toFloat()
-//        mutableFilterConfigLiveData.next(mapConfigFilter)
-//    }, {
-//        mutableFilterConfigLiveData.failed(it)
-//    }, {
-//        if (mutableFilterConfigLiveData.value is Outcome.Next) {
-//            mutableFilterConfigLiveData.success((mutableFilterConfigLiveData.value as Outcome.Next).data)
-//        }
-//    }).also { mCompositeDisposable.add(it) }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
@@ -166,14 +135,6 @@ class AllCountriesViewModel(
             }
 
             , mutableCountriesFromSearchLiveData )
-
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({
-//                mutableCountriesFromSearchLiveData.value = it
-//            }, {
-//                Log.d(ContentValues.TAG, ("Error"))
-//            }).also { mCompositeDisposable.add(it) }
         )
     }
 
@@ -213,15 +174,5 @@ class AllCountriesViewModel(
                 }
             }).also { mCompositeDisposable.add(it) }
 
-
-
-
-//
-//            .subscribe({ sortedListDto ->
-//                mutableCountriesFromSearchLiveData.value = listCountriesFromFilter
-//                saveToDBfromApi(sortedListDto)
-//            }, {
-//
-//            }).also { mCompositeDisposable.add(it) }
     }
 }
