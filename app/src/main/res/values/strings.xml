@@ -40,6 +40,7 @@
     <string name="population">Население от %1$d до %2$d чел.</string>
     <string name="Distance">Дистанция</string>
     <string name="filter_name">Отфильтровать</string>
+    <string name="def_value_edit_text">0</string>
     <string-array name="rangeSliderValues">
     <item>1000</item>
     <item>5000</item>
