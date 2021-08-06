@@ -8,7 +8,7 @@
         app:actionViewClass="android.widget.SearchView"/>
     <item android:id="@+id/online"
         android:icon="@drawable/ic_baseline_signal_wifi_off_24"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:title="@string/wi_fi"/>
     <item android:id="@+id/filter"
         android:icon="@drawable/ic_baseline_filter_alt_24"
