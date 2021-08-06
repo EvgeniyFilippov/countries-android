@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
@@ -20,14 +19,11 @@ import com.example.course_android.R
 import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentFilterBinding
-import com.example.course_android.ext.askLocationPermission
-import com.example.course_android.ext.checkLocationPermission
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
 import com.example.course_android.utils.toast
 import com.google.android.material.slider.RangeSlider
 import java.text.NumberFormat
-import kotlin.collections.HashMap
 
 class FilterFragment : Fragment(), BaseMvvmView {
 
@@ -47,11 +43,6 @@ class FilterFragment : Fragment(), BaseMvvmView {
     private lateinit var viewDistanceFrom: EditText
     private lateinit var viewDistanceTo: EditText
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,8 +50,6 @@ class FilterFragment : Fragment(), BaseMvvmView {
         binding = FragmentFilterBinding.inflate(inflater, container, false)
         headerOfArea = binding?.headerOfArea as TextView
         headerOfPopulation = binding?.headerOfPopulation as TextView
-
-
         headerOfDistance = binding?.headerOfArea as TextView
         viewDistanceFrom = binding?.distanceFrom as EditText
         viewDistanceTo = binding?.distanceTo as EditText
@@ -98,9 +87,6 @@ class FilterFragment : Fragment(), BaseMvvmView {
                 }
             }
         }
-
-
-
         return binding?.root
     }
 
@@ -150,7 +136,6 @@ class FilterFragment : Fragment(), BaseMvvmView {
 
     //формируем начальные и конечные данные фильтра
     private fun buildFilterWithConfig(mapOfConfig: HashMap<String, Float>) {
-
         sliderOfArea?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY_AREA] ?: 0.0F
         sliderOfArea?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY_AREA] ?: 0.0F
         sliderOfArea?.values =
@@ -160,7 +145,6 @@ class FilterFragment : Fragment(), BaseMvvmView {
             mapOfConfig[FILTER_VALUE_FROM_KEY_AREA]?.toInt(),
             mapOfConfig[FILTER_VALUE_TO_KEY_AREA]?.toInt()
         )
-
         sliderOfPopulation?.valueFrom = mapOfConfig[FILTER_VALUE_FROM_KEY_POPULATION] ?: 0.0F
         sliderOfPopulation?.valueTo = mapOfConfig[FILTER_VALUE_TO_KEY_POPULATION] ?: 0.0F
         sliderOfPopulation?.values =
