@@ -22,6 +22,9 @@ import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentFilterBinding
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
+import com.example.course_android.ext.isOnline
+import com.example.course_android.ext.showAlertDialog
+import com.example.course_android.utils.toast
 import com.google.android.material.slider.RangeSlider
 import java.text.NumberFormat
 import kotlin.collections.HashMap
@@ -80,7 +83,8 @@ class FilterFragment : Fragment(), BaseMvvmView {
         viewModelFilter.mutableFilterConfigLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
-                showProgress()
+                    binding?.progressFilter?.visibility = View.VISIBLE
+                    Thread.sleep(500)
                 }
                 is Outcome.Failure -> {
                     hideProgress()
@@ -172,7 +176,12 @@ class FilterFragment : Fragment(), BaseMvvmView {
     }
 
     override fun showError() {
-        TODO("Not yet implemented")
+        hideProgress()
+        if (context?.isOnline() == false) {
+            context?.toast(getString(R.string.chek_inet))
+        } else {
+            activity?.showAlertDialog()
+        }
     }
 
     override fun showProgress() {
