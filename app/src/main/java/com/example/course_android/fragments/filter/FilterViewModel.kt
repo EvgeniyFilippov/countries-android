@@ -74,8 +74,4 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
 
     }
 
-    fun setConfigFilter(config: HashMap<String, Float>) {
-        savedStateHandle["configFilter"] = config
-    }
-
 }
