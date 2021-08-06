@@ -1,6 +1,5 @@
 package com.example.course_android.fragments.filter
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
@@ -15,10 +14,8 @@ import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.*
-import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.transformCountryToDto
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedStateHandle) {
