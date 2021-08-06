@@ -8,8 +8,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AllCountriesViewModelFactory(
     private var sortStatus:  Int,
-    private val mSearchSubject: PublishSubject<String>,
-    savedStateHandle: SavedStateHandle
+    private val mSearchSubject: BehaviorSubject<String>
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
