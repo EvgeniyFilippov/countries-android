@@ -31,9 +31,10 @@ class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(savedStateHandle) {
 
-    val mutableCountriesLiveData = MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+    val mutableCountriesLiveData =
+        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val mutableCountriesFromSearchLiveData =
-        SingleLiveEvent<Outcome<MutableList<CountryDescriptionItemDto>>>()
+        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
@@ -47,16 +48,15 @@ class AllCountriesViewModel(
             .subscribe({
                 mutableCountriesLiveData.next(it)
                 saveToDBfromApi(it)
-            }, {mutableCountriesLiveData.failed(it)
+            }, {
+                mutableCountriesLiveData.failed(it)
                 getCountriesFromDB()
             }, {
                 if (mutableCountriesLiveData.value is Outcome.Next) {
                     mutableCountriesLiveData.success((mutableCountriesLiveData.value as Outcome.Next).data)
-        }
+                }
             }).also { mCompositeDisposable.add(it) }
     }
-
-
 
 
     private fun getCountriesFromDB() {
@@ -75,11 +75,12 @@ class AllCountriesViewModel(
             ?.subscribe({
                 mutableCountriesLiveData.next(it)
                 it.clear()
-            }, { mutableCountriesLiveData.failed(it)
+            }, {
+                mutableCountriesLiveData.failed(it)
             }, {
                 if (mutableCountriesLiveData.value is Outcome.Next) {
                     mutableCountriesLiveData.success((mutableCountriesLiveData.value as Outcome.Next).data)
-        }
+                }
             }).also { mCompositeDisposable.add(it) }
     }
 
@@ -112,26 +113,23 @@ class AllCountriesViewModel(
     fun getSearchSubject() {
         mCompositeDisposable.add(
             executeJob(
-        mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
-            .onErrorResumeNext { Flowable.just("") }
-            .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
-            .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
-            .distinctUntilChanged()
-            .map { it.trim() }
-            .flatMap { text: String ->
-                RetrofitObj.getCountriesApi().getCountryDetails(text)
+                mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
+                    .onErrorResumeNext { Flowable.just("") }
+                    .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+                    .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+                    .distinctUntilChanged()
+                    .map { it.trim() }
+                    .flatMap { text: String ->
+                        RetrofitObj.getCountriesApi().getCountryDetails(text)
 
-                    .map { it.transformCountryToDto() }
-                    .map {
-                        it.filter { country ->
-                            country.name.contains(text, true)
-                        }
-                            .toMutableList()
-                    }
-
-            }
-
-            , mutableCountriesFromSearchLiveData )
+                            .map { it.transformCountryToDto() }
+                            .map {
+                                it.filter { country ->
+                                    country.name.contains(text, true)
+                                }
+                                    .toMutableList()
+                            }
+                    }, mutableCountriesFromSearchLiveData)
         )
     }
 
@@ -161,7 +159,6 @@ class AllCountriesViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-
                 mutableCountriesFromSearchLiveData.next(listCountriesFromFilter)
             }, {
                 mutableCountriesFromSearchLiveData.failed(it)
@@ -170,6 +167,5 @@ class AllCountriesViewModel(
                     mutableCountriesFromSearchLiveData.success((mutableCountriesFromSearchLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
-
     }
 }
