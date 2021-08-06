@@ -2,7 +2,9 @@ package com.example.course_android.fragments.allCountries
 
 import android.content.ContentValues
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.example.course_android.Constants
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
@@ -13,28 +15,38 @@ import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.CountriesApp
 import com.example.course_android.api.RetrofitObj
-import com.example.course_android.base.mvvm.BaseViewModel
+import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     private val sortStatus: Int,
-    private val mSearchSubject: PublishSubject<String>,
+    private val mSearchSubject: BehaviorSubject<String>,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(savedStateHandle) {
 
-    val mutableCountriesLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
+    val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
+
     val mutableCountriesFromSearchLiveData =
-        SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
+        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+//    val mutableCountriesFromSearchLiveData =
+//        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+//    val mutableCountriesFromSearchLiveData =
+//        SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
+
+//    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
@@ -105,15 +117,18 @@ class AllCountriesViewModel(
         }
     }
 
-    fun getSearchSubject(): Disposable =
-        mSearchSubject
+    fun getSearchSubject() {
+        mCompositeDisposable.add(
+            executeJob(
+        mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
+            .onErrorResumeNext { Flowable.just("") }
             .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
             .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .map { it.trim() }
             .flatMap { text: String ->
-                RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
-                    .onErrorResumeNext { Observable.just(mutableListOf()) }
+                RetrofitObj.getCountriesApi().getCountryDetails(text)
+
                     .map { it.transformCountryToDto() }
                     .map {
                         it.filter { country ->
@@ -121,14 +136,20 @@ class AllCountriesViewModel(
                         }
                             .toMutableList()
                     }
+
             }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                mutableCountriesFromSearchLiveData.value = it
-            }, {
-                Log.d(ContentValues.TAG, ("Error"))
-            }).also { mCompositeDisposable.add(it) }
+
+            , mutableCountriesFromSearchLiveData )
+
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({
+//                mutableCountriesFromSearchLiveData.value = it
+//            }, {
+//                Log.d(ContentValues.TAG, ("Error"))
+//            }).also { mCompositeDisposable.add(it) }
+        )
+    }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
         val currentLocationOfUser = getResultOfCurrentLocation()
@@ -155,11 +176,26 @@ class AllCountriesViewModel(
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ sortedListDto ->
-                mutableCountriesFromSearchLiveData.value = listCountriesFromFilter
-                saveToDBfromApi(sortedListDto)
-            }, {
+            .subscribe({
 
+                mutableCountriesFromSearchLiveData.next(listCountriesFromFilter)
+            }, {
+                mutableCountriesFromSearchLiveData.failed(it)
+            }, {
+                if (mutableCountriesFromSearchLiveData.value is Outcome.Next) {
+                    mutableCountriesFromSearchLiveData.success((mutableCountriesFromSearchLiveData.value as Outcome.Next).data)
+                }
             }).also { mCompositeDisposable.add(it) }
+
+
+
+
+//
+//            .subscribe({ sortedListDto ->
+//                mutableCountriesFromSearchLiveData.value = listCountriesFromFilter
+//                saveToDBfromApi(sortedListDto)
+//            }, {
+//
+//            }).also { mCompositeDisposable.add(it) }
     }
 }
