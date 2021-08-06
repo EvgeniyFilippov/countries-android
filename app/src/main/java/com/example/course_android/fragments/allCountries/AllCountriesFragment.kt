@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants
@@ -25,6 +26,7 @@ import com.example.course_android.Constants.SORT_STATUS_UP
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
+import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
@@ -48,13 +50,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
 
-    private val mSearchSubject = PublishSubject.create<String>()
+    private val mSearchSubject = BehaviorSubject.create<String>()
     private lateinit var viewModel: AllCountriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel =
-            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
+            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
                 .get(AllCountriesViewModel::class.java)
         viewModel.getSearchSubject()
     }
@@ -74,9 +76,37 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         viewModel.mutableCountriesLiveData.observe(
             viewLifecycleOwner,
             Observer { data -> showCountries(data) })
-        viewModel.mutableCountriesFromSearchLiveData.singleObserve(
-            viewLifecycleOwner,
-            Observer { data -> showCountries(data) })
+
+
+//        viewModel.mutableCountriesFromSearchLiveData.singleObserve(
+//            viewLifecycleOwner,
+//            Observer { data -> showCountries(data) })
+
+
+        viewModel.mutableCountriesFromSearchLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is Outcome.Progress -> {
+
+                }
+                is Outcome.Failure -> {
+                    hideProgress()
+                }
+                is Outcome.Success -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+
+                is Outcome.Next -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+                else -> {
+
+                }
+            }
+        }
+
+
 
         showProgress()
         viewModel.getCountriesFromApi()
@@ -168,7 +198,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
-        binding?.progressBar?.visibility = View.GONE
+        hideProgress()
         adapterOfAllCountries.setItemClick { item ->
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_KEY, item.name)
