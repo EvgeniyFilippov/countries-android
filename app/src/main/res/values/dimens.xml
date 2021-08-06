@@ -22,4 +22,9 @@
     <dimen name="flag_height">100dp</dimen>
     <dimen name="map_height">250dp</dimen>
     <dimen name="zero_size">0dp</dimen>
+    <dimen name="margin_top_30">30dp</dimen>
+    <dimen name="width_edit_text_def">70dp</dimen>
+    <dimen name="height_edit_text_def">40dp</dimen>
+    <dimen name="padding_left_4">4dp</dimen>
+    <dimen name="def_margin">10dp</dimen>
 </resources>
