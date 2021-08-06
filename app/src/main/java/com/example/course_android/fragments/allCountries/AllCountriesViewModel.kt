@@ -37,7 +37,7 @@ class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(savedStateHandle) {
 
-    val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
+    val mutableCountriesLiveData = MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
     val mutableCountriesFromSearchLiveData =
         MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
@@ -58,17 +58,24 @@ class AllCountriesViewModel(
             .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ sortedListDto ->
-                mutableCountriesLiveData.value = sortedListDto
-                saveToDBfromApi(sortedListDto)
-            }, {
+            .subscribe({
+                mutableCountriesLiveData.next(it)
+                saveToDBfromApi(it)
+            }, {mutableCountriesLiveData.failed(it)
                 getCountriesFromDB()
 //                if (cone?.isOnline() == false) {
 //                    mutableCountriesErrorLiveData.value = "Error"
 //                    context?.toast(getString(R.string.chek_inet))
 //                }
+            }, {
+                if (mutableCountriesLiveData.value is Outcome.Next) {
+                    mutableCountriesLiveData.success((mutableCountriesLiveData.value as Outcome.Next).data)
+        }
             }).also { mCompositeDisposable.add(it) }
     }
+
+
+
 
     private fun getCountriesFromDB() {
         val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
@@ -83,13 +90,32 @@ class AllCountriesViewModel(
             ?.doOnNext { list -> list.sortBySortStatusFromPref(sortStatus) }
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({ sortedListDto ->
-                mutableCountriesLiveData.value = sortedListDto
-                sortedListDto.clear()
-            }, { throwable ->
-                throwable.printStackTrace()
+            ?.subscribe({
+                mutableCountriesLiveData.next(it)
+                it.clear()
+            }, { mutableCountriesLiveData.failed(it)
+            }, {
+                if (mutableCountriesLiveData.value is Outcome.Next) {
+                    mutableCountriesLiveData.success((mutableCountriesLiveData.value as Outcome.Next).data)
+        }
             }).also { mCompositeDisposable.add(it) }
     }
+
+
+
+    //    .subscribe({
+//        mapConfigFilter[Constants.FILTER_VALUE_FROM_KEY_AREA] = it[0].toFloat()
+//        mapConfigFilter[Constants.FILTER_VALUE_TO_KEY_AREA] = it[1].toFloat()
+//        mapConfigFilter[Constants.FILTER_VALUE_FROM_KEY_POPULATION] = it[2].toFloat()
+//        mapConfigFilter[Constants.FILTER_VALUE_TO_KEY_POPULATION] = it[3].toFloat()
+//        mutableFilterConfigLiveData.next(mapConfigFilter)
+//    }, {
+//        mutableFilterConfigLiveData.failed(it)
+//    }, {
+//        if (mutableFilterConfigLiveData.value is Outcome.Next) {
+//            mutableFilterConfigLiveData.success((mutableFilterConfigLiveData.value as Outcome.Next).data)
+//        }
+//    }).also { mCompositeDisposable.add(it) }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()

@@ -73,9 +73,39 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             viewModel.getCountriesFromFilter(map)
         })
 
-        viewModel.mutableCountriesLiveData.observe(
-            viewLifecycleOwner,
-            Observer { data -> showCountries(data) })
+//        viewModel.mutableCountriesLiveData.observe(
+//            viewLifecycleOwner,
+//            Observer { data -> showCountries(data) })
+
+        viewModel.mutableCountriesLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is Outcome.Progress -> {
+
+                }
+                is Outcome.Failure -> {
+                    hideProgress()
+                }
+                is Outcome.Success -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+
+                is Outcome.Next -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+                else -> {
+
+                }
+            }
+        }
+
+
+
+
+
+
+
 
 
 //        viewModel.mutableCountriesFromSearchLiveData.singleObserve(
