@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
@@ -71,7 +72,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                     showProgress()
                 }
                 is Outcome.Failure -> {
-                 showError()
+                    showError()
                 }
                 is Outcome.Success -> {
                     showCountries(it.data)
@@ -111,7 +112,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             }
         }
 
-//        showProgress()
         viewModel.getCountriesFromApi()
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
