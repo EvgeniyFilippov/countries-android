@@ -17,10 +17,7 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
-import com.example.course_android.utils.calculateDistanceFiler
-import com.example.course_android.utils.convertDBdataToRetrofitModel
-import com.example.course_android.utils.getResultOfCurrentLocation
-import com.example.course_android.utils.sortBySortStatusFromPref
+import com.example.course_android.utils.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
@@ -36,7 +33,7 @@ class AllCountriesViewModel(
 
     val mutableCountriesLiveData = MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val mutableCountriesFromSearchLiveData =
-        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+        SingleLiveEvent<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
