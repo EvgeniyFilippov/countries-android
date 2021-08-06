@@ -34,7 +34,7 @@ class AllCountriesViewModel(
     val mutableCountriesLiveData =
         MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val mutableCountriesFromSearchLiveData =
-        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+        SingleLiveEvent<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
