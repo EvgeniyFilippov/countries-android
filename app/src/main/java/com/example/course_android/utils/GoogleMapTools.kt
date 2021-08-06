@@ -85,14 +85,8 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
         .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
 }
 
-
 fun getResultOfCurrentLocation(): Location {
     return currentLocationOfUser
-}
-
-fun getDistanceForFilter(location: Location): Int {
-    calculateDistance(location)
-    return distance
 }
 
 fun getDistance(context: Context): Int {
