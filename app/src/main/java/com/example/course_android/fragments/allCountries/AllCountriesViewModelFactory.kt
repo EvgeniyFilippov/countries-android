@@ -7,12 +7,13 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 class AllCountriesViewModelFactory(
     private var sortStatus:  Int,
-    private val mSearchSubject: BehaviorSubject<String>
+    private val mSearchSubject: BehaviorSubject<String>,
+    private val savedStateHandle: SavedStateHandle
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AllCountriesViewModel::class.java)) {
-            return AllCountriesViewModel(sortStatus, mSearchSubject, savedStateHandle = SavedStateHandle()) as T
+            return AllCountriesViewModel(sortStatus, mSearchSubject, savedStateHandle) as T
         }
         throw IllegalArgumentException("Error class. Get ${modelClass.canonicalName}, required AllCountriesViewModel")
     }
