@@ -120,7 +120,7 @@ class FilterFragment : Fragment(), BaseMvvmView {
         }
 
         //слушаем слайдер популяции
-        sliderOfPopulation?.addOnChangeListener { rangeSlider, value, fromUser ->
+        sliderOfPopulation?.addOnChangeListener { rangeSlider, _, _ ->
             startPopulation = rangeSlider.values[0]
             endPopulation = rangeSlider.values[1]
             headerOfPopulation.text =
