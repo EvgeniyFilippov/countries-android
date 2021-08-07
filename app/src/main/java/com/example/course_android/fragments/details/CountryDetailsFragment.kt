@@ -14,7 +14,6 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.*
 import com.example.course_android.utils.*
 import com.google.android.libraries.maps.SupportMapFragment
-import kotlinx.android.synthetic.main.fragment_country_details.*
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
@@ -43,8 +42,8 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         getPresenter().attachView(this)
         setHasOptionsMenu(true)
         binding?.mTvCountryName?.text = mCountryName
-        recycler_languages.layoutManager = LinearLayoutManager(context)
-        recycler_languages.adapter = adapterLanguages
+        binding?.recyclerLanguages?.layoutManager = LinearLayoutManager(context)
+        binding?.recyclerLanguages?.adapter = adapterLanguages
 
         binding?.srCountryDetails?.setOnRefreshListener {
             getPresenter().getMyData(mCountryName, true)
