@@ -48,10 +48,10 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { it.transformCountryToDto() }
             .map { list -> listOf(
-                list.minBy { it.area.toInt()}?.area ?: 0.0,
-                list.maxBy { it.area.toInt()}?.area ?: 0.0,
-                list.minBy { it.population}?.population?.toDouble() ?: 0.0,
-                list.maxBy { it.population}?.population?.toDouble() ?: 0.0
+                list.minByOrNull { it.area.toInt()}?.area ?: 0.0,
+                list.maxByOrNull { it.area.toInt()}?.area ?: 0.0,
+                list.minByOrNull { it.population}?.population?.toDouble() ?: 0.0,
+                list.maxByOrNull { it.population}?.population?.toDouble() ?: 0.0
             )}
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
