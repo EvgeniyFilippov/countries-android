@@ -51,13 +51,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
                 .get(AllCountriesViewModel::class.java)
         viewModel.getSearchSubject()
+        context?.let { getCurrentLocation(it) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
-        context?.let { getCurrentLocation(it) }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             "valueOfFilter"
