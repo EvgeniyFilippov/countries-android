@@ -33,7 +33,6 @@ import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import kotlinx.android.synthetic.main.fragment_all_countries.*
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
 
@@ -88,7 +87,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             }
         }
 
-        viewModel.mutableCountriesFromSearchLiveData.observe(viewLifecycleOwner) {
+        viewModel.mutableCountriesFromSearchLiveData.singleObserve(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
                     showProgress()
@@ -112,9 +111,9 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         }
 
         viewModel.getCountriesFromApi()
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = adapterOfAllCountries
+        binding?.recyclerView?.setHasFixedSize(true)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
+        binding?.recyclerView?.adapter = adapterOfAllCountries
         setHasOptionsMenu(true)
     }
 
