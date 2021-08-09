@@ -47,6 +47,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        readSortStatus()
         viewModel =
             ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
                 .get(AllCountriesViewModel::class.java)
@@ -56,7 +57,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
