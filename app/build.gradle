@@ -68,6 +68,7 @@ dependencies {
     final rxJavaRetrofit = "3.0.0"
     final rxJavaAndroid = "3.0.0"
     final rxJava ="3.0.13"
+    final koinVersion ="3.1.2"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -106,6 +107,15 @@ dependencies {
     //Maps
     implementation "com.google.android.gms:play-services-location:$gms"
     implementation "com.google.android.libraries.maps:maps:$maps"
+
+    //Koin
+    implementation "io.insert-koin:koin-core:$koinVersion"
+    // Koin main features for Android (Scope,ViewModel ...)
+    implementation "io.insert-koin:koin-android:$koinVersion"
+    // Koin Java Compatibility
+    implementation "io.insert-koin:koin-android-compat:$koinVersion"
+    // Koin for Jetpack WorkManager
+    implementation "io.insert-koin:koin-androidx-workmanager:$koinVersion"
 }
 
 //apply plugin: 'kotlin-android-extensions'
