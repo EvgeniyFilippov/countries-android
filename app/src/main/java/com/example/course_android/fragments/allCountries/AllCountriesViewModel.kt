@@ -42,7 +42,7 @@ class AllCountriesViewModel(
     fun getCountriesFromApi() {
         RetrofitObj.getCountriesApi().getListOfCountry()
             .map { it.transformCountryToDto() }
-            .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus) }
+            .map { it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
