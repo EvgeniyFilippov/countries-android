@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -34,6 +33,7 @@ import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
 
@@ -43,14 +43,15 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val mSearchSubject = BehaviorSubject.create<String>()
-    private lateinit var viewModel: AllCountriesViewModel
+//    private lateinit var viewModel: AllCountriesViewModel
+    private val viewModel: AllCountriesViewModel by stateViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readSortStatus()
-        viewModel =
-            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
-                .get(AllCountriesViewModel::class.java)
+//        viewModel =
+//            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
+//                .get(AllCountriesViewModel::class.java)
         viewModel.getCountriesFromSearch()
         context?.let { getCurrentLocation(it) }
     }
