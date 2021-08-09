@@ -18,6 +18,8 @@ import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
+import com.repository.database.DatabaseRepository
+import com.repository.network.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
@@ -26,9 +28,11 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
-    private val sortStatus: Int,
-    private val mSearchSubject: BehaviorSubject<String>,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+//    private val sortStatus: Int,
+//    private val mSearchSubject: BehaviorSubject<String>,
+//    private val mDatabaseRepository: DatabaseRepository,
+    private val mNetworkRepository: NetworkRepository
 ) : BaseViewModel(savedStateHandle) {
 
     val allCountriesLiveData =
@@ -40,9 +44,8 @@ class AllCountriesViewModel(
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
-        RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { it.transformCountryToDto() }
-            .map { it.sortBySortStatusFromPref(sortStatus) }
+        mNetworkRepository.getListOfCountry()
+//            .map { it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -60,83 +63,82 @@ class AllCountriesViewModel(
 
 
     private fun getCountriesFromDB() {
-        val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
-        val languagesFromDB = CountriesApp.base?.getLanguageInfoDAO()
-        countriesFromDB
-            ?.map { list ->
-                list.convertDBdataToRetrofitModel(
-                    languagesFromDB,
-                    listOfCountriesFromDB
-                )
-            }
-            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) }
-            ?.subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({
-                allCountriesLiveData.next(it)
-                it.clear()
-            }, {
-                allCountriesLiveData.failed(it)
-            }, {
-                if (allCountriesLiveData.value is Outcome.Next) {
-                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
-                }
-            }).also { mCompositeDisposable.add(it) }
+//        val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
+//        val languagesFromDB = CountriesApp.base?.getLanguageInfoDAO()
+//        countriesFromDB
+//            ?.map { list ->
+//                list.convertDBdataToRetrofitModel(
+//                    languagesFromDB,
+//                    listOfCountriesFromDB
+//                )
+//            }
+////            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) }
+//            ?.subscribeOn(Schedulers.io())
+//            ?.observeOn(AndroidSchedulers.mainThread())
+//            ?.subscribe({
+//                allCountriesLiveData.next(it)
+//                it.clear()
+//            }, {
+//                allCountriesLiveData.failed(it)
+//            }, {
+//                if (allCountriesLiveData.value is Outcome.Next) {
+//                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
+//                }
+//            }).also { mCompositeDisposable.add(it) }
     }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-        listCountriesFromApiDto.let {
-            listCountriesFromApiDto.forEach { item ->
-                listOfAllCountries.add(
-                    CountryBaseInfoEntity(
-                        item.name,
-                        item.capital,
-                        item.area
-                    )
-                )
-                item.languages.forEach { language ->
-                    listOfAllLanguages.add(
-                        LanguagesInfoEntity(
-                            item.name,
-                            language.name
-                        )
-                    )
-                }
-            }
-            CountriesApp.daoCountry?.addAll(listOfAllCountries)
-            CountriesApp.daoLanguage?.addAll(listOfAllLanguages)
-        }
+//        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+//        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+//        listCountriesFromApiDto.let {
+//            listCountriesFromApiDto.forEach { item ->
+//                listOfAllCountries.add(
+//                    CountryBaseInfoEntity(
+//                        item.name,
+//                        item.capital,
+//                        item.area
+//                    )
+//                )
+//                item.languages.forEach { language ->
+//                    listOfAllLanguages.add(
+//                        LanguagesInfoEntity(
+//                            item.name,
+//                            language.name
+//                        )
+//                    )
+//                }
+//            }
+//            CountriesApp.daoCountry?.addAll(listOfAllCountries)
+//            CountriesApp.daoLanguage?.addAll(listOfAllLanguages)
+//        }
     }
 
     fun getCountriesFromSearch() {
-        mCompositeDisposable.add(
-            executeJob(
-                mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
-                    .onErrorResumeNext { Flowable.just("") }
-                    .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
-                    .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
-                    .distinctUntilChanged()
-                    .map { it.trim() }
-                    .flatMap { text: String ->
-                        RetrofitObj.getCountriesApi().getCountryDetails(text)
-
-                            .map { it.transformCountryToDto() }
-                            .map {
-                                it.filter { country ->
-                                    country.name.contains(text, true)
-                                }
-                                    .toMutableList()
-                            }
-                    }, countriesFromSearchAndFilterLiveData)
-        )
+//        mCompositeDisposable.add(
+//            executeJob(
+//                mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
+//                    .onErrorResumeNext { Flowable.just("") }
+//                    .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+//                    .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+//                    .distinctUntilChanged()
+//                    .map { it.trim() }
+//                    .flatMap { text: String ->
+//                        RetrofitObj.getCountriesApi().getCountryDetails(text)
+//
+//                            .map { it.transformCountryToDto() }
+//                            .map {
+//                                it.filter { country ->
+//                                    country.name.contains(text, true)
+//                                }
+//                                    .toMutableList()
+//                            }
+//                    }, countriesFromSearchAndFilterLiveData)
+//        )
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
         val currentLocationOfUser = getResultOfCurrentLocation()
-        RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { it.transformCountryToDto() }
+        mNetworkRepository.getListOfCountry()
             .doOnNext { list ->
                 listCountriesFromFilter.clear()
                 list.forEach { country ->
