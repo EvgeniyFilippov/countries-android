@@ -50,7 +50,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         viewModel =
             ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
                 .get(AllCountriesViewModel::class.java)
-        viewModel.getSearchSubject()
+        viewModel.getCountriesFromSearch()
         context?.let { getCurrentLocation(it) }
     }
 
@@ -65,7 +65,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             viewModel.getCountriesFromFilter(map)
         })
 
-        viewModel.mutableCountriesLiveData.observe(viewLifecycleOwner) {
+        viewModel.allCountriesLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
                     showProgress()
@@ -88,7 +88,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
             }
         }
 
-        viewModel.mutableCountriesFromSearchLiveData.singleObserve(viewLifecycleOwner) {
+        viewModel.countriesFromSearchAndFilterLiveData.singleObserve(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
                     showProgress()
