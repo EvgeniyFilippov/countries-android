@@ -2,9 +2,14 @@ package com.example.course_android
 
 import android.app.Application
 import com.example.course_android.api.RetrofitObj
+import com.example.course_android.di.appModule
+import com.example.course_android.di.countryListModule
 import com.example.course_android.room.CountryInfoDAO
 import com.example.course_android.room.DatabaseInfo
 import com.example.course_android.room.LanguagesInfoDAO
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
 import retrofit2.Retrofit
 
 class CountriesApp : Application() {
@@ -22,5 +27,17 @@ class CountriesApp : Application() {
         base = this.let { DatabaseInfo.init(it) }
         daoCountry = base?.getCountryInfoDAO()
         daoLanguage = base?.getLanguageInfoDAO()
+        startKoin {
+            // Koin Android logger
+            androidLogger()
+            //inject Android context
+            androidContext(this@CountriesApp)
+            // use modules
+            modules(
+                appModule,
+                countryListModule
+            )
+        }
+
     }
 }
