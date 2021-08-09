@@ -31,9 +31,9 @@ class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(savedStateHandle) {
 
-    val mutableCountriesLiveData =
+    val allCountriesLiveData =
         MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
-    val mutableCountriesFromSearchLiveData =
+    val countriesFromSearchAndFilterLiveData =
         SingleLiveEvent<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
@@ -46,14 +46,14 @@ class AllCountriesViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mutableCountriesLiveData.next(it)
+                allCountriesLiveData.next(it)
                 saveToDBfromApi(it)
             }, {
-                mutableCountriesLiveData.failed(it)
+                allCountriesLiveData.failed(it)
                 getCountriesFromDB()
             }, {
-                if (mutableCountriesLiveData.value is Outcome.Next) {
-                    mutableCountriesLiveData.success((mutableCountriesLiveData.value as Outcome.Next).data)
+                if (allCountriesLiveData.value is Outcome.Next) {
+                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
     }
@@ -73,13 +73,13 @@ class AllCountriesViewModel(
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                mutableCountriesLiveData.next(it)
+                allCountriesLiveData.next(it)
                 it.clear()
             }, {
-                mutableCountriesLiveData.failed(it)
+                allCountriesLiveData.failed(it)
             }, {
-                if (mutableCountriesLiveData.value is Outcome.Next) {
-                    mutableCountriesLiveData.success((mutableCountriesLiveData.value as Outcome.Next).data)
+                if (allCountriesLiveData.value is Outcome.Next) {
+                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
     }
@@ -110,7 +110,7 @@ class AllCountriesViewModel(
         }
     }
 
-    fun getSearchSubject() {
+    fun getCountriesFromSearch() {
         mCompositeDisposable.add(
             executeJob(
                 mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
@@ -129,7 +129,7 @@ class AllCountriesViewModel(
                                 }
                                     .toMutableList()
                             }
-                    }, mutableCountriesFromSearchLiveData)
+                    }, countriesFromSearchAndFilterLiveData)
         )
     }
 
@@ -159,12 +159,12 @@ class AllCountriesViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mutableCountriesFromSearchLiveData.next(listCountriesFromFilter)
+                countriesFromSearchAndFilterLiveData.next(listCountriesFromFilter)
             }, {
-                mutableCountriesFromSearchLiveData.failed(it)
+                countriesFromSearchAndFilterLiveData.failed(it)
             }, {
-                if (mutableCountriesFromSearchLiveData.value is Outcome.Next) {
-                    mutableCountriesFromSearchLiveData.success((mutableCountriesFromSearchLiveData.value as Outcome.Next).data)
+                if (countriesFromSearchAndFilterLiveData.value is Outcome.Next) {
+                    countriesFromSearchAndFilterLiveData.success((countriesFromSearchAndFilterLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
     }
