@@ -69,7 +69,7 @@ class AllCountriesViewModel(
                     listOfCountriesFromDB
                 )
             }
-            ?.doOnNext { list -> list.sortBySortStatusFromPref(sortStatus) }
+            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) as MutableList<CountryDescriptionItemDto> }
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
