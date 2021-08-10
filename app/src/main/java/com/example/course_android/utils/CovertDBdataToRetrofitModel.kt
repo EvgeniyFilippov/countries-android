@@ -6,9 +6,10 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoDAO
+import com.repository.database.DatabaseLanguageRepository
 
 fun List<CountryBaseInfoEntity>?.convertDBdataToRetrofitModel(
-    languagesFromDB: LanguagesInfoDAO?, listOfCountriesFromDB: MutableList<CountryDescriptionItemDto>
+    languagesFromDB: DatabaseLanguageRepository, listOfCountriesFromDB: MutableList<CountryDescriptionItemDto>
 ): MutableList<CountryDescriptionItemDto> {
     this?.forEach { countryDB ->
         val listOfLanguagesFromDB: MutableList<LanguageOfOneCountryDto> = mutableListOf()
