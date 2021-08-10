@@ -2,36 +2,27 @@ package com.example.course_android.fragments.allCountries
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
-import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.CountriesApp
-import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
-import com.repository.database.DatabaseRepository
 import com.repository.network.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
 //    private val sortStatus: Int,
 //    private val mSearchSubject: BehaviorSubject<String>,
-//    private val mDatabaseRepository: DatabaseRepository,
+//    private val mDatabaseRepository: DatabaseLanguageRepository,
     private val mNetworkRepository: NetworkRepository
 ) : BaseViewModel(savedStateHandle) {
 
@@ -88,29 +79,29 @@ class AllCountriesViewModel(
     }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-//        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-//        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-//        listCountriesFromApiDto.let {
-//            listCountriesFromApiDto.forEach { item ->
-//                listOfAllCountries.add(
-//                    CountryBaseInfoEntity(
-//                        item.name,
-//                        item.capital,
-//                        item.area
-//                    )
-//                )
-//                item.languages.forEach { language ->
-//                    listOfAllLanguages.add(
-//                        LanguagesInfoEntity(
-//                            item.name,
-//                            language.name
-//                        )
-//                    )
-//                }
-//            }
-//            CountriesApp.daoCountry?.addAll(listOfAllCountries)
-//            CountriesApp.daoLanguage?.addAll(listOfAllLanguages)
-//        }
+        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+        listCountriesFromApiDto.let {
+            listCountriesFromApiDto.forEach { item ->
+                listOfAllCountries.add(
+                    CountryBaseInfoEntity(
+                        item.name,
+                        item.capital,
+                        item.area
+                    )
+                )
+                item.languages.forEach { language ->
+                    listOfAllLanguages.add(
+                        LanguagesInfoEntity(
+                            item.name,
+                            language.name
+                        )
+                    )
+                }
+            }
+            CountriesApp.daoCountry?.addAll(listOfAllCountries)
+            CountriesApp.daoLanguage?.addAll(listOfAllLanguages)
+        }
     }
 
     fun getCountriesFromSearch() {
