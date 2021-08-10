@@ -11,9 +11,11 @@ import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentMapAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
+import com.example.course_android.fragments.details.CountryDetailsPresenter
 import com.example.course_android.utils.toast
 import com.google.android.libraries.maps.SupportMapFragment
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import org.koin.android.ext.android.inject
 
 class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(),
     MapAllCountriesView {
@@ -21,6 +23,7 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
     private var binding: FragmentMapAllCountriesBinding? = null
     private var mapFragment2: SupportMapFragment? = null
     private val mCompositeDisposable = CompositeDisposable()
+    private val mModulePresenter : MapAllCountriesPresenter by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +46,7 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
     }
 
     override fun createPresenter() {
-        mPresenter = MapAllCountriesPresenter()
+        mPresenter = mModulePresenter
     }
 
     override fun getPresenter(): MapAllCountriesPresenter = mPresenter
