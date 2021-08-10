@@ -2,8 +2,10 @@ package com.example.course_android.base.mvp
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.core.scope.Scope
 
-abstract class BaseMvpFragment<View: BaseMvpView, PresenterType : BaseMvpPresenter<View>> : Fragment() {
+abstract class BaseMvpFragment<View: BaseMvpView, PresenterType : BaseMvpPresenter<View>> : ScopeFragment() {
 
     protected lateinit var mPresenter: PresenterType
 
