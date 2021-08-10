@@ -34,9 +34,7 @@ class AllCountriesViewModel(
 ) : BaseViewModel(savedStateHandle) {
 
     private var sortStatus: Int = 0
-
     private val mSearchSubject = BehaviorSubject.create<String>()
-
     val allCountriesLiveData =
         MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val countriesFromSearchAndFilterLiveData =
