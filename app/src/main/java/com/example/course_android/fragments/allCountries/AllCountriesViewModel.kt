@@ -2,9 +2,11 @@ package com.example.course_android.fragments.allCountries
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
+import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
@@ -18,7 +20,11 @@ import com.repository.database.DatabaseCountryRepository
 import com.repository.database.DatabaseLanguageRepository
 import com.repository.network.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
@@ -30,6 +36,8 @@ class AllCountriesViewModel(
     private val mNetworkRepository: NetworkRepository
 ) : BaseViewModel(savedStateHandle) {
 
+    private val mSearchSubject = BehaviorSubject.create<String>()
+
     val allCountriesLiveData =
         MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val countriesFromSearchAndFilterLiveData =
@@ -40,7 +48,7 @@ class AllCountriesViewModel(
 
     fun getCountriesFromApi() {
         mNetworkRepository.getListOfCountry()
-//            .map { it.sortBySortStatusFromPref(sortStatus) }
+//            .map { it -> it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -109,26 +117,24 @@ class AllCountriesViewModel(
     }
 
     fun getCountriesFromSearch() {
-//        mCompositeDisposable.add(
-//            executeJob(
-//                mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
-//                    .onErrorResumeNext { Flowable.just("") }
-//                    .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
-//                    .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
-//                    .distinctUntilChanged()
-//                    .map { it.trim() }
-//                    .flatMap { text: String ->
-//                        RetrofitObj.getCountriesApi().getCountryDetails(text)
-//
-//                            .map { it.transformCountryToDto() }
-//                            .map {
-//                                it.filter { country ->
-//                                    country.name.contains(text, true)
-//                                }
-//                                    .toMutableList()
-//                            }
-//                    }, countriesFromSearchAndFilterLiveData)
-//        )
+        mCompositeDisposable.add(
+            executeJob(
+                mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
+                    .onErrorResumeNext { Flowable.just("") }
+                    .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+                    .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+                    .distinctUntilChanged()
+                    .map { it.trim() }
+                    .flatMap { text: String ->
+                        mNetworkRepository.getCountryDetails(text)
+                            .map {
+                                it.filter { country ->
+                                    country.name.contains(text, true)
+                                }
+                                    .toMutableList()
+                            }
+                    }, countriesFromSearchAndFilterLiveData)
+        )
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
@@ -165,4 +171,6 @@ class AllCountriesViewModel(
                 }
             }).also { mCompositeDisposable.add(it) }
     }
+
+    fun getSearchSubject(): BehaviorSubject<String> = mSearchSubject
 }
