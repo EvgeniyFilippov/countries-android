@@ -12,6 +12,7 @@ import org.koin.dsl.module
 
 val filterModule = module {
 
-    scope<FilterFragment> {  }
-    viewModel { (handle: SavedStateHandle) -> FilterViewModel(handle, get()) }
+    scope<FilterFragment> {
+        viewModel { (handle: SavedStateHandle) -> FilterViewModel(handle, get()) }
+    }
 }
