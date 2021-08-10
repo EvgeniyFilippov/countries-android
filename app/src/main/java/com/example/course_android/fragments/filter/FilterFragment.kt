@@ -21,8 +21,10 @@ import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentFilterBinding
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
+import com.example.course_android.fragments.allCountries.AllCountriesViewModel
 import com.example.course_android.utils.toast
 import com.google.android.material.slider.RangeSlider
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import java.text.NumberFormat
 
 class FilterFragment : Fragment(), BaseMvvmView {
@@ -30,7 +32,7 @@ class FilterFragment : Fragment(), BaseMvvmView {
     private var binding: FragmentFilterBinding? = null
     private var sliderOfArea: RangeSlider? = null
     private var sliderOfPopulation: RangeSlider? = null
-    private val viewModelFilter = FilterViewModel(SavedStateHandle())
+    private val viewModelFilter: FilterViewModel by stateViewModel()
     private var startArea = 0.0F
     private var endArea = 0.0F
     private var startPopulation = 0.0F
