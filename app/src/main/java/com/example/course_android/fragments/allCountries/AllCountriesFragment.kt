@@ -7,10 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -32,7 +29,6 @@ import com.example.course_android.utils.getCurrentLocation
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
@@ -43,7 +39,8 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
-    private val mSearchSubject = BehaviorSubject.create<String>()
+
+    //    private val mSearchSubject = BehaviorSubject.create<String>()
 //    private lateinit var viewModel: AllCountriesViewModel
     private val viewModel: AllCountriesViewModel by stateViewModel()
 
@@ -136,12 +133,12 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { mSearchSubject.onNext(query) }
+                query?.let { viewModel.getSearchSubject().onNext(query) }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                mSearchSubject.onNext(newText)
+                viewModel.getSearchSubject().onNext(newText)
                 return true
             }
         })
