@@ -39,9 +39,6 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
-
-    //    private val mSearchSubject = BehaviorSubject.create<String>()
-//    private lateinit var viewModel: AllCountriesViewModel
     private val viewModel: AllCountriesViewModel by stateViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -189,6 +186,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         val reader = sharedPreference?.getInt(KEY_SORT_STATUS, DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
+            viewModel.setSortStatus(sortStatus)
         }
     }
 
