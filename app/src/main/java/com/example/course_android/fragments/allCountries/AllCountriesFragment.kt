@@ -33,9 +33,10 @@ import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
-class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
+class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), BaseMvvmView {
 
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = DEFAULT_SORT_STATUS
@@ -49,9 +50,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readSortStatus()
-//        viewModel =
-//            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
-//                .get(AllCountriesViewModel::class.java)
         viewModel.getCountriesFromSearch()
         context?.let { getCurrentLocation(it) }
     }
