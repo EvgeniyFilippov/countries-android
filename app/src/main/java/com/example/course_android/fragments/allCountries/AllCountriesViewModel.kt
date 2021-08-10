@@ -14,12 +14,16 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
+import com.repository.database.DatabaseCountryRepository
+import com.repository.database.DatabaseLanguageRepository
 import com.repository.network.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
+    private val mDatabaseCountryRepository: DatabaseCountryRepository,
+    private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
 //    private val sortStatus: Int,
 //    private val mSearchSubject: BehaviorSubject<String>,
 //    private val mDatabaseRepository: DatabaseLanguageRepository,
@@ -54,28 +58,28 @@ class AllCountriesViewModel(
 
 
     private fun getCountriesFromDB() {
-//        val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
-//        val languagesFromDB = CountriesApp.base?.getLanguageInfoDAO()
-//        countriesFromDB
-//            ?.map { list ->
-//                list.convertDBdataToRetrofitModel(
-//                    languagesFromDB,
-//                    listOfCountriesFromDB
-//                )
-//            }
-////            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) }
-//            ?.subscribeOn(Schedulers.io())
-//            ?.observeOn(AndroidSchedulers.mainThread())
-//            ?.subscribe({
-//                allCountriesLiveData.next(it)
-//                it.clear()
-//            }, {
-//                allCountriesLiveData.failed(it)
-//            }, {
-//                if (allCountriesLiveData.value is Outcome.Next) {
-//                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
-//                }
-//            }).also { mCompositeDisposable.add(it) }
+        val countriesFromDB = mDatabaseCountryRepository.getAllInfo()
+        val languagesFromDB = mDatabaseLanguageRepository
+        countriesFromDB
+            .map { list ->
+                list.convertDBdataToRetrofitModel(
+                    languagesFromDB,
+                    listOfCountriesFromDB
+                )
+            }
+//            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) }
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
+                allCountriesLiveData.next(it)
+                it.clear()
+            }, {
+                allCountriesLiveData.failed(it)
+            }, {
+                if (allCountriesLiveData.value is Outcome.Next) {
+                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
+                }
+            }).also { mCompositeDisposable.add(it) }
     }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
@@ -99,8 +103,8 @@ class AllCountriesViewModel(
                     )
                 }
             }
-            CountriesApp.daoCountry?.addAll(listOfAllCountries)
-            CountriesApp.daoLanguage?.addAll(listOfAllLanguages)
+            mDatabaseCountryRepository.addAll(listOfAllCountries)
+            mDatabaseLanguageRepository.addAll(listOfAllLanguages)
         }
     }
 
