@@ -30,11 +30,10 @@ class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
     private val mDatabaseCountryRepository: DatabaseCountryRepository,
     private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
-//    private val sortStatus: Int,
-//    private val mSearchSubject: BehaviorSubject<String>,
-//    private val mDatabaseRepository: DatabaseLanguageRepository,
     private val mNetworkRepository: NetworkRepository
 ) : BaseViewModel(savedStateHandle) {
+
+    private var sortStatus: Int = 0
 
     private val mSearchSubject = BehaviorSubject.create<String>()
 
@@ -48,7 +47,7 @@ class AllCountriesViewModel(
 
     fun getCountriesFromApi() {
         mNetworkRepository.getListOfCountry()
-//            .map { it -> it.sortBySortStatusFromPref(sortStatus) }
+            .map { it -> it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -75,7 +74,7 @@ class AllCountriesViewModel(
                     listOfCountriesFromDB
                 )
             }
-//            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) }
+            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) }
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
@@ -173,4 +172,8 @@ class AllCountriesViewModel(
     }
 
     fun getSearchSubject(): BehaviorSubject<String> = mSearchSubject
+
+    fun setSortStatus(value: Int) {
+        sortStatus = value
+    }
 }
