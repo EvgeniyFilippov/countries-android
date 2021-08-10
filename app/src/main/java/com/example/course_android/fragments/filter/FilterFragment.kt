@@ -24,10 +24,11 @@ import com.example.course_android.ext.showAlertDialog
 import com.example.course_android.fragments.allCountries.AllCountriesViewModel
 import com.example.course_android.utils.toast
 import com.google.android.material.slider.RangeSlider
+import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import java.text.NumberFormat
 
-class FilterFragment : Fragment(), BaseMvvmView {
+class FilterFragment : ScopeFragment(), BaseMvvmView {
 
     private var binding: FragmentFilterBinding? = null
     private var sliderOfArea: RangeSlider? = null
