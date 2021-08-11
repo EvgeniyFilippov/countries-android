@@ -10,7 +10,6 @@ import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
-import com.example.course_android.CountriesApp
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.room.CountryBaseInfoEntity
@@ -45,7 +44,7 @@ class AllCountriesViewModel(
 
     fun getCountriesFromApi() {
         mNetworkRepository.getListOfCountry()
-            .map { it -> it.sortBySortStatusFromPref(sortStatus) }
+            .map { it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -130,7 +129,8 @@ class AllCountriesViewModel(
                                 }
                                     .toMutableList()
                             }
-                    }, countriesFromSearchAndFilterLiveData)
+                    }, countriesFromSearchAndFilterLiveData
+            )
         )
     }
 
