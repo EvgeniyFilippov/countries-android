@@ -12,7 +12,7 @@ fun List<CountryBaseInfoEntity>.convertCountryEntityToDto(): MutableList<RoomCou
         val countryEntityDto = RoomCountryDescriptionItemDto()
         countryEntityDto.area = it.area ?: Constants.DEFAULT_DOUBLE
         countryEntityDto.capital = it.capital ?: Constants.DEFAULT_STRING
-        countryEntityDto.name = it.name
+        countryEntityDto.name = it.name ?: Constants.DEFAULT_STRING
 
         listCountryEntityDto.add(countryEntityDto)
     }
