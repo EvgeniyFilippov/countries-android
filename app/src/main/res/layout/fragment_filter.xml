@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/def_margin"
+    tools:context=".fragments.filter.FilterFragment">
+
+    <ProgressBar
+        android:id="@+id/progressFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/header_of_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_30"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/slider_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_30"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_of_area"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/header2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Distance"
+        android:layout_marginTop="@dimen/margin_top_30"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slider_area"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/distanceFrom"
+        android:layout_width="@dimen/width_edit_text_def"
+        android:layout_height="@dimen/height_edit_text_def"
+        android:layout_marginTop="@dimen/margin_top_30"
+        android:paddingLeft="@dimen/padding_left_4"
+        android:text="@string/def_value_edit_text"
+        android:background="@color/qu_grey_600"
+        android:inputType="number"
+        app:layout_constraintEnd_toStartOf="@id/between"
+        app:layout_constraintTop_toBottomOf="@id/header2"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/between"
+        android:layout_width="@dimen/text_heading"
+        android:layout_height="@dimen/height_edit_text_def"
+        android:layout_marginTop="@dimen/margin_top_30"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header2">
+
+    </androidx.appcompat.widget.AppCompatImageView>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/distanceTo"
+        android:layout_width="@dimen/width_edit_text_def"
+        android:layout_height="@dimen/height_edit_text_def"
+        android:layout_marginTop="@dimen/margin_top_30"
+        android:paddingLeft="@dimen/padding_left_4"
+        android:text="@string/def_value_edit_text"
+        android:inputType="number"
+        android:background="@color/qu_grey_600"
+        app:layout_constraintStart_toEndOf="@id/between"
+        app:layout_constraintTop_toBottomOf="@id/header2"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/header_of_population"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_30"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/distanceTo"/>
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/slider_population"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_30"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_of_population"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_filter_go"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_name"
+        android:layout_marginTop="@dimen/margin_top_30"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slider_population"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

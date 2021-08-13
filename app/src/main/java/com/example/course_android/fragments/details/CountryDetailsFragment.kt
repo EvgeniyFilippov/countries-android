@@ -1,5 +1,6 @@
 package com.example.course_android.fragments.details
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,16 +11,9 @@ import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.ext.askLocationPermission
-import com.example.course_android.ext.checkLocationPermission
-import com.example.course_android.ext.isOnline
-import com.example.course_android.ext.showDialogWithOneButton
-import com.example.course_android.utils.getDistance
-import com.example.course_android.utils.initMapOfCountryDetails
-import com.example.course_android.utils.loadSvg
-import com.example.course_android.utils.toast
+import com.example.course_android.ext.*
+import com.example.course_android.utils.*
 import com.google.android.libraries.maps.SupportMapFragment
-import kotlinx.android.synthetic.main.fragment_country_details.*
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
@@ -48,8 +42,8 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         getPresenter().attachView(this)
         setHasOptionsMenu(true)
         binding?.mTvCountryName?.text = mCountryName
-        recycler_languages.layoutManager = LinearLayoutManager(context)
-        recycler_languages.adapter = adapterLanguages
+        binding?.recyclerLanguages?.layoutManager = LinearLayoutManager(context)
+        binding?.recyclerLanguages?.adapter = adapterLanguages
 
         binding?.srCountryDetails?.setOnRefreshListener {
             getPresenter().getMyData(mCountryName, true)
@@ -62,11 +56,12 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @SuppressLint("StringFormatMatches")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.gps_distance) {
             activity?.showDialogWithOneButton(
                 null,
-                getString(R.string.distanceToYou, mCountryName, getDistance()),
+                getString(R.string.distanceToYou, mCountryName, context?.let { getDistance(it) }),
                 R.string.dialog_ok,
                 null
             )
@@ -97,7 +92,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         //проверяем и запрашиваем пермишен Gps
         if (context?.checkLocationPermission() == true) {
             permissionGps = true
-            getDistance()
         } else {
             activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
         }
@@ -109,7 +103,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
                     initMapOfCountryDetails(
                         map,
                         country[0],
-                        it.applicationContext,
                         permissionGps
                     )
                 }
@@ -120,6 +113,8 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     override fun showError(error: String, throwable: Throwable) {
         if (context?.isOnline() == false) {
             context?.toast(getString(R.string.chek_inet))
+        } else {
+            activity?.showAlertDialog()
         }
     }
 

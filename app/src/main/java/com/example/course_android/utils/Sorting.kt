@@ -1,9 +1,10 @@
 package com.example.course_android.utils
 
+import androidx.lifecycle.MutableLiveData
 import com.example.course_android.Constants
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 
-fun MutableList<CountryDescriptionItemDto>.sortBySortStatusFromPref(sortStatus: Int) {
+fun MutableList<CountryDescriptionItemDto>.sortBySortStatusFromPref(sortStatus: Int) : MutableList<CountryDescriptionItemDto> {
     when (sortStatus) {
         Constants.SORT_STATUS_UP -> {
             this.sortBy { it.area }
@@ -15,4 +16,5 @@ fun MutableList<CountryDescriptionItemDto>.sortBySortStatusFromPref(sortStatus: 
             this.sortBy {it.name}
         }
     }
+    return this
 }

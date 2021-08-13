@@ -15,10 +15,10 @@ data class CountryDescriptionItem(
 //    val gini: Double,
     val languages: List<LanguageOfOneCountry>?,
     val latlng: List<Double>?,
-    val name: String?
+    val name: String?,
 //    val nativeName: String,
 //    val numericCode: String,
-//    val population: Int,
+    val population: Int?
 //    val region: String,
 //    val regionalBlocs: List<RegionalBloc>,
 //    val subregion: String,

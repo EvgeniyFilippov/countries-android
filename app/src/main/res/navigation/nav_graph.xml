@@ -12,20 +12,26 @@
         tools:layout="@layout/fragment_start" >
         <action
             android:id="@+id/action_startFragment_to_secondFragment"
-            app:destination="@id/secondFragment" />
+            app:destination="@id/allCountriesFragment" />
         <action
             android:id="@+id/action_startFragment_to_mapOfAllCountriesFragment2"
             app:destination="@id/mapOfAllCountriesFragment2" />
+        <action
+            android:id="@+id/action_startFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/secondFragment"
-        android:name="com.example.course_android.fragments.AllCountriesFragment"
-        android:label="fragment_second"
-        tools:layout="@layout/fragment_all_countries" >
+        android:id="@+id/allCountriesFragment"
+        android:name="com.example.course_android.fragments.allCountries.AllCountriesFragment"
+        android:label="fragment_all_countries"
+        tools:layout="@layout/fragment_all_countries">
         <action
             android:id="@+id/action_secondFragment_to_countryDetailsFragment"
             app:destination="@id/countryDetailsFragment" />
+        <action
+            android:id="@+id/action_allCountriesFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
     </fragment>
     <fragment
         android:id="@+id/countryDetailsFragment"
@@ -37,4 +43,9 @@
         android:name="com.example.course_android.fragments.map.MapAllCountriesFragment"
         android:label="fragment_map_of_all_countries"
         tools:layout="@layout/fragment_map_all_countries" />
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.example.course_android.fragments.filter.FilterFragment"
+        android:label="fragment_filter"
+        tools:layout="@layout/fragment_filter" />
 </navigation>
