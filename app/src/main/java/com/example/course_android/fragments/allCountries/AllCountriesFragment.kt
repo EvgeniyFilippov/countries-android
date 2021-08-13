@@ -17,6 +17,7 @@ import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
 import com.example.course_android.Constants.SORT_STATUS_DOWN
 import com.example.course_android.Constants.SORT_STATUS_UP
+import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
@@ -53,7 +54,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         binding = FragmentAllCountriesBinding.bind(view)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
-            "valueOfFilter"
+            VALUE_OF_FILTER_KEY
         )?.observe(viewLifecycleOwner, Observer { map ->
             viewModel.getCountriesFromFilter(map)
         })
