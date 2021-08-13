@@ -2,6 +2,7 @@ package com.example.course_android.fragments.allCountries
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
@@ -35,7 +36,7 @@ class AllCountriesViewModel(
     private var sortStatus: Int = 0
     private val mSearchSubject = BehaviorSubject.create<String>()
     val allCountriesLiveData =
-        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+        savedStateHandle.getLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>(ALL_COUNTRIES_LIVE_DATA)
     val countriesFromSearchAndFilterLiveData =
         SingleLiveEvent<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
