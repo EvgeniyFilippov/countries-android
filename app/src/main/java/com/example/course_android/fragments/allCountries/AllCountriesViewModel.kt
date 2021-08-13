@@ -63,12 +63,10 @@ class AllCountriesViewModel(
 
 
     private fun getCountriesFromDB() {
-        val countriesFromDB = mDatabaseCountryRepository.getAllInfo()
-        val languagesFromDB = mDatabaseLanguageRepository
-        countriesFromDB
+        mDatabaseCountryRepository.getAllInfo()
             .map { list ->
                 list.convertDBdataToRetrofitModel(
-                    languagesFromDB,
+                    mDatabaseLanguageRepository,
                     listOfCountriesFromDB
                 )
             }
