@@ -49,5 +49,6 @@ object Constants {
     const val FILTER_VALUE_START_KEY = 0.0F
     const val FILTER_VALUE_END_KEY = 0.0F
 
-
+    //LIVE DATA
+    const val ALL_COUNTRIES_LIVE_DATA = "allCountriesLiveData"
 }
