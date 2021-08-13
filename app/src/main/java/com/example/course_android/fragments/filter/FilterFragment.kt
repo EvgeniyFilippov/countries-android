@@ -15,6 +15,7 @@ import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
 import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_POPULATION
 import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_AREA
 import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
+import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.course_android.base.mvvm.Outcome
@@ -133,7 +134,7 @@ class FilterFragment : ScopeFragment(), BaseMvvmView {
 
     //отправляем конфиг в предыдущий фрагмент
     private fun sendSettingsOfFilter(map: HashMap<String, Int>) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("valueOfFilter", map)
+        findNavController().previousBackStackEntry?.savedStateHandle?.set(VALUE_OF_FILTER_KEY, map)
         findNavController().popBackStack()
     }
 
