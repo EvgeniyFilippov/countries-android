@@ -113,10 +113,12 @@ class AllCountriesViewModel(
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe ({
                 mDatabaseCountryRepository.addAll(listOfAllCountries)
                 mDatabaseLanguageRepository.addAll(listOfAllLanguages)
-            }
+            }, {
+                Log.d(KOIN_TAG, it.message.toString())
+            })
     }
 
     fun getCountriesFromSearch() {
