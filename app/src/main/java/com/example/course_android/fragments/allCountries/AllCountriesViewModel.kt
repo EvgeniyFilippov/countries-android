@@ -1,5 +1,6 @@
 package com.example.course_android.fragments.allCountries
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -150,20 +151,7 @@ class AllCountriesViewModel(
                 val currentLocationOfUser = getResultOfCurrentLocation()
                 listCountriesFromFilter.clear()
                 list.forEach { country ->
-                    if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
-                        && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
-                    ) {
-                        val distance = calculateDistanceFiler(currentLocationOfUser, country)
-                        if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
-                            distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
-                        ) {
-                            if (country.population >= mapSettingsByFilter[START_POPULATION_FILTER_KEY] ?: 0
-                                && country.population <= mapSettingsByFilter[END_POPULATION_FILTER_KEY] ?: 0
-                            ) {
-                                listCountriesFromFilter.add(country)
-                            }
-                        }
-                    }
+                    makeListCountriesForFilter(country, mapSettingsByFilter, currentLocationOfUser)
                 }
             }
             .subscribeOn(Schedulers.io())
@@ -177,6 +165,27 @@ class AllCountriesViewModel(
                     countriesFromSearchAndFilterLiveData.success((countriesFromSearchAndFilterLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
+    }
+
+    private fun makeListCountriesForFilter(
+        country: CountryDescriptionItemDto,
+        mapSettingsByFilter: HashMap<String?, Int>,
+        currentLocationOfUser: Location
+    ) {
+        if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
+            && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
+        ) {
+            val distance = calculateDistanceFiler(currentLocationOfUser, country)
+            if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
+                distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
+            ) {
+                if (country.population >= mapSettingsByFilter[START_POPULATION_FILTER_KEY] ?: 0
+                    && country.population <= mapSettingsByFilter[END_POPULATION_FILTER_KEY] ?: 0
+                ) {
+                    listCountriesFromFilter.add(country)
+                }
+            }
+        }
     }
 
     fun setSortStatus(value: Int) {
