@@ -45,7 +45,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readSortStatus()
-        viewModel.getCountriesFromSearch()
+//        viewModel.getCountriesFromSearch()
         context?.let { getCurrentLocation(it) }
     }
 
