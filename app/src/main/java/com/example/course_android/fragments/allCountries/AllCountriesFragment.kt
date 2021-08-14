@@ -45,7 +45,6 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readSortStatus()
-        context?.let { getCurrentLocation(it) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,6 +54,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
         )?.observe(viewLifecycleOwner, Observer { map ->
+            context?.let { getCurrentLocation(it) }
             viewModel.getCountriesFromFilter(map)
         })
 
