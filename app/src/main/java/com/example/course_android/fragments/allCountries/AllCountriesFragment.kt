@@ -45,7 +45,6 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readSortStatus()
-//        viewModel.getCountriesFromSearch()
         context?.let { getCurrentLocation(it) }
     }
 
@@ -131,12 +130,12 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { viewModel.getSearchSubject().onNext(query) }
+                query?.let { viewModel.getCountriesFromSearch().onNext(query) }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.getSearchSubject().onNext(newText)
+                viewModel.getCountriesFromSearch().onNext(newText)
                 return true
             }
         })
