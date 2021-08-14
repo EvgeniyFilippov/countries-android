@@ -178,7 +178,10 @@ class AllCountriesViewModel(
             }).also { mCompositeDisposable.add(it) }
     }
 
-    fun getSearchSubject(): BehaviorSubject<String> = mSearchSubject
+    fun getSearchSubject(): BehaviorSubject<String> {
+        getCountriesFromSearch()
+       return mSearchSubject
+    }
 
     fun setSortStatus(value: Int) {
         sortStatus = value
