@@ -113,7 +113,7 @@ class AllCountriesViewModel(
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe ({
+            .subscribe({
                 mDatabaseCountryRepository.addAll(listOfAllCountries)
                 mDatabaseLanguageRepository.addAll(listOfAllLanguages)
             }, {
@@ -121,7 +121,7 @@ class AllCountriesViewModel(
             })
     }
 
-    fun getCountriesFromSearch() {
+    fun getCountriesFromSearch(): BehaviorSubject<String> {
         mCompositeDisposable.add(
             executeJob(
                 mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
@@ -141,6 +141,7 @@ class AllCountriesViewModel(
                     }, countriesFromSearchAndFilterLiveData
             )
         )
+        return mSearchSubject
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
@@ -176,11 +177,6 @@ class AllCountriesViewModel(
                     countriesFromSearchAndFilterLiveData.success((countriesFromSearchAndFilterLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
-    }
-
-    fun getSearchSubject(): BehaviorSubject<String> {
-        getCountriesFromSearch()
-       return mSearchSubject
     }
 
     fun setSortStatus(value: Int) {
