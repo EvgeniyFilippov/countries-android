@@ -145,9 +145,9 @@ class AllCountriesViewModel(
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
-        val currentLocationOfUser = getResultOfCurrentLocation()
         mNetworkRepository.getListOfCountry()
             .doOnNext { list ->
+                val currentLocationOfUser = getResultOfCurrentLocation()
                 listCountriesFromFilter.clear()
                 list.forEach { country ->
                     if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
