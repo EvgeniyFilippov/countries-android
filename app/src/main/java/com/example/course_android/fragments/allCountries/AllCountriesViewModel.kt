@@ -38,6 +38,8 @@ class AllCountriesViewModel(
 
     private var sortStatus: Int = 0
     private val mSearchSubject = BehaviorSubject.create<String>()
+//    val allCountriesLiveData =
+//        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val allCountriesLiveData =
         savedStateHandle.getLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>(
             ALL_COUNTRIES_LIVE_DATA
