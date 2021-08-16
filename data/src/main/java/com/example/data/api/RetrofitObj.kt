@@ -1,6 +1,5 @@
 package com.example.data.api
 
-import com.example.course_android.Constants
 import com.example.course_android.CountriesApp
 import com.example.data.NetConstants.BASE_URL
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
