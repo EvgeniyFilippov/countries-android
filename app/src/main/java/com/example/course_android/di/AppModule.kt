@@ -13,12 +13,12 @@ import org.koin.dsl.module
 val appModule = module {
 
     //Model level
-    single { com.example.data.room.DatabaseInfo.init(get()) }
-    single { com.example.data.api.RetrofitObj.getCountriesApi() }
+    single { DatabaseInfo.init(get()) }
+    single { RetrofitObj.getCountriesApi() }
 
     //Data level
-    single { com.example.data.repository.network.NetworkRepositoryImpl(get()) as com.example.domain.repository.NetworkRepository }
-    single { com.example.data.repository.database.DatabaseCountryRepositoryImpl(get()) as com.example.domain.repository.DatabaseCountryRepository }
-    single { com.example.data.repository.database.DatabaseLanguageRepositoryImpl(get()) as com.example.domain.repository.DatabaseLanguageRepository }
+    single { NetworkRepositoryImpl(get()) as NetworkRepository }
+    single { DatabaseCountryRepositoryImpl(get()) as DatabaseCountryRepository }
+    single { DatabaseLanguageRepositoryImpl(get()) as DatabaseLanguageRepository }
 
 }

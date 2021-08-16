@@ -7,7 +7,7 @@ interface DatabaseCountryRepository {
 
     fun getAllInfo(): Flowable<List<RoomCountryDescriptionItemDto>>
 
-    fun add(entity: RoomCountryDescriptionItemDto)
-
-    fun addAll(list: List<RoomCountryDescriptionItemDto>)
+//    fun add(entity: RoomCountryDescriptionItemDto)
+//
+//    fun addAll(list: List<RoomCountryDescriptionItemDto>)
 }

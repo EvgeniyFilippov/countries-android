@@ -1,13 +1,12 @@
-package com.example.course_android.utils
+package com.example.data.ext
 
-import com.example.course_android.Constants.DEFAULT_DOUBLE
-import com.example.course_android.Constants.DEFAULT_FLAG
-import com.example.course_android.Constants.DEFAULT_INT
-import com.example.course_android.Constants.DEFAULT_LATLNG_SIZE
-import com.example.course_android.Constants.DEFAULT_STRING
+import com.example.data.NetConstants.DEFAULT_DOUBLE
+import com.example.data.NetConstants.DEFAULT_FLAG
+import com.example.data.NetConstants.DEFAULT_INT
+import com.example.data.NetConstants.DEFAULT_LATLNG_SIZE
+import com.example.data.NetConstants.DEFAULT_STRING
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.dto.model.LanguageOfOneCountryDto
-import com.example.data.model.oneCountry.CountryDescriptionItem
 
    fun MutableList<com.example.data.model.oneCountry.CountryDescriptionItem>?.transformCountryToDto(): MutableList<CountryDescriptionItemDto> {
 

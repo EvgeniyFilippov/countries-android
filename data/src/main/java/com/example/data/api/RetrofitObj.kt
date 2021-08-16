@@ -1,6 +1,5 @@
 package com.example.data.api
 
-import com.example.course_android.CountriesApp
 import com.example.data.NetConstants.BASE_URL
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
@@ -18,18 +17,16 @@ object RetrofitObj {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    fun getRetrofit(): Retrofit {
-      return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .client(okHttpClient)
-            .build()
-    }
+    private val retrofitBuilder = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+        .client(okHttpClient)
+        .build()
 
-    fun getCountriesApi(): CountryService {
-        return CountriesApp.retrofit.create(CountryService::class.java)
-    }
+    val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
+
+    fun getCountriesApi(): CountryService = COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

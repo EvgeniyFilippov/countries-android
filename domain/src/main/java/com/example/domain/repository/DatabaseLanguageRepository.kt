@@ -5,11 +5,11 @@ import io.reactivex.rxjava3.core.Flowable
 
 interface DatabaseLanguageRepository {
 
-    fun add(entity: RoomLanguageOfOneCountryDto)
+//    fun add(entity: RoomLanguageOfOneCountryDto)
 
     fun getAllInfo(): Flowable<List<RoomLanguageOfOneCountryDto>>
 
     fun getLanguageByCountry(name: String): List<String>
-
-    fun addAll(list: List<RoomLanguageOfOneCountryDto>)
+//
+//    fun addAll(list: List<RoomLanguageOfOneCountryDto>)
 }

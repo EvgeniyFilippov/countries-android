@@ -1,8 +1,7 @@
 package com.example.data.repository.network
 
-import com.example.data.api.CountryService
+import com.example.data.ext.transformCountryToDto
 import com.example.domain.dto.model.CountryDescriptionItemDto
-import com.example.course_android.utils.transformCountryToDto
 import io.reactivex.rxjava3.core.Flowable
 
 class NetworkRepositoryImpl(private val mService: com.example.data.api.CountryService) :
