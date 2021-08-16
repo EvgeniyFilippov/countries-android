@@ -5,7 +5,7 @@ import com.example.data.NetConstants.DEFAULT_STRING
 import com.example.domain.dto.room.RoomCountryDescriptionItemDto
 import com.example.data.room.CountryBaseInfoEntity
 
-fun List<CountryBaseInfoEntity>.convertCountryEntityToDto(): MutableList<RoomCountryDescriptionItemDto> {
+fun List<CountryBaseInfoEntity>.convertListCountryEntityToDto(): MutableList<RoomCountryDescriptionItemDto> {
 
     val listCountryEntityDto: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()
 
@@ -18,5 +18,17 @@ fun List<CountryBaseInfoEntity>.convertCountryEntityToDto(): MutableList<RoomCou
         listCountryEntityDto.add(countryEntityDto)
     }
     return listCountryEntityDto
+
+}
+
+fun List<RoomCountryDescriptionItemDto>.convertCountryListDtoToEntity(): MutableList<CountryBaseInfoEntity> {
+
+    val listCountryEntity: MutableList<CountryBaseInfoEntity> = mutableListOf()
+
+    this.forEach {
+        val countryEntity = CountryBaseInfoEntity(it.name, it.capital, it.area)
+        listCountryEntity.add(countryEntity)
+    }
+    return listCountryEntity
 
 }

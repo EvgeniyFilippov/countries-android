@@ -17,3 +17,15 @@ fun List<LanguagesInfoEntity>.convertLanguageEntityToDto(): MutableList<RoomLang
     return listLanguageEntityDto
 
 }
+
+fun List<RoomLanguageOfOneCountryDto>.convertLanguageDtoToEntity(): MutableList<LanguagesInfoEntity> {
+
+    val listLanguageEntity: MutableList<LanguagesInfoEntity> = mutableListOf()
+
+    this.forEach {
+        val languageEntity = LanguagesInfoEntity(it.countryName, it.language)
+        listLanguageEntity.add(languageEntity)
+    }
+    return listLanguageEntity
+
+}

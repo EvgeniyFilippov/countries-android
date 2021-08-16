@@ -1,6 +1,7 @@
 package com.example.course_android.fragments.allCountries
 
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
@@ -13,6 +14,10 @@ import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.utils.*
+import com.example.data.ext.convertLanguageEntityToDto
+import com.example.data.ext.convertListCountryEntityToDto
+import com.example.data.room.CountryBaseInfoEntity
+import com.example.data.room.LanguagesInfoEntity
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.repository.DatabaseCountryRepository
 import com.example.domain.repository.DatabaseLanguageRepository
@@ -24,6 +29,7 @@ import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import org.koin.core.logger.KOIN_TAG
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
@@ -53,7 +59,7 @@ class AllCountriesViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 allCountriesLiveData.next(it)
-//                saveToDBfromApi(it)
+                saveToDBfromApi(it)
             }, {
                 allCountriesLiveData.failed(it)
                 getCountriesFromDB()
@@ -88,37 +94,37 @@ class AllCountriesViewModel(
             }).also { mCompositeDisposable.add(it) }
     }
 
-//    private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-//        val listOfAllCountries: MutableList<com.example.data.room.CountryBaseInfoEntity> = mutableListOf()
-//        val listOfAllLanguages: MutableList<com.example.data.room.LanguagesInfoEntity> = mutableListOf()
-//        Flowable.just(listCountriesFromApiDto)
-//            .flatMap { Flowable.fromIterable(it) }
-//            .doOnNext { item ->
-//                listOfAllCountries.add(
-//                    com.example.data.room.CountryBaseInfoEntity(
-//                        item.name,
-//                        item.capital,
-//                        item.area
-//                    )
-//                )
-//                item.languages.forEach { language ->
-//                    listOfAllLanguages.add(
-//                        com.example.data.room.LanguagesInfoEntity(
-//                            item.name,
-//                            language.name
-//                        )
-//                    )
-//                }
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({
-//                mDatabaseCountryRepository.addAll(listOfAllCountries.convertCountryEntityToDto())
-//                mDatabaseLanguageRepository.addAll(listOfAllLanguages.convertLanguageEntityToDto())
-//            }, {
-//                Log.d(KOIN_TAG, it.message.toString())
-//            })
-//    }
+    private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
+        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+        Flowable.just(listCountriesFromApiDto)
+            .flatMap { Flowable.fromIterable(it) }
+            .doOnNext { item ->
+                listOfAllCountries.add(
+                    CountryBaseInfoEntity(
+                        item.name,
+                        item.capital,
+                        item.area
+                    )
+                )
+                item.languages.forEach { language ->
+                    listOfAllLanguages.add(
+                        LanguagesInfoEntity(
+                            item.name,
+                            language.name
+                        )
+                    )
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                mDatabaseCountryRepository.addAll(listOfAllCountries.convertListCountryEntityToDto())
+                mDatabaseLanguageRepository.addAll(listOfAllLanguages.convertLanguageEntityToDto())
+            }, {
+                Log.d(KOIN_TAG, it.message.toString())
+            })
+    }
 
     fun getCountriesFromSearch(): BehaviorSubject<String> {
         mCompositeDisposable.add(

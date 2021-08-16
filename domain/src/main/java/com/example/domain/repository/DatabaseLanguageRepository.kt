@@ -10,6 +10,6 @@ interface DatabaseLanguageRepository {
     fun getAllInfo(): Flowable<List<RoomLanguageOfOneCountryDto>>
 
     fun getLanguageByCountry(name: String): List<String>
-//
-//    fun addAll(list: List<RoomLanguageOfOneCountryDto>)
+
+    fun addAll(list: List<RoomLanguageOfOneCountryDto>)
 }
