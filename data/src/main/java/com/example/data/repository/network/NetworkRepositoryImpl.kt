@@ -1,10 +1,11 @@
 package com.example.data.repository.network
 
+import com.example.data.api.CountryService
 import com.example.data.ext.transformCountryToDto
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import io.reactivex.rxjava3.core.Flowable
 
-class NetworkRepositoryImpl(private val mService: com.example.data.api.CountryService) :
+class NetworkRepositoryImpl(private val mService: CountryService) :
     com.example.domain.repository.NetworkRepository {
 
     override fun getListOfCountry(): Flowable<MutableList<CountryDescriptionItemDto>> =

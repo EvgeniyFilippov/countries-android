@@ -1,7 +1,6 @@
 package com.example.course_android.fragments.allCountries
 
 import android.location.Location
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
@@ -13,25 +12,27 @@ import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
-import com.example.domain.dto.model.CountryDescriptionItemDto
-import com.example.data.room.CountryBaseInfoEntity
-import com.example.data.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
-import com.example.data.ext.convertCountryEntityToDto
-import com.example.data.ext.convertLanguageEntityToDto
+import com.example.domain.dto.model.CountryDescriptionItemDto
+import com.example.domain.repository.DatabaseCountryRepository
+import com.example.domain.repository.DatabaseLanguageRepository
+import com.example.domain.repository.NetworkRepository
+import com.example.domain.usecase.impl.GetAllCountriesUseCase
+import com.example.domain.usecase.impl.GetCountryListByNameUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import org.koin.core.logger.KOIN_TAG
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mDatabaseCountryRepository: com.example.domain.repository.DatabaseCountryRepository,
-    private val mDatabaseLanguageRepository: com.example.domain.repository.DatabaseLanguageRepository,
-    private val mNetworkRepository: com.example.domain.repository.NetworkRepository
+    private val mDatabaseCountryRepository: DatabaseCountryRepository,
+    private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
+//    private val mNetworkRepository: NetworkRepository
+    private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
+    private val mGetCountryListByNameUseCase: GetCountryListByNameUseCase
 ) : BaseViewModel(savedStateHandle) {
 
     private var sortStatus: Int = 0
@@ -49,7 +50,7 @@ class AllCountriesViewModel(
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
-        mNetworkRepository.getListOfCountry()
+        mGetAllCountriesUseCase.execute()
             .map { it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -132,7 +133,7 @@ class AllCountriesViewModel(
                     .distinctUntilChanged()
                     .map { it.trim() }
                     .flatMap { text: String ->
-                        mNetworkRepository.getCountryDetails(text)
+                        mGetCountryListByNameUseCase.setParams(text).execute()
                             .map {
                                 it.filter { country ->
                                     country.name.contains(text, true)
@@ -146,7 +147,7 @@ class AllCountriesViewModel(
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
-        mNetworkRepository.getListOfCountry()
+        mGetAllCountriesUseCase.execute()
             .doOnNext { list ->
                 val currentLocationOfUser = getResultOfCurrentLocation()
                 listCountriesFromFilter.clear()
