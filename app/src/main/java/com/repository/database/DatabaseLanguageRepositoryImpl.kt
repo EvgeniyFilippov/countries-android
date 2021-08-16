@@ -6,7 +6,8 @@ import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.convertLanguageEntityToDto
 import io.reactivex.rxjava3.core.Flowable
 
-class DatabaseLanguageRepositoryImpl(private val db: DatabaseInfo) : DatabaseLanguageRepository {
+class DatabaseLanguageRepositoryImpl(private val db: DatabaseInfo) :
+    com.example.domain.repository.DatabaseLanguageRepository {
 
     override fun add(entity: LanguagesInfoEntity) = db.getLanguageInfoDAO().add(entity)
 

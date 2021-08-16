@@ -12,16 +12,14 @@ import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
-import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.*
-import com.example.course_android.dto.transformCountryToDto
-import com.repository.network.NetworkRepository
+import com.example.domain.repository.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class FilterViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mNetworkRepository: NetworkRepository
+    private val mNetworkRepository: com.example.domain.repository.NetworkRepository
 ) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()

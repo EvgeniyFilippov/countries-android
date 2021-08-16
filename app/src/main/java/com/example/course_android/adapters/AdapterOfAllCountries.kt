@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.R
 import com.example.course_android.base.adapter.BaseAdapter
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.utils.getLanguageByKey
 
 class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
 

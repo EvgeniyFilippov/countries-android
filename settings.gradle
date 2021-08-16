@@ -1,2 +1,3 @@
 include ':app'
 rootProject.name = "course-android"
+include ':domain'

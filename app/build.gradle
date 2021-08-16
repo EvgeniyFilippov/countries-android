@@ -67,8 +67,9 @@ dependencies {
     final gms = "18.0.0"
     final rxJavaRetrofit = "3.0.0"
     final rxJavaAndroid = "3.0.0"
-    final rxJava ="3.0.13"
     final koinVersion ="3.1.2"
+
+    implementation project(":domain")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$corektxVersion"
@@ -88,6 +89,7 @@ dependencies {
     //Room
     implementation("androidx.room:room-runtime:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
+    implementation "androidx.room:room-rxjava3:$room_version"
 
     //Coil
     implementation("io.coil-kt:coil:$coil")
@@ -101,8 +103,6 @@ dependencies {
 
     //RxJava
     implementation "io.reactivex.rxjava3:rxandroid:$rxJavaAndroid"
-    implementation "io.reactivex.rxjava3:rxjava:$rxJava"
-    implementation "androidx.room:room-rxjava3:$room_version"
 
     //Maps
     implementation "com.google.android.gms:play-services-location:$gms"

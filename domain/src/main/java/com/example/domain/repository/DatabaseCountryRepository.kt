@@ -1,4 +1,4 @@
-package com.repository.database
+package com.example.domain.repository
 
 import com.example.course_android.dto.room.RoomCountryDescriptionItemDto
 import com.example.course_android.room.CountryBaseInfoEntity

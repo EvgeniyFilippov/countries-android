@@ -5,10 +5,9 @@ import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.dto.room.RoomCountryDescriptionItemDto
-import com.repository.database.DatabaseLanguageRepository
 
 fun List<RoomCountryDescriptionItemDto>?.convertDBdataToRetrofitModel(
-    languagesFromDB: DatabaseLanguageRepository,
+    languagesFromDB: com.example.domain.repository.DatabaseLanguageRepository,
     listOfCountriesFromDB: MutableList<CountryDescriptionItemDto>
 ): MutableList<CountryDescriptionItemDto> {
     this?.forEach { countryDB ->

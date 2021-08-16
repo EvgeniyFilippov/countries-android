@@ -1,10 +1,10 @@
 package com.example.course_android.fragments.map
 
 import com.example.course_android.base.mvp.BaseMvpPresenter
-import com.repository.network.NetworkRepository
+import com.example.domain.repository.NetworkRepository
 
 class MapAllCountriesPresenter(
-    private val mNetworkRepository: NetworkRepository
+    private val mNetworkRepository: com.example.domain.repository.NetworkRepository
 ) : BaseMvpPresenter<MapAllCountriesView>() {
 
     fun getAllCountries(isRefresh: Boolean) {

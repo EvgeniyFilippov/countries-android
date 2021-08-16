@@ -2,7 +2,6 @@ package com.example.course_android.fragments.allCountries
 
 import android.location.Location
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
@@ -18,9 +17,6 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
-import com.repository.database.DatabaseCountryRepository
-import com.repository.database.DatabaseLanguageRepository
-import com.repository.network.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
@@ -31,9 +27,9 @@ import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mDatabaseCountryRepository: DatabaseCountryRepository,
-    private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
-    private val mNetworkRepository: NetworkRepository
+    private val mDatabaseCountryRepository: com.example.domain.repository.DatabaseCountryRepository,
+    private val mDatabaseLanguageRepository: com.example.domain.repository.DatabaseLanguageRepository,
+    private val mNetworkRepository: com.example.domain.repository.NetworkRepository
 ) : BaseViewModel(savedStateHandle) {
 
     private var sortStatus: Int = 0

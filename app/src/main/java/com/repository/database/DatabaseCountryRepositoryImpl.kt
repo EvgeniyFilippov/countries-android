@@ -6,7 +6,8 @@ import com.example.course_android.room.DatabaseInfo
 import com.example.course_android.utils.convertCountryEntityToDto
 import io.reactivex.rxjava3.core.Flowable
 
-class DatabaseCountryRepositoryImpl(private val db: DatabaseInfo) : DatabaseCountryRepository {
+class DatabaseCountryRepositoryImpl(private val db: DatabaseInfo) :
+    com.example.domain.repository.DatabaseCountryRepository {
     override fun getAllInfo(): Flowable<List<RoomCountryDescriptionItemDto>> =
         db.getCountryInfoDAO().getAllInfo()
             .map { it.convertCountryEntityToDto() }

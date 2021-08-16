@@ -1,12 +1,10 @@
 package com.example.course_android.fragments.details
 
-import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvp.BaseMvpPresenter
-import com.example.course_android.dto.transformCountryToDto
-import com.repository.network.NetworkRepository
+import com.example.domain.repository.NetworkRepository
 
 class CountryDetailsPresenter(
-    private val mNetworkRepository: NetworkRepository
+    private val mNetworkRepository: com.example.domain.repository.NetworkRepository
 ) : BaseMvpPresenter<CountryDetailsView>() {
 
     fun getMyData(mCountryName: String, isRefresh: Boolean) {
