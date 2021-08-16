@@ -5,7 +5,7 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationManager
 import android.util.Log
-import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult

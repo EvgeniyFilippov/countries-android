@@ -1,11 +1,11 @@
 package com.example.course_android
 
 import android.app.Application
-import com.example.course_android.api.RetrofitObj
+import com.example.data.api.RetrofitObj
 import com.example.course_android.di.*
-import com.example.course_android.room.CountryInfoDAO
-import com.example.course_android.room.DatabaseInfo
-import com.example.course_android.room.LanguagesInfoDAO
+import com.example.data.room.CountryInfoDAO
+import com.example.data.room.DatabaseInfo
+import com.example.data.room.LanguagesInfoDAO
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -22,7 +22,7 @@ class CountriesApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        retrofit = RetrofitObj.getRetrofit()
+        retrofit = com.example.data.api.RetrofitObj.getRetrofit()
 //        base = this.let { DatabaseInfo.init(it) }
 //        daoCountry = base?.getCountryInfoDAO()
 //        daoLanguage = base?.getLanguageInfoDAO()

@@ -1,10 +1,10 @@
 package com.example.course_android.utils
 
 import com.example.course_android.Constants
-import com.example.course_android.dto.room.RoomCountryDescriptionItemDto
-import com.example.course_android.room.CountryBaseInfoEntity
+import com.example.domain.dto.room.RoomCountryDescriptionItemDto
+import com.example.data.room.CountryBaseInfoEntity
 
-fun List<CountryBaseInfoEntity>.convertCountryEntityToDto(): MutableList<RoomCountryDescriptionItemDto> {
+fun List<com.example.data.room.CountryBaseInfoEntity>.convertCountryEntityToDto(): MutableList<RoomCountryDescriptionItemDto> {
 
     val listCountryEntityDto: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()
 

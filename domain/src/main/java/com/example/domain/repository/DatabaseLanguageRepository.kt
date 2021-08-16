@@ -1,16 +1,15 @@
 package com.example.domain.repository
 
-import com.example.course_android.dto.room.RoomLanguageOfOneCountryDto
-import com.example.course_android.room.LanguagesInfoEntity
+import com.example.domain.dto.room.RoomLanguageOfOneCountryDto
 import io.reactivex.rxjava3.core.Flowable
 
 interface DatabaseLanguageRepository {
 
-    fun add(entity: LanguagesInfoEntity)
+    fun add(entity: RoomLanguageOfOneCountryDto)
 
     fun getAllInfo(): Flowable<List<RoomLanguageOfOneCountryDto>>
 
     fun getLanguageByCountry(name: String): List<String>
 
-    fun addAll(list: List<LanguagesInfoEntity>)
+    fun addAll(list: List<RoomLanguageOfOneCountryDto>)
 }

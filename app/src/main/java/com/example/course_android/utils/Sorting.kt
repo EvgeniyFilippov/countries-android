@@ -1,7 +1,7 @@
 package com.example.course_android.utils
 
 import com.example.course_android.Constants
-import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.domain.dto.model.CountryDescriptionItemDto
 
 fun MutableList<CountryDescriptionItemDto>.sortBySortStatusFromPref(sortStatus: Int) : MutableList<CountryDescriptionItemDto> {
     when (sortStatus) {

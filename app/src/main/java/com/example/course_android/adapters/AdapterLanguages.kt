@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.R
 import com.example.course_android.base.adapter.BaseAdapter
-import com.example.course_android.dto.model.LanguageOfOneCountryDto
+import com.example.domain.dto.model.LanguageOfOneCountryDto
 
 class AdapterLanguages : BaseAdapter<LanguageOfOneCountryDto>() {
 

@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="course-android.app" target="11" />
+      <module name="course-android.data" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

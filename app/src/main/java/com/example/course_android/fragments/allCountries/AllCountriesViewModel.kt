@@ -13,9 +13,9 @@ import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
-import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.room.CountryBaseInfoEntity
-import com.example.course_android.room.LanguagesInfoEntity
+import com.example.domain.dto.model.CountryDescriptionItemDto
+import com.example.data.room.CountryBaseInfoEntity
+import com.example.data.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
@@ -89,13 +89,13 @@ class AllCountriesViewModel(
     }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+        val listOfAllCountries: MutableList<com.example.data.room.CountryBaseInfoEntity> = mutableListOf()
+        val listOfAllLanguages: MutableList<com.example.data.room.LanguagesInfoEntity> = mutableListOf()
         Flowable.just(listCountriesFromApiDto)
             .flatMap { Flowable.fromIterable(it) }
             .doOnNext { item ->
                 listOfAllCountries.add(
-                    CountryBaseInfoEntity(
+                    com.example.data.room.CountryBaseInfoEntity(
                         item.name,
                         item.capital,
                         item.area
@@ -103,7 +103,7 @@ class AllCountriesViewModel(
                 )
                 item.languages.forEach { language ->
                     listOfAllLanguages.add(
-                        LanguagesInfoEntity(
+                        com.example.data.room.LanguagesInfoEntity(
                             item.name,
                             language.name
                         )
@@ -113,8 +113,8 @@ class AllCountriesViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mDatabaseCountryRepository.addAll(listOfAllCountries)
-                mDatabaseLanguageRepository.addAll(listOfAllLanguages)
+                mDatabaseCountryRepository.addAll(listOfAllCountries.convertCountryEntityToDto())
+                mDatabaseLanguageRepository.addAll(listOfAllLanguages.convertLanguageEntityToDto())
             }, {
                 Log.d(KOIN_TAG, it.message.toString())
             })

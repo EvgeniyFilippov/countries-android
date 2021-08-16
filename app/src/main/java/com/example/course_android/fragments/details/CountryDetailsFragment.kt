@@ -10,7 +10,7 @@ import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
-import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.*
 import com.example.course_android.utils.*
 import com.google.android.libraries.maps.SupportMapFragment

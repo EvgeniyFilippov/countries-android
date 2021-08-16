@@ -2,9 +2,9 @@ package com.example.course_android.utils
 
 import com.example.course_android.Constants.DEFAULT_DOUBLE
 import com.example.course_android.Constants.DEFAULT_STRING
-import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.dto.model.LanguageOfOneCountryDto
-import com.example.course_android.dto.room.RoomCountryDescriptionItemDto
+import com.example.domain.dto.model.CountryDescriptionItemDto
+import com.example.domain.dto.model.LanguageOfOneCountryDto
+import com.example.domain.dto.room.RoomCountryDescriptionItemDto
 
 fun List<RoomCountryDescriptionItemDto>?.convertDBdataToRetrofitModel(
     languagesFromDB: com.example.domain.repository.DatabaseLanguageRepository,

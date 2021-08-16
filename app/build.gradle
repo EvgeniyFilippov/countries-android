@@ -57,15 +57,10 @@ dependencies {
     final junitVersion = "4.+"
     final testJunitVersion = "1.1.2"
     final testEspressoVersion = "3.3.0"
-    final retrofit = "2.9.0"
-    final converterGson = "2.9.0"
-    final okhttp = "4.9.0"
     final loggingInterceptor = "4.9.0"
-    def room_version = "2.3.0"
     final coil = "0.12.0"
     final maps = "3.1.0-beta"
     final gms = "18.0.0"
-    final rxJavaRetrofit = "3.0.0"
     final rxJavaAndroid = "3.0.0"
     final koinVersion ="3.1.2"
 
@@ -86,20 +81,9 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$testEspressoVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$loggingInterceptor"
 
-    //Room
-    implementation("androidx.room:room-runtime:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
-    implementation "androidx.room:room-rxjava3:$room_version"
-
     //Coil
     implementation("io.coil-kt:coil:$coil")
     implementation("io.coil-kt:coil-svg:$coil")
-
-    //Network
-    implementation "com.squareup.retrofit2:retrofit:$retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$converterGson"
-    implementation"com.squareup.okhttp3:okhttp:$okhttp"
-    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:$rxJavaRetrofit"
 
     //RxJava
     implementation "io.reactivex.rxjava3:rxandroid:$rxJavaAndroid"

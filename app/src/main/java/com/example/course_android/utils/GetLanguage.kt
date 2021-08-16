@@ -1,6 +1,6 @@
 package com.example.course_android.utils
 
-import com.example.course_android.dto.model.LanguageOfOneCountryDto
+import com.example.domain.dto.model.LanguageOfOneCountryDto
 
 fun List<LanguageOfOneCountryDto>.getLanguageByKey(): StringBuilder {
     val myStringBuilder = StringBuilder()

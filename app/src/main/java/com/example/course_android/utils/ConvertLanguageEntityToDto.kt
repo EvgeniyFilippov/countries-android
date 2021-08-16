@@ -1,10 +1,10 @@
 package com.example.course_android.utils
 
 import com.example.course_android.Constants
-import com.example.course_android.dto.room.RoomLanguageOfOneCountryDto
-import com.example.course_android.room.LanguagesInfoEntity
+import com.example.domain.dto.room.RoomLanguageOfOneCountryDto
+import com.example.data.room.LanguagesInfoEntity
 
-fun List<LanguagesInfoEntity>.convertLanguageEntityToDto(): MutableList<RoomLanguageOfOneCountryDto> {
+fun List<com.example.data.room.LanguagesInfoEntity>.convertLanguageEntityToDto(): MutableList<RoomLanguageOfOneCountryDto> {
 
     val listLanguageEntityDto: MutableList<RoomLanguageOfOneCountryDto> = mutableListOf()
 

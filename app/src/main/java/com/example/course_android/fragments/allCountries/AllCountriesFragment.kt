@@ -23,7 +23,7 @@ import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
-import com.example.course_android.dto.model.CountryDescriptionItemDto
+import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
 import com.example.course_android.utils.getCurrentLocation
