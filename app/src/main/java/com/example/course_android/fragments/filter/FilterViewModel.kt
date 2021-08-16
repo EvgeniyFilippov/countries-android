@@ -14,12 +14,13 @@ import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
 import com.example.domain.repository.NetworkRepository
+import com.example.domain.usecase.impl.GetAllCountriesUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class FilterViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mNetworkRepository: com.example.domain.repository.NetworkRepository
+    private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
 ) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
@@ -47,7 +48,7 @@ class FilterViewModel(
     }
 
     fun makeConfigFilter() {
-        mNetworkRepository.getListOfCountry()
+        mGetAllCountriesUseCase.execute()
             .map { list -> listOf(
                 list.minByOrNull { it.area.toInt()}?.area ?: 0.0,
                 list.maxByOrNull { it.area.toInt()}?.area ?: 0.0,

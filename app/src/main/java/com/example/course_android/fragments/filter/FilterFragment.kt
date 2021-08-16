@@ -29,7 +29,7 @@ import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import java.text.NumberFormat
 
-class FilterFragment : ScopeFragment(), BaseMvvmView {
+class FilterFragment : ScopeFragment(R.layout.fragment_filter), BaseMvvmView {
 
     private var binding: FragmentFilterBinding? = null
     private var sliderOfArea: RangeSlider? = null

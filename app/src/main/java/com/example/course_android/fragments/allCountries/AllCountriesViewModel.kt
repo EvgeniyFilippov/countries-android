@@ -30,15 +30,12 @@ class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
     private val mDatabaseCountryRepository: DatabaseCountryRepository,
     private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
-//    private val mNetworkRepository: NetworkRepository
     private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
     private val mGetCountryListByNameUseCase: GetCountryListByNameUseCase
 ) : BaseViewModel(savedStateHandle) {
 
     private var sortStatus: Int = 0
     private val mSearchSubject = BehaviorSubject.create<String>()
-//    val allCountriesLiveData =
-//        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val allCountriesLiveData =
         savedStateHandle.getLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>(
             ALL_COUNTRIES_LIVE_DATA

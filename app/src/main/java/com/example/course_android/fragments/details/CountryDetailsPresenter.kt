@@ -2,15 +2,16 @@ package com.example.course_android.fragments.details
 
 import com.example.course_android.base.mvp.BaseMvpPresenter
 import com.example.domain.repository.NetworkRepository
+import com.example.domain.usecase.impl.GetCountryListByNameUseCase
 
 class CountryDetailsPresenter(
-    private val mNetworkRepository: com.example.domain.repository.NetworkRepository
+    private val mGetCountryListByNameUseCase: GetCountryListByNameUseCase
 ) : BaseMvpPresenter<CountryDetailsView>() {
 
     fun getMyData(mCountryName: String, isRefresh: Boolean) {
         addDisposable(
             inBackground(
-                handleProgress(mNetworkRepository.getCountryDetails(mCountryName), isRefresh)
+                handleProgress(mGetCountryListByNameUseCase.setParams(mCountryName).execute(), isRefresh)
             ).subscribe({ response ->
                 getView()?.showCountryInfo( response)
             }, {
