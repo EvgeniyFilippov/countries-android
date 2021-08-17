@@ -24,7 +24,8 @@ class FilterViewModel(
 ) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
-    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
+    val mutableFilterConfigLiveData =
+        savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
 
     private val mapValuesByFilter = hashMapOf<String, Int>()
     private val mapConfigFilter = hashMapOf<String, Float>()
@@ -49,12 +50,14 @@ class FilterViewModel(
 
     fun makeConfigFilter() {
         mGetAllCountriesUseCase.execute()
-            .map { list -> listOf(
-                list.minByOrNull { it.area.toInt()}?.area ?: 0.0,
-                list.maxByOrNull { it.area.toInt()}?.area ?: 0.0,
-                list.minByOrNull { it.population}?.population?.toDouble() ?: 0.0,
-                list.maxByOrNull { it.population}?.population?.toDouble() ?: 0.0
-            )}
+            .map { list ->
+                listOf(
+                    list.minByOrNull { it.area.toInt() }?.area ?: 0.0,
+                    list.maxByOrNull { it.area.toInt() }?.area ?: 0.0,
+                    list.minByOrNull { it.population }?.population?.toDouble() ?: 0.0,
+                    list.maxByOrNull { it.population }?.population?.toDouble() ?: 0.0
+                )
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -70,7 +73,6 @@ class FilterViewModel(
                     mutableFilterConfigLiveData.success((mutableFilterConfigLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
-
     }
 
 }

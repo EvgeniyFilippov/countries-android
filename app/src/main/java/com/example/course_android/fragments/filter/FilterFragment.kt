@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
@@ -20,17 +18,21 @@ import com.example.course_android.R
 import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentFilterBinding
+import com.example.course_android.ext.askLocationPermission
+import com.example.course_android.ext.checkLocationPermission
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
-import com.example.course_android.fragments.allCountries.AllCountriesViewModel
 import com.example.course_android.utils.toast
 import com.google.android.material.slider.RangeSlider
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import java.text.NumberFormat
 
+private const val LOCATION_PERMISSION_CODE = 1000
+
 class FilterFragment : ScopeFragment(R.layout.fragment_filter), BaseMvvmView {
 
+    private var permissionGps = false
     private var binding: FragmentFilterBinding? = null
     private var sliderOfArea: RangeSlider? = null
     private var sliderOfPopulation: RangeSlider? = null
@@ -77,7 +79,6 @@ class FilterFragment : ScopeFragment(R.layout.fragment_filter), BaseMvvmView {
             when (it) {
                 is Outcome.Progress -> {
                     binding?.progressFilter?.visibility = View.VISIBLE
-                    Thread.sleep(500)
                 }
                 is Outcome.Failure -> {
                     hideProgress()
@@ -96,6 +97,13 @@ class FilterFragment : ScopeFragment(R.layout.fragment_filter), BaseMvvmView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //проверяем и запрашиваем пермишен Gps
+        if (context?.checkLocationPermission() == true) {
+            permissionGps = true
+        } else {
+            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+        }
 
         //подписываеся на введенные юзером данные
         viewModelFilter.mutableFilterLiveData.observe(
