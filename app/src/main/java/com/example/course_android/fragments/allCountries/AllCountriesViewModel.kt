@@ -14,18 +14,14 @@ import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.utils.*
-import com.example.data.ext.convertLanguageEntityToDto
-import com.example.data.ext.convertListCountryEntityToDto
-import com.example.data.room.CountryBaseInfoEntity
-import com.example.data.room.LanguagesInfoEntity
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.dto.room.RoomCountryDescriptionItemDto
 import com.example.domain.dto.room.RoomLanguageOfOneCountryDto
 import com.example.domain.repository.DatabaseCountryRepository
 import com.example.domain.repository.DatabaseLanguageRepository
-import com.example.domain.repository.NetworkRepository
 import com.example.domain.usecase.impl.GetAllCountriesUseCase
 import com.example.domain.usecase.impl.GetCountryListByNameUseCase
+import com.example.domain.usecase.impl.GetListCountriesFromDbUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
@@ -39,7 +35,9 @@ class AllCountriesViewModel(
     private val mDatabaseCountryRepository: DatabaseCountryRepository,
     private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
     private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
-    private val mGetCountryListByNameUseCase: GetCountryListByNameUseCase
+    private val mGetCountryListByNameUseCase: GetCountryListByNameUseCase,
+    private val mGetListCountriesFromDbUseCase: GetListCountriesFromDbUseCase
+
 ) : BaseViewModel(savedStateHandle) {
 
     private var sortStatus: Int = 0
@@ -74,7 +72,7 @@ class AllCountriesViewModel(
 
 
     private fun getCountriesFromDB() {
-        mDatabaseCountryRepository.getAllInfo()
+        mGetListCountriesFromDbUseCase.execute()
             .map { list ->
                 list.convertDBdataToRetrofitModel(
                     mDatabaseLanguageRepository,
