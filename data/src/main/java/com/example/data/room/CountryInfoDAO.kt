@@ -16,5 +16,5 @@ interface CountryInfoDAO {
     fun add(entity: CountryBaseInfoEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addAll(list: List<CountryBaseInfoEntity>)
+    fun addAll(list: MutableList<CountryBaseInfoEntity>)
 }

@@ -18,5 +18,5 @@ interface LanguagesInfoDAO {
     fun getLanguageByCountry(name: String): List<String>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addAll(list: List<LanguagesInfoEntity>)
+    fun addAll(list: MutableList<LanguagesInfoEntity>)
 }

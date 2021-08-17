@@ -19,6 +19,8 @@ import com.example.data.ext.convertListCountryEntityToDto
 import com.example.data.room.CountryBaseInfoEntity
 import com.example.data.room.LanguagesInfoEntity
 import com.example.domain.dto.model.CountryDescriptionItemDto
+import com.example.domain.dto.room.RoomCountryDescriptionItemDto
+import com.example.domain.dto.room.RoomLanguageOfOneCountryDto
 import com.example.domain.repository.DatabaseCountryRepository
 import com.example.domain.repository.DatabaseLanguageRepository
 import com.example.domain.repository.NetworkRepository
@@ -95,32 +97,36 @@ class AllCountriesViewModel(
     }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
+        val listOfAllCountries: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()
+        val listOfAllLanguages: MutableList<RoomLanguageOfOneCountryDto> = mutableListOf()
         Flowable.just(listCountriesFromApiDto)
-            .flatMap { Flowable.fromIterable(it) }
-            .doOnNext { item ->
-                listOfAllCountries.add(
-                    CountryBaseInfoEntity(
-                        item.name,
-                        item.capital,
-                        item.area
-                    )
-                )
-                item.languages.forEach { language ->
-                    listOfAllLanguages.add(
-                        LanguagesInfoEntity(
+            .doOnNext {
+                it.forEach { item ->
+                    listOfAllCountries.add(
+                        RoomCountryDescriptionItemDto(
                             item.name,
-                            language.name
+                            item.capital,
+                            item.area
                         )
                     )
+                    item.languages.forEach { language ->
+                        listOfAllLanguages.add(
+                            RoomLanguageOfOneCountryDto(
+                                item.name,
+                                language.name
+                            )
+                        )
+                    }
+
                 }
+                mDatabaseCountryRepository.addAll(listOfAllCountries)
+                mDatabaseLanguageRepository.addAll(listOfAllLanguages)
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mDatabaseCountryRepository.addAll(listOfAllCountries.convertListCountryEntityToDto())
-                mDatabaseLanguageRepository.addAll(listOfAllLanguages.convertLanguageEntityToDto())
+
+                Log.d(KOIN_TAG, "Saved to DB")
             }, {
                 Log.d(KOIN_TAG, it.message.toString())
             })
