@@ -27,8 +27,8 @@ object RetrofitObj {
             .build()
     }
 
-    fun getCountriesApi(): CountriesApi {
-        return CountriesApp.retrofit.create(CountriesApi::class.java)
+    fun getCountriesApi(): CountryService {
+        return CountriesApp.retrofit.create(CountryService::class.java)
     }
 
     init {

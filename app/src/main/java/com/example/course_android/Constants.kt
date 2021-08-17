@@ -20,6 +20,8 @@ object Constants {
     const val DEFAULT_LATLNG_SIZE = 2
     const val FIRST_ELEMENTS_DB = 20
     const val SERVER_API = "rest/v2/all"
+    const val SERVER_API_DESCRIPTION = "rest/v2/name/{country}"
+    const val API_PATH_VALUE = "country"
     const val DEFAULT_SLEEP = 500L
     const val MARKER_TITLE = "Marker title with position"
     const val MIN_SEARCH_STRING_LENGTH = 3
@@ -41,10 +43,12 @@ object Constants {
     const val FILTER_VALUE_TO_KEY_AREA = "FILTER_VALUE_TO_KEY"
     const val FILTER_VALUE_FROM_KEY_POPULATION = "FILTER_VALUE_FROM_KEY_POPULATION"
     const val FILTER_VALUE_TO_KEY_POPULATION = "FILTER_VALUE_TO_KEY_POPULATION"
+    const val VALUE_OF_FILTER_KEY = "VALUE_OF_FILTER_KEY"
 
 
     const val FILTER_VALUE_START_KEY = 0.0F
     const val FILTER_VALUE_END_KEY = 0.0F
 
-
+    //LIVE DATA
+    const val ALL_COUNTRIES_LIVE_DATA = "allCountriesLiveData"
 }

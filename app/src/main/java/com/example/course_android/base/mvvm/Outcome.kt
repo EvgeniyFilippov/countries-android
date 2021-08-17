@@ -1,6 +1,8 @@
 package com.example.course_android.base.mvvm
 
-sealed class Outcome<T> {
+import java.io.Serializable
+
+sealed class Outcome<T> : Serializable {
 
 	data class Progress<T>(var loading: Boolean) : Outcome<T>()
 	data class Success<T>(var data: T) : Outcome<T>()

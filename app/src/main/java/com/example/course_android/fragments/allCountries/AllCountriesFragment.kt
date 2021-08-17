@@ -7,11 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -21,6 +17,7 @@ import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
 import com.example.course_android.Constants.SORT_STATUS_DOWN
 import com.example.course_android.Constants.SORT_STATUS_UP
+import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
@@ -33,26 +30,21 @@ import com.example.course_android.utils.getCurrentLocation
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.subjects.BehaviorSubject
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
-class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
+class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), BaseMvvmView {
 
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
-    private val mSearchSubject = BehaviorSubject.create<String>()
-    private lateinit var viewModel: AllCountriesViewModel
+    private val viewModel: AllCountriesViewModel by stateViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readSortStatus()
-        viewModel =
-            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
-                .get(AllCountriesViewModel::class.java)
-        viewModel.getCountriesFromSearch()
-        context?.let { getCurrentLocation(it) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,8 +52,9 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         binding = FragmentAllCountriesBinding.bind(view)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
-            "valueOfFilter"
+            VALUE_OF_FILTER_KEY
         )?.observe(viewLifecycleOwner, Observer { map ->
+            context?.let { getCurrentLocation(it) }
             viewModel.getCountriesFromFilter(map)
         })
 
@@ -96,17 +89,13 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
                 is Outcome.Failure -> {
                     showError()
                 }
-                is Outcome.Success -> {
-                    showCountries(it.data)
-                    hideProgress()
-                }
 
                 is Outcome.Next -> {
                     showCountries(it.data)
-                    hideProgress()
+
                 }
                 else -> {
-
+                    hideProgress()
                 }
             }
         }
@@ -137,12 +126,12 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { mSearchSubject.onNext(query) }
+                query?.let { viewModel.getCountriesFromSearch().onNext(query) }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                mSearchSubject.onNext(newText)
+                viewModel.getCountriesFromSearch().onNext(newText)
                 return true
             }
         })
@@ -193,6 +182,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         val reader = sharedPreference?.getInt(KEY_SORT_STATUS, DEFAULT_INT)
         if (reader != null) {
             sortStatus = reader
+            viewModel.setSortStatus(sortStatus)
         }
     }
 

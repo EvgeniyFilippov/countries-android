@@ -14,6 +14,7 @@ import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.*
 import com.example.course_android.utils.*
 import com.google.android.libraries.maps.SupportMapFragment
+import org.koin.android.ext.android.inject
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
@@ -25,6 +26,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     var mapFragment: SupportMapFragment? = null
     private var adapterLanguages = AdapterLanguages()
     private var permissionGps = false
+    private val mModulePresenter : CountryDetailsPresenter by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,7 +77,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     }
 
     override fun createPresenter() {
-        mPresenter = CountryDetailsPresenter()
+        mPresenter = mModulePresenter
     }
 
     override fun getPresenter(): CountryDetailsPresenter = mPresenter

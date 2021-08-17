@@ -15,10 +15,14 @@ import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.transformCountryToDto
+import com.repository.network.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedStateHandle) {
+class FilterViewModel(
+    savedStateHandle: SavedStateHandle,
+    private val mNetworkRepository: NetworkRepository
+) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
     val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
@@ -45,8 +49,7 @@ class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedS
     }
 
     fun makeConfigFilter() {
-        RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { it.transformCountryToDto() }
+        mNetworkRepository.getListOfCountry()
             .map { list -> listOf(
                 list.minByOrNull { it.area.toInt()}?.area ?: 0.0,
                 list.maxByOrNull { it.area.toInt()}?.area ?: 0.0,
