@@ -95,10 +95,10 @@ class AllCountriesViewModel(
     }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        val listOfAllCountries: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()
-        val listOfAllLanguages: MutableList<RoomLanguageOfOneCountryDto> = mutableListOf()
         Flowable.just(listCountriesFromApiDto)
             .doOnNext {
+                val listOfAllCountries: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()
+                val listOfAllLanguages: MutableList<RoomLanguageOfOneCountryDto> = mutableListOf()
                 it.forEach { item ->
                     listOfAllCountries.add(
                         RoomCountryDescriptionItemDto(
