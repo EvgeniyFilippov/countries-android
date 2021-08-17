@@ -50,11 +50,12 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
+        context?.let { getCurrentLocation(it) }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
         )?.observe(viewLifecycleOwner, Observer { map ->
-            context?.let { getCurrentLocation(it) }
+
             viewModel.getCountriesFromFilter(map)
         })
 
