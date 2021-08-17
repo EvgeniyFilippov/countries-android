@@ -117,7 +117,6 @@ class AllCountriesViewModel(
                             )
                         )
                     }
-
                 }
                 mDatabaseCountryRepository.addAll(listOfAllCountries)
                 mDatabaseLanguageRepository.addAll(listOfAllLanguages)
