@@ -2,7 +2,6 @@ package com.example.course_android.fragments.allCountries
 
 import android.location.Location
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
@@ -14,13 +13,15 @@ import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
-import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.room.CountryBaseInfoEntity
-import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
-import com.repository.database.DatabaseCountryRepository
-import com.repository.database.DatabaseLanguageRepository
-import com.repository.network.NetworkRepository
+import com.example.domain.dto.model.CountryDescriptionItemDto
+import com.example.domain.dto.room.RoomCountryDescriptionItemDto
+import com.example.domain.dto.room.RoomLanguageOfOneCountryDto
+import com.example.domain.repository.DatabaseCountryRepository
+import com.example.domain.repository.DatabaseLanguageRepository
+import com.example.domain.usecase.impl.GetAllCountriesUseCase
+import com.example.domain.usecase.impl.GetCountryListByNameUseCase
+import com.example.domain.usecase.impl.GetListCountriesFromDbUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
@@ -33,13 +34,14 @@ class AllCountriesViewModel(
     savedStateHandle: SavedStateHandle,
     private val mDatabaseCountryRepository: DatabaseCountryRepository,
     private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
-    private val mNetworkRepository: NetworkRepository
+    private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
+    private val mGetCountryListByNameUseCase: GetCountryListByNameUseCase,
+    private val mGetListCountriesFromDbUseCase: GetListCountriesFromDbUseCase
+
 ) : BaseViewModel(savedStateHandle) {
 
     private var sortStatus: Int = 0
     private val mSearchSubject = BehaviorSubject.create<String>()
-//    val allCountriesLiveData =
-//        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val allCountriesLiveData =
         savedStateHandle.getLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>(
             ALL_COUNTRIES_LIVE_DATA
@@ -51,7 +53,7 @@ class AllCountriesViewModel(
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
-        mNetworkRepository.getListOfCountry()
+        mGetAllCountriesUseCase.execute()
             .map { it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -70,7 +72,7 @@ class AllCountriesViewModel(
 
 
     private fun getCountriesFromDB() {
-        mDatabaseCountryRepository.getAllInfo()
+        mGetListCountriesFromDbUseCase.execute()
             .map { list ->
                 list.convertDBdataToRetrofitModel(
                     mDatabaseLanguageRepository,
@@ -93,32 +95,35 @@ class AllCountriesViewModel(
     }
 
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
-        val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
-        val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
         Flowable.just(listCountriesFromApiDto)
-            .flatMap { Flowable.fromIterable(it) }
-            .doOnNext { item ->
-                listOfAllCountries.add(
-                    CountryBaseInfoEntity(
-                        item.name,
-                        item.capital,
-                        item.area
-                    )
-                )
-                item.languages.forEach { language ->
-                    listOfAllLanguages.add(
-                        LanguagesInfoEntity(
+            .doOnNext {
+                val listOfAllCountries: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()
+                val listOfAllLanguages: MutableList<RoomLanguageOfOneCountryDto> = mutableListOf()
+                it.forEach { item ->
+                    listOfAllCountries.add(
+                        RoomCountryDescriptionItemDto(
                             item.name,
-                            language.name
+                            item.capital,
+                            item.area
                         )
                     )
+                    item.languages.forEach { language ->
+                        listOfAllLanguages.add(
+                            RoomLanguageOfOneCountryDto(
+                                item.name,
+                                language.name
+                            )
+                        )
+                    }
                 }
+                mDatabaseCountryRepository.addAll(listOfAllCountries)
+                mDatabaseLanguageRepository.addAll(listOfAllLanguages)
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mDatabaseCountryRepository.addAll(listOfAllCountries)
-                mDatabaseLanguageRepository.addAll(listOfAllLanguages)
+
+                Log.d(KOIN_TAG, "Saved to DB")
             }, {
                 Log.d(KOIN_TAG, it.message.toString())
             })
@@ -134,7 +139,7 @@ class AllCountriesViewModel(
                     .distinctUntilChanged()
                     .map { it.trim() }
                     .flatMap { text: String ->
-                        mNetworkRepository.getCountryDetails(text)
+                        mGetCountryListByNameUseCase.setParams(text).execute()
                             .map {
                                 it.filter { country ->
                                     country.name.contains(text, true)
@@ -148,7 +153,7 @@ class AllCountriesViewModel(
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
-        mNetworkRepository.getListOfCountry()
+        mGetAllCountriesUseCase.execute()
             .doOnNext { list ->
                 val currentLocationOfUser = getResultOfCurrentLocation()
                 listCountriesFromFilter.clear()
