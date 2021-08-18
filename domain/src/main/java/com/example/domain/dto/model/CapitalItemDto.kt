@@ -1,5 +1,7 @@
 package com.example.domain.dto.model
 
-class CapitalItemDto {
+import java.io.Serializable
+
+class CapitalItemDto (
     var capital: String = ""
-}
+) : Serializable
