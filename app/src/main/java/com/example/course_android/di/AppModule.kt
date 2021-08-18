@@ -17,6 +17,7 @@ val appModule = module {
     //Model level
     single { DatabaseInfo.init(get()) }
     single { RetrofitObj.getCountriesApi() }
+    single { RetrofitObj.getCapitalsApi() }
 
     //Data level
     single { NetworkRepositoryImpl(get()) as NetworkRepository }

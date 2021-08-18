@@ -6,7 +6,7 @@ abstract class UseCaseCoroutines<Params : Any, Result> : Serializable {
 
     private var mParams: Params? = null
 
-    protected abstract fun buildResult(params: Params?): Result
+    protected abstract suspend fun buildResult(params: Params?): Result
 
     abstract val mIsParamsRequired: Boolean
 
@@ -15,7 +15,7 @@ abstract class UseCaseCoroutines<Params : Any, Result> : Serializable {
         return this
     }
 
-    fun execute(): Result {
+    suspend fun execute(): Result {
         require(!(mIsParamsRequired && mParams == null)) { "Params are required" }
         return buildResult(mParams)
     }

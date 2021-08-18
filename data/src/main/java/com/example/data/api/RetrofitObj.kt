@@ -36,6 +36,7 @@ object RetrofitObj {
     val COROUTINE_COUNTRY_SERVICE: CoroutineCountryService = coroutineRetrofitBuilder.create(CoroutineCountryService::class.java)
 
     fun getCountriesApi(): CountryService = COUNTRY_SERVICE
+    fun getCapitalsApi(): CoroutineCountryService = COROUTINE_COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
