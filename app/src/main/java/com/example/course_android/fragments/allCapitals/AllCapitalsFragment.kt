@@ -38,13 +38,8 @@ class AllCapitalsFragment : ScopeFragment(R.layout.fragment_all_capitals), BaseM
                 }
                 is Outcome.Success -> {
                     showCapitals(it.data)
-                    hideProgress()
                 }
 
-                is Outcome.Next -> {
-                    showCapitals(it.data)
-                    hideProgress()
-                }
                 else -> {
 
                 }
