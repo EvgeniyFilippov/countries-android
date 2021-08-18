@@ -15,7 +15,6 @@ import kotlinx.coroutines.withContext
 class AllCapitalsViewModel(
     savedStateHandle: SavedStateHandle,
     private val mGetCapitalUseCase: GetCapitalsUseCase
-//    private val mNetworkCapitalsRepository: NetworkCapitalsRepository
 ) : BaseViewModel(savedStateHandle) {
 
     val allCapitalsLiveData =
@@ -24,7 +23,6 @@ class AllCapitalsViewModel(
         )
 
     fun getCapitalsCoroutines() {
-
         CoroutineScope(viewModelScope.coroutineContext).launch {
             try {
                 allCapitalsLiveData.value = Outcome.loading(true)
