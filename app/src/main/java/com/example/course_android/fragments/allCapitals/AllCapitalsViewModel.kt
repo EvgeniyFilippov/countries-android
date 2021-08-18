@@ -1,17 +1,21 @@
 package com.example.course_android.fragments.allCapitals
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.example.course_android.Constants.ALL_CAPITALS_LIVE_DATA
-import com.example.course_android.base.mvvm.*
+import com.example.course_android.base.mvvm.BaseViewModel
+import com.example.course_android.base.mvvm.Outcome
 import com.example.domain.dto.model.CapitalItemDto
 import com.example.domain.usecase.impl.GetCapitalsUseCase
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AllCapitalsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mGetCapitalUseCase: GetCapitalsUseCase,
-
+    private val mGetCapitalUseCase: GetCapitalsUseCase
+//    private val mNetworkCapitalsRepository: NetworkCapitalsRepository
 ) : BaseViewModel(savedStateHandle) {
 
     val allCapitalsLiveData =
@@ -19,20 +23,20 @@ class AllCapitalsViewModel(
             ALL_CAPITALS_LIVE_DATA
         )
 
-    fun getCapitalsFromApi() {
-        mGetCapitalUseCase.execute()
-            .map { it }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                allCapitalsLiveData.next(it)
-            }, {
-                allCapitalsLiveData.failed(it)
-            }, {
-                if (allCapitalsLiveData.value is Outcome.Next) {
-                    allCapitalsLiveData.success((allCapitalsLiveData.value as Outcome.Next).data)
-                }
-            }).also { mCompositeDisposable.add(it) }
-    }
+    fun getCapitalsCoroutines() {
 
+        CoroutineScope(viewModelScope.coroutineContext).launch {
+            try {
+                allCapitalsLiveData.value = Outcome.loading(true)
+                val result = withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+                    mGetCapitalUseCase.execute()
+                }
+                allCapitalsLiveData.value = Outcome.loading(false)
+                allCapitalsLiveData.value = Outcome.success(result)
+            } catch (e: Exception) {
+                allCapitalsLiveData.value = Outcome.loading(false)
+                allCapitalsLiveData.value = Outcome.failure(e)
+            }
+        }
+    }
 }

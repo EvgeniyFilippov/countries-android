@@ -6,6 +6,6 @@ import io.reactivex.rxjava3.core.Flowable
 
 interface NetworkCapitalsRepository {
 
-    fun getListOfCapitals(): Flowable<MutableList<CapitalItemDto>>
+    suspend fun getListOfCapitals(): MutableList<CapitalItemDto>
 
 }

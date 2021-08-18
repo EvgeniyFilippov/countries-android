@@ -26,11 +26,12 @@ class AllCapitalsFragment : ScopeFragment(R.layout.fragment_all_capitals), BaseM
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCapitalsBinding.bind(view)
+        viewModel.getCapitalsCoroutines()
 
         viewModel.allCapitalsLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
-                    showProgress()
+                    if (it.loading) showProgress() else hideProgress()
                 }
                 is Outcome.Failure -> {
                     showError()
@@ -50,7 +51,6 @@ class AllCapitalsFragment : ScopeFragment(R.layout.fragment_all_capitals), BaseM
             }
         }
 
-        viewModel.getCapitalsFromApi()
         binding?.recyclerView?.setHasFixedSize(true)
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.adapter = adapterCapitals
