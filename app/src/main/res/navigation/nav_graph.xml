@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_startFragment_to_filterFragment"
             app:destination="@id/filterFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_allCapitalsFragment"
+            app:destination="@id/allCapitalsFragment" />
     </fragment>
 
     <fragment
@@ -48,4 +51,8 @@
         android:name="com.example.course_android.fragments.filter.FilterFragment"
         android:label="fragment_filter"
         tools:layout="@layout/fragment_filter" />
+    <fragment
+        android:id="@+id/allCapitalsFragment"
+        android:name="com.example.course_android.fragments.allCapitals.AllCapitalsFragment"
+        android:label="AllCapitalsFragment" />
 </navigation>
