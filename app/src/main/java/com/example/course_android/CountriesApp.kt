@@ -21,7 +21,8 @@ class CountriesApp : Application() {
                 countryListModule,
                 countryDetailsModule,
                 mapModule,
-                filterModule
+                filterModule,
+                capitalListModule
             )
         }
 
