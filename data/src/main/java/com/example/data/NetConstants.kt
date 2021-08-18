@@ -6,6 +6,7 @@ object NetConstants {
     const val SERVER_API = "rest/v2/all"
     const val SERVER_API_DESCRIPTION = "rest/v2/name/{country}"
     const val API_PATH_VALUE = "country"
+    const val SERVER_API_CAPITALS = "rest/v2/all?fields=capital"
 
     //DEFAULT VALUES
     const val DEFAULT_INT = 0
