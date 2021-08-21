@@ -67,9 +67,9 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
                 is Outcome.Failure -> {
                     showError()
                 }
-                is Outcome.Success -> {
-                    showCountries(it.data)
-                }
+//                is Outcome.Success -> {
+//                    showCountries(it.data)
+//                }
 
                 is Outcome.Next -> {
                     showCountries(it.data)
