@@ -20,11 +20,12 @@ data class CountryDescriptionItemDto(
     var name: String = "",
 //    val nativeName: String,
 //    val numericCode: String,
-    var population: Int = 0
+    var population: Int = 0,
 //    val region: String,
 //    val regionalBlocs: List<RegionalBloc>,
 //    val subregion: String,
 //    val timezones: List<String>,
 //    val topLevelDomain: List<String>,
 //    val translations: Translations
+    var distance: Int = 0
 ) : Serializable

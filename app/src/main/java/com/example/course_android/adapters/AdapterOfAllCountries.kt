@@ -1,6 +1,5 @@
 package com.example.course_android.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.Constants.DEFAULT_KM
 import com.example.course_android.R
 import com.example.course_android.base.adapter.BaseAdapter
-import com.example.course_android.utils.calculateDistanceFiler
 import com.example.course_android.utils.getLanguageByKey
-import com.example.course_android.utils.getResultOfCurrentLocation
 import com.example.domain.dto.model.CountryDescriptionItemDto
 
 class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
@@ -22,8 +19,7 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
         val tvCapital: AppCompatTextView = view.findViewById(R.id.item_detail)
         val tvLanguages: AppCompatTextView = view.findViewById(R.id.item_lang)
         val tvArea: AppCompatTextView = view.findViewById(R.id.item_area)
-        val tvPopulation: AppCompatTextView = view.findViewById(R.id.like_bar_distance)
-        val currentLocationOfUser = getResultOfCurrentLocation()
+        val tvDistance: AppCompatTextView = view.findViewById(R.id.like_bar_distance)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
@@ -32,7 +28,6 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
         return CountryViewHolder(itemView)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CountryViewHolder) {
             val item = mDataList[position]
@@ -40,8 +35,7 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
             holder.tvCapital.text = item.capital
             holder.tvLanguages.text = item.languages.getLanguageByKey()
             holder.tvArea.text = item.area.toString()
-            holder.tvPopulation.text =
-                calculateDistanceFiler(holder.currentLocationOfUser, item).toString() + DEFAULT_KM
+            holder.tvDistance.text = item.distance.toString()
             holder.itemView.setOnClickListener { mClickFunction?.invoke(item) }
         }
     }

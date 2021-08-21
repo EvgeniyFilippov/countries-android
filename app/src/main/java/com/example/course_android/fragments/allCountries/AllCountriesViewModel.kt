@@ -3,6 +3,7 @@ package com.example.course_android.fragments.allCountries
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import com.example.course_android.Constants
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
@@ -53,8 +54,12 @@ class AllCountriesViewModel(
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
+        val currentLocationOfUser = getResultOfCurrentLocation()
         mGetAllCountriesUseCase.execute()
             .map { it.sortBySortStatusFromPref(sortStatus) }
+            .doOnNext { it.forEach { country ->
+                country.distance = calculateDistanceFiler(currentLocationOfUser, country)
+            }}
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
