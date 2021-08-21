@@ -42,6 +42,8 @@
     <string name="filter_name">Отфильтровать</string>
     <string name="def_value_edit_text">0</string>
     <string name="capitals">Столицы</string>
+    <string name="default_likes">125ы</string>
+
     <string-array name="rangeSliderValues">
         <item>1000</item>
         <item>5000</item>

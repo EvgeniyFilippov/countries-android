@@ -1,10 +1,12 @@
 package com.example.course_android.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.course_android.Constants.DEFAULT_KM
 import com.example.course_android.R
 import com.example.course_android.base.adapter.BaseAdapter
 import com.example.course_android.utils.calculateDistanceFiler
@@ -30,6 +32,7 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
         return CountryViewHolder(itemView)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CountryViewHolder) {
             val item = mDataList[position]
@@ -37,7 +40,8 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
             holder.tvCapital.text = item.capital
             holder.tvLanguages.text = item.languages.getLanguageByKey()
             holder.tvArea.text = item.area.toString()
-            holder.tvPopulation.text = calculateDistanceFiler(holder.currentLocationOfUser, item).toString()
+            holder.tvPopulation.text =
+                calculateDistanceFiler(holder.currentLocationOfUser, item).toString() + DEFAULT_KM
             holder.itemView.setOnClickListener { mClickFunction?.invoke(item) }
         }
     }
