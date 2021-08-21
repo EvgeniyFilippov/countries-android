@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="5dp">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/mLikeUp"
@@ -39,6 +36,7 @@
         android:layout_marginHorizontal="2dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/like_bar_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3,6Km"
@@ -50,8 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_navigation_24"
-
         android:tint="@color/black" />
 
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+</merge>

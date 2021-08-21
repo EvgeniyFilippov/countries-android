@@ -26,5 +26,6 @@ class CustomLikeBar : LinearLayout {
     private fun initView(context: Context, attrs: AttributeSet?) {
         val view = inflate(context, R.layout.custom_likebar, this)
 
+        layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
     }
 }
