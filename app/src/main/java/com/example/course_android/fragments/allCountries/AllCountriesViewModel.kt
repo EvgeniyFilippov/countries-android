@@ -188,6 +188,7 @@ class AllCountriesViewModel(
             && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
         ) {
             val distance = calculateDistanceFiler(currentLocationOfUser, country)
+            country.distance = distance
             if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
                 distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
             ) {
