@@ -25,5 +25,4 @@ data class CountryDescriptionItem(
 //    val timezones: List<String>,
 //    val topLevelDomain: List<String>,
 //    val translations: Translations
-    val distance: Int?
 )

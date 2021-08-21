@@ -27,5 +27,5 @@ data class CountryDescriptionItemDto(
 //    val timezones: List<String>,
 //    val topLevelDomain: List<String>,
 //    val translations: Translations
-    var distance: Int = 0
+    var distance: String = ""
 ) : Serializable

@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
+import com.example.course_android.Constants.DEFAULT_KM
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
@@ -57,9 +58,14 @@ class AllCountriesViewModel(
         val currentLocationOfUser = getResultOfCurrentLocation()
         mGetAllCountriesUseCase.execute()
             .map { it.sortBySortStatusFromPref(sortStatus) }
-            .doOnNext { it.forEach { country ->
-                country.distance = calculateDistanceFiler(currentLocationOfUser, country)
-            }}
+            .doOnNext {
+                it.forEach { country ->
+                    country.distance = calculateDistanceFiler(
+                        currentLocationOfUser,
+                        country
+                    ).toString() + DEFAULT_KM
+                }
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -188,7 +194,7 @@ class AllCountriesViewModel(
             && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
         ) {
             val distance = calculateDistanceFiler(currentLocationOfUser, country)
-            country.distance = distance
+            country.distance = distance.toString() + DEFAULT_KM
             if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
                 distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
             ) {
