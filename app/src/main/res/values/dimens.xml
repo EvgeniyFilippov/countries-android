@@ -27,4 +27,6 @@
     <dimen name="height_edit_text_def">40dp</dimen>
     <dimen name="padding_left_4">4dp</dimen>
     <dimen name="def_margin">10dp</dimen>
+    <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
 </resources>
