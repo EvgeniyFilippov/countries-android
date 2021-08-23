@@ -1,32 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/mLikeUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_arrow_circle_up_24"
-        android:tint="@color/black" />
+        android:tint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/mLikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:layout_marginHorizontal="2dp"/>
+        android:layout_marginHorizontal="2dp"
+        app:layout_constraintStart_toEndOf="@id/mLikeUp"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/arrow_down_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_arrow_circle_down_24"
-        android:tint="@color/black" />
+        android:tint="@color/black"
+        app:layout_constraintStart_toEndOf="@id/mLikes"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@id/arrow_down_icon"
+        app:layout_constraintEnd_toStartOf="@id/like_bar_distance"
+        app:layout_constraintTop_toTopOf="parent">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_mode_comment_24"
-        android:layout_marginStart="40dp"
-        android:tint="@color/black" />
+        android:tint="@color/black"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/mComments"
@@ -34,19 +49,24 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:layout_marginHorizontal="2dp"/>
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/like_bar_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:textColor="@color/black"
-        android:layout_marginHorizontal="2dp"/>
+        android:layout_marginHorizontal="2dp"
+        app:layout_constraintEnd_toStartOf="@id/icon_nav"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icon_nav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_navigation_24"
-        android:tint="@color/black" />
+        android:tint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </merge>

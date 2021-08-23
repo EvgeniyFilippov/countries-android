@@ -4,12 +4,13 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.course_android.Constants.DEFAULT_COMMENTS
 import com.example.course_android.Constants.DEFAULT_LIKES
 import com.example.course_android.R
 import java.lang.Exception
 
-class CustomLikeBar : LinearLayout {
+class CustomLikeBar : ConstraintLayout {
 
     private var mTvLikes: TextView? = null
     private var mTvComments: TextView? = null
