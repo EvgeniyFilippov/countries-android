@@ -30,11 +30,12 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@id/arrow_down_icon"
-        app:layout_constraintEnd_toStartOf="@id/like_bar_distance"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="@id/mLikeUp"
+        app:layout_constraintEnd_toEndOf="@id/icon_nav"
         app:layout_constraintTop_toTopOf="parent">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -48,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:layout_marginHorizontal="2dp"/>
+        android:layout_marginStart="2dp"/>
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
