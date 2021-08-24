@@ -1,6 +1,7 @@
 package com.example.data.api
 
 import com.example.data.NetConstants.BASE_URL
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,9 +25,18 @@ object RetrofitObj {
         .client(okHttpClient)
         .build()
 
+    private val coroutineRetrofitBuilder = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
+        .client(okHttpClient)
+        .build()
+
     val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
+    val COROUTINE_COUNTRY_SERVICE: CoroutineCountryService = coroutineRetrofitBuilder.create(CoroutineCountryService::class.java)
 
     fun getCountriesApi(): CountryService = COUNTRY_SERVICE
+    fun getCapitalsApi(): CoroutineCountryService = COROUTINE_COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

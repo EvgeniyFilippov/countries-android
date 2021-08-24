@@ -62,19 +62,17 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         viewModel.allCountriesLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
-                    showProgress()
+                    if (it.loading) showProgress() else hideProgress()
                 }
                 is Outcome.Failure -> {
                     showError()
                 }
                 is Outcome.Success -> {
                     showCountries(it.data)
-                    hideProgress()
                 }
 
                 is Outcome.Next -> {
                     showCountries(it.data)
-                    hideProgress()
                 }
                 else -> {
 

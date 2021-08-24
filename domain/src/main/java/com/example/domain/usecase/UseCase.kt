@@ -1,8 +1,6 @@
 package com.example.domain.usecase
 
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
 import java.io.Serializable
 
 abstract class UseCase<Params : Any, Result> : Serializable {

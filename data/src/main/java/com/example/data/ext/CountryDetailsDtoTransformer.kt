@@ -5,10 +5,11 @@ import com.example.data.NetConstants.DEFAULT_FLAG
 import com.example.data.NetConstants.DEFAULT_INT
 import com.example.data.NetConstants.DEFAULT_LATLNG_SIZE
 import com.example.data.NetConstants.DEFAULT_STRING
+import com.example.data.model.oneCountry.CountryDescriptionItem
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.dto.model.LanguageOfOneCountryDto
 
-   fun MutableList<com.example.data.model.oneCountry.CountryDescriptionItem>?.transformCountryToDto(): MutableList<CountryDescriptionItemDto> {
+   fun MutableList<CountryDescriptionItem>?.transformCountryToDto(): MutableList<CountryDescriptionItemDto> {
 
         val listCountryDescriptionItemDto: MutableList<CountryDescriptionItemDto> = mutableListOf()
 
