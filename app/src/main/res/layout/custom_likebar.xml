@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:layout_marginHorizontal="2dp"
+        android:layout_marginStart="@dimen/margin_4dp"
         app:layout_constraintStart_toEndOf="@id/mLikeUp"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -26,13 +26,13 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_arrow_circle_down_24"
         android:tint="@color/black"
+        android:layout_marginStart="@dimen/margin_4dp"
         app:layout_constraintStart_toEndOf="@id/mLikes"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
         android:gravity="center"
         app:layout_constraintStart_toStartOf="@id/mLikeUp"
         app:layout_constraintEnd_toEndOf="@id/icon_nav"
@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:layout_marginStart="2dp"/>
+        android:layout_marginStart="@dimen/margin_2dp"/>
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -57,7 +57,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:layout_marginHorizontal="2dp"
         app:layout_constraintEnd_toStartOf="@id/icon_nav"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -67,6 +66,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_navigation_24"
         android:tint="@color/black"
+        android:layout_marginStart="@dimen/margin_2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
