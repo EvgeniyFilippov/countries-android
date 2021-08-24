@@ -9,10 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentStartBinding
+import com.example.course_android.ext.askLocationPermission
+import com.example.course_android.ext.checkLocationPermission
+
+private const val LOCATION_PERMISSION_CODE = 1000
 
 class StartFragment : Fragment(R.layout.fragment_start) {
 
     private var binding: FragmentStartBinding? = null
+    private var permissionGps = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -23,10 +28,14 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         binding?.btnMap?.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_mapOfAllCountriesFragment2)
         }
-        binding?.btnFilter?.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_filterFragment)
-        }
         setHasOptionsMenu(true)
+
+        //проверяем и запрашиваем пермишен Gps
+        if (context?.checkLocationPermission() == true) {
+            permissionGps = true
+        } else {
+            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

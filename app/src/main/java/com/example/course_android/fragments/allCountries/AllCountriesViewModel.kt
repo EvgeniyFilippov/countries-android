@@ -1,92 +1,86 @@
 package com.example.course_android.fragments.allCountries
 
-import android.annotation.SuppressLint
-import android.content.ContentValues
-import android.content.ContentValues.TAG
-import android.util.Log
-import android.view.View
-import android.widget.ProgressBar
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.course_android.Constants
+import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
-import com.example.course_android.Constants.DEFAULT_STRING
+import com.example.course_android.Constants.END_AREA_FILTER_KEY
+import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
+import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
+import com.example.course_android.Constants.START_AREA_FILTER_KEY
+import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
+import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.CountriesApp
-import com.example.course_android.R
 import com.example.course_android.api.RetrofitObj
-import com.example.course_android.base.mvvm.BaseViewModel
-import com.example.course_android.databinding.FragmentAllCountriesBinding
-import com.example.course_android.dto.CountryDetailsDtoTransformer
+import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.model.oneCountry.CountryDescriptionItem
+import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
-import com.example.course_android.utils.SingleLiveEvent
-import com.example.course_android.utils.convertDBdataToRetrofitModel
-import com.example.course_android.utils.sortBySortStatusFromPref
+import com.example.course_android.utils.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
     private val sortStatus: Int,
-    private val mSearchSubject: PublishSubject<String>
-    ) : BaseViewModel() {
+    private val mSearchSubject: BehaviorSubject<String>,
+    savedStateHandle: SavedStateHandle
+) : BaseViewModel(savedStateHandle) {
 
-    val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
-//    val countriesLiveData: LiveData<MutableList<CountryDescriptionItemDto>> =
-//        mutableCountriesLiveData
-
-    val mutableCountriesErrorLiveData = SingleLiveEvent<String>()
-//    val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
-
-    val mutableCountriesFromSearchLiveData = SingleLiveEvent<MutableList<CountryDescriptionItemDto>>()
-//    val countriesFromSearchLiveData: LiveData<MutableList<CountryDescriptionItemDto>> = mutableCountriesFromSearchLiveData
+    val allCountriesLiveData =
+        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+    val countriesFromSearchAndFilterLiveData =
+        SingleLiveEvent<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
-    private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
-
-    private var searchText: String = DEFAULT_STRING
-
-    private var listCountriesFromSearch: MutableList<CountryDescriptionItem> = arrayListOf()
+    private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
         RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { list -> countryDetailsDtoTransformer.transform(list) }
-            .doOnNext { listDto -> listDto.sortBySortStatusFromPref(sortStatus)}
+            .map { it.transformCountryToDto() }
+            .map { it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ sortedListDto ->
-                mutableCountriesLiveData.value = sortedListDto
-                saveToDBfromApi(sortedListDto)
+            .subscribe({
+                allCountriesLiveData.next(it)
+                saveToDBfromApi(it)
             }, {
+                allCountriesLiveData.failed(it)
                 getCountriesFromDB()
-//                if (cone?.isOnline() == false) {
-//                    mutableCountriesErrorLiveData.value = "Error"
-//                    context?.toast(getString(R.string.chek_inet))
-//                }
+            }, {
+                if (allCountriesLiveData.value is Outcome.Next) {
+                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
+                }
             }).also { mCompositeDisposable.add(it) }
     }
+
 
     private fun getCountriesFromDB() {
         val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
         val languagesFromDB = CountriesApp.base?.getLanguageInfoDAO()
         countriesFromDB
-            ?.map { list -> list.convertDBdataToRetrofitModel(languagesFromDB,
-                listOfCountriesFromDB) }
-            ?.doOnNext { list -> list.sortBySortStatusFromPref(sortStatus) }
+            ?.map { list ->
+                list.convertDBdataToRetrofitModel(
+                    languagesFromDB,
+                    listOfCountriesFromDB
+                )
+            }
+            ?.map { it -> it.sortBySortStatusFromPref(sortStatus) }
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({ sortedListDto ->
-                mutableCountriesLiveData.value = sortedListDto
-                sortedListDto.clear()
-            }, { throwable ->
-                throwable.printStackTrace()
+            ?.subscribe({
+                allCountriesLiveData.next(it)
+                it.clear()
+            }, {
+                allCountriesLiveData.failed(it)
+            }, {
+                if (allCountriesLiveData.value is Outcome.Next) {
+                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
+                }
             }).also { mCompositeDisposable.add(it) }
     }
 
@@ -116,35 +110,62 @@ class AllCountriesViewModel(
         }
     }
 
-    fun getSearchSubject(): Disposable =
-        mSearchSubject
-            .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
-            .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
-            .distinctUntilChanged()
-            .map { it.trim() }
-            .doOnNext { searchText = it }
-            .flatMap { text: String ->
-                RetrofitObj.getCountriesApi().getCountryDetails(text).toObservable()
-                    .onErrorResumeNext { Observable.just(mutableListOf()) }
-            }
-            .doOnNext {  list: MutableList<CountryDescriptionItem> ->
-                listCountriesFromSearch.clear()
+    fun getCountriesFromSearch() {
+        mCompositeDisposable.add(
+            executeJob(
+                mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
+                    .onErrorResumeNext { Flowable.just("") }
+                    .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+                    .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+                    .distinctUntilChanged()
+                    .map { it.trim() }
+                    .flatMap { text: String ->
+                        RetrofitObj.getCountriesApi().getCountryDetails(text)
+
+                            .map { it.transformCountryToDto() }
+                            .map {
+                                it.filter { country ->
+                                    country.name.contains(text, true)
+                                }
+                                    .toMutableList()
+                            }
+                    }, countriesFromSearchAndFilterLiveData)
+        )
+    }
+
+    fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
+        val currentLocationOfUser = getResultOfCurrentLocation()
+        RetrofitObj.getCountriesApi().getListOfCountry()
+            .map { it.transformCountryToDto() }
+            .doOnNext { list ->
+                listCountriesFromFilter.clear()
                 list.forEach { country ->
-                    if (country.name?.contains(searchText, ignoreCase = true) == true) {
-                        listCountriesFromSearch.add(country)
+                    if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
+                        && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
+                    ) {
+                        val distance = calculateDistanceFiler(currentLocationOfUser, country)
+                        if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
+                            distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
+                        ) {
+                            if (country.population >= mapSettingsByFilter[START_POPULATION_FILTER_KEY] ?: 0
+                                && country.population <= mapSettingsByFilter[END_POPULATION_FILTER_KEY] ?: 0
+                            ) {
+                                listCountriesFromFilter.add(country)
+                            }
+                        }
                     }
                 }
-                countryDetailsDtoTransformer.transform(
-                    listCountriesFromSearch
-                )
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mutableCountriesFromSearchLiveData.value = countryDetailsDtoTransformer.transform(listCountriesFromSearch)
+                countriesFromSearchAndFilterLiveData.next(listCountriesFromFilter)
             }, {
-                Log.d(ContentValues.TAG, ("Error"))
+                countriesFromSearchAndFilterLiveData.failed(it)
+            }, {
+                if (countriesFromSearchAndFilterLiveData.value is Outcome.Next) {
+                    countriesFromSearchAndFilterLiveData.success((countriesFromSearchAndFilterLiveData.value as Outcome.Next).data)
+                }
             }).also { mCompositeDisposable.add(it) }
-
+    }
 }
-

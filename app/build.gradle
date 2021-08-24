@@ -108,4 +108,4 @@ dependencies {
     implementation "com.google.android.libraries.maps:maps:$maps"
 }
 
-apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-android-extensions'

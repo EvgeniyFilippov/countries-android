@@ -9,10 +9,11 @@ import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
@@ -23,17 +24,16 @@ import com.example.course_android.Constants.SORT_STATUS_UP
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
+import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
-import com.example.course_android.fragments.filter.FilterViewModel
+import com.example.course_android.utils.getCurrentLocation
 import com.example.course_android.utils.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.android.synthetic.main.fragment_all_countries.*
 
 class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvmView {
 
@@ -42,42 +42,79 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
     var adapterOfAllCountries = AdapterOfAllCountries()
-
-    private val mSearchSubject = PublishSubject.create<String>()
-
+    private val mSearchSubject = BehaviorSubject.create<String>()
     private lateinit var viewModel: AllCountriesViewModel
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        readSortStatus()
         viewModel =
-            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject))
+            ViewModelProvider(this, AllCountriesViewModelFactory(sortStatus, mSearchSubject, SavedStateHandle()))
                 .get(AllCountriesViewModel::class.java)
-        viewModel.getSearchSubject()
+        viewModel.getCountriesFromSearch()
+        context?.let { getCurrentLocation(it) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        readSortStatus()
         binding = FragmentAllCountriesBinding.bind(view)
 
-        viewModel.mutableCountriesLiveData.observe(
-            viewLifecycleOwner,
-            Observer { data -> showCountries(data) })
-//        viewModel.mutableCountriesErrorLiveData.observe(
-//            viewLifecycleOwner,
-//            Observer { error -> showError(error) })
-        viewModel.mutableCountriesFromSearchLiveData.singleObserve(
-            viewLifecycleOwner,
-            Observer { data -> showCountries(data) })
-        showProgress()
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
+            "valueOfFilter"
+        )?.observe(viewLifecycleOwner, Observer { map ->
+            viewModel.getCountriesFromFilter(map)
+        })
+
+        viewModel.allCountriesLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is Outcome.Progress -> {
+                    showProgress()
+                }
+                is Outcome.Failure -> {
+                    showError()
+                }
+                is Outcome.Success -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+
+                is Outcome.Next -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+                else -> {
+
+                }
+            }
+        }
+
+        viewModel.countriesFromSearchAndFilterLiveData.singleObserve(viewLifecycleOwner) {
+            when (it) {
+                is Outcome.Progress -> {
+                    showProgress()
+                }
+                is Outcome.Failure -> {
+                    showError()
+                }
+                is Outcome.Success -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+
+                is Outcome.Next -> {
+                    showCountries(it.data)
+                    hideProgress()
+                }
+                else -> {
+
+                }
+            }
+        }
+
         viewModel.getCountriesFromApi()
-
-
-
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = adapterOfAllCountries
+        binding?.recyclerView?.setHasFixedSize(true)
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
+        binding?.recyclerView?.adapter = adapterOfAllCountries
         setHasOptionsMenu(true)
     }
 
@@ -94,7 +131,6 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
 
         inet = menu.findItem(R.id.online)
         inet.isVisible = context?.isOnline() != true
-
 
 
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
@@ -136,6 +172,10 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         if (item.itemId == R.id.reset_sort) {
             showSortResetDialog()
         }
+        if (item.itemId == R.id.filter) {
+            findNavController().navigate(R.id.action_allCountriesFragment_to_filterFragment)
+        }
+
         saveSortStatus()
         return super.onOptionsItemSelected(item)
     }
@@ -160,7 +200,7 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
-        binding?.progressBar?.visibility = View.GONE
+
         adapterOfAllCountries.setItemClick { item ->
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_KEY, item.name)
@@ -193,7 +233,8 @@ class AllCountriesFragment : Fragment(R.layout.fragment_all_countries), BaseMvvm
         mCompositeDisposable.clear()
     }
 
-    override fun showError(error: String) {
+    override fun showError() {
+        hideProgress()
         if (context?.isOnline() == false) {
             context?.toast(getString(R.string.chek_inet))
         } else {

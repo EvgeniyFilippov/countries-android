@@ -1,61 +1,74 @@
 package com.example.course_android.fragments.filter
 
-import android.content.ContentValues
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.course_android.Constants
-import com.example.course_android.CountriesApp
+import androidx.lifecycle.SavedStateHandle
+import com.example.course_android.Constants.END_AREA_FILTER_KEY
+import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
+import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
+import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
+import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_POPULATION
+import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_AREA
+import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
+import com.example.course_android.Constants.START_AREA_FILTER_KEY
+import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
+import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.api.RetrofitObj
-import com.example.course_android.base.mvvm.BaseViewModel
-import com.example.course_android.dto.CountryDetailsDtoTransformer
-import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.model.oneCountry.CountryDescriptionItem
-import com.example.course_android.room.CountryBaseInfoEntity
-import com.example.course_android.room.LanguagesInfoEntity
-import com.example.course_android.utils.convertDBdataToRetrofitModel
-import com.example.course_android.utils.sortBySortStatusFromPref
+import com.example.course_android.base.mvvm.*
+import com.example.course_android.dto.transformCountryToDto
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
 
-class FilterViewModel(
-//    private val start: Float,
-//    private val end: Float
-) : BaseViewModel() {
+class FilterViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedStateHandle) {
 
-    private val mutableCountriesLiveData = MutableLiveData<MutableList<CountryDescriptionItemDto>>()
-    val countriesLiveData: LiveData<MutableList<CountryDescriptionItemDto>> =
-        mutableCountriesLiveData
+    val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
+    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
 
-    private val mutableCountriesErrorLiveData = MutableLiveData<String>()
-    val countriesErrorLiveData: LiveData<String> = mutableCountriesErrorLiveData
+    private val mapValuesByFilter = hashMapOf<String, Int>()
+    private val mapConfigFilter = hashMapOf<String, Float>()
 
-    private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
-    private val countryDetailsDtoTransformer = CountryDetailsDtoTransformer()
+    fun putValuesFromFilter(
+        startArea: Float,
+        endArea: Float,
+        startDistance: Int,
+        endDistance: Int,
+        startPopulation: Float,
+        endPopulation: Float
+    ) {
+        mapValuesByFilter[START_AREA_FILTER_KEY] = startArea.toInt()
+        mapValuesByFilter[END_AREA_FILTER_KEY] = endArea.toInt()
+        mapValuesByFilter[START_DISTANCE_FILTER_KEY] = startDistance
+        mapValuesByFilter[END_DISTANCE_FILTER_KEY] = endDistance
+        mapValuesByFilter[START_POPULATION_FILTER_KEY] = startPopulation.toInt()
+        mapValuesByFilter[END_POPULATION_FILTER_KEY] = endPopulation.toInt()
 
-    private var searchText: String = Constants.DEFAULT_STRING
+        mutableFilterLiveData.value = mapValuesByFilter
+    }
 
-    private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
-
-    fun getCountriesFromFilter(start: Float, end: Float) {
+    fun makeConfigFilter() {
         RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { list -> countryDetailsDtoTransformer.transform(list) }
-            .doOnNext { list -> list.forEach {
-                if (it.area in start..end) {
-                    listCountriesFromFilter.add(it)
-                }
-            } }
+            .map { it.transformCountryToDto() }
+            .map { list -> listOf(
+                list.minByOrNull { it.area.toInt()}?.area ?: 0.0,
+                list.maxByOrNull { it.area.toInt()}?.area ?: 0.0,
+                list.minByOrNull { it.population}?.population?.toDouble() ?: 0.0,
+                list.maxByOrNull { it.population}?.population?.toDouble() ?: 0.0
+            )}
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mutableCountriesLiveData.value = listCountriesFromFilter
-                listCountriesFromFilter.clear()
+                mapConfigFilter[FILTER_VALUE_FROM_KEY_AREA] = it[0].toFloat()
+                mapConfigFilter[FILTER_VALUE_TO_KEY_AREA] = it[1].toFloat()
+                mapConfigFilter[FILTER_VALUE_FROM_KEY_POPULATION] = it[2].toFloat()
+                mapConfigFilter[FILTER_VALUE_TO_KEY_POPULATION] = it[3].toFloat()
+                mutableFilterConfigLiveData.next(mapConfigFilter)
             }, {
+                mutableFilterConfigLiveData.failed(it)
+            }, {
+                if (mutableFilterConfigLiveData.value is Outcome.Next) {
+                    mutableFilterConfigLiveData.success((mutableFilterConfigLiveData.value as Outcome.Next).data)
+                }
             }).also { mCompositeDisposable.add(it) }
+
     }
 
 }

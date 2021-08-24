@@ -2,21 +2,19 @@ package com.example.course_android.dto
 
 import com.example.course_android.Constants.DEFAULT_DOUBLE
 import com.example.course_android.Constants.DEFAULT_FLAG
+import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_LATLNG_SIZE
 import com.example.course_android.Constants.DEFAULT_STRING
 import com.example.course_android.dto.model.CountryDescriptionItemDto
 import com.example.course_android.dto.model.LanguageOfOneCountryDto
 import com.example.course_android.model.oneCountry.CountryDescriptionItem
 
-class CountryDetailsDtoTransformer :
-    Transformer<List<CountryDescriptionItem>, List<CountryDescriptionItemDto>> {
-
-    override fun transform(item: List<CountryDescriptionItem>?): MutableList<CountryDescriptionItemDto> {
+   fun MutableList<CountryDescriptionItem>?.transformCountryToDto(): MutableList<CountryDescriptionItemDto> {
 
         val listCountryDescriptionItemDto: MutableList<CountryDescriptionItemDto> = mutableListOf()
 
 
-        item?.forEach { country ->
+        this?.forEach { country ->
             val countryDescriptionItemDto = CountryDescriptionItemDto()
             val listOfLanguagesDto: MutableList<LanguageOfOneCountryDto> = mutableListOf()
 
@@ -24,6 +22,7 @@ class CountryDetailsDtoTransformer :
             countryDescriptionItemDto.name = country.name ?: DEFAULT_STRING
             countryDescriptionItemDto.area = country.area ?: DEFAULT_DOUBLE
             countryDescriptionItemDto.capital = country.capital ?: DEFAULT_STRING
+            countryDescriptionItemDto.population = country.population ?: DEFAULT_INT
 
             countryDescriptionItemDto.latlng =
                 country.latlng ?: arrayListOf(DEFAULT_DOUBLE, DEFAULT_DOUBLE)
@@ -46,8 +45,5 @@ class CountryDetailsDtoTransformer :
         }
 
         return listCountryDescriptionItemDto
-
-    }
-
 
 }

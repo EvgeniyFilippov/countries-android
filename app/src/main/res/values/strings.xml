@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">course-android</string>
+    <string name="app_name">YF</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="main_button">Список стран</string>
@@ -36,7 +36,11 @@
     <string name="no">No</string>
     <string name="chek_inet">Проверьте подключение к интернету</string>
     <string name="marker_title">Проверьте подключение к интернету</string>
-    <string name="area">Площадь</string>
+    <string name="area">Площадь от %1$d до %2$d км.кв.</string>
+    <string name="population">Население от %1$d до %2$d чел.</string>
+    <string name="Distance">Дистанция</string>
+    <string name="filter_name">Отфильтровать</string>
+    <string name="def_value_edit_text">0</string>
     <string-array name="rangeSliderValues">
     <item>1000</item>
     <item>5000</item>
