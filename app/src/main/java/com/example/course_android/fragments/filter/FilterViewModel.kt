@@ -12,20 +12,20 @@ import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
-import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.*
-import com.example.course_android.dto.transformCountryToDto
-import com.repository.network.NetworkRepository
+import com.example.domain.repository.NetworkRepository
+import com.example.domain.usecase.impl.GetAllCountriesUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class FilterViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mNetworkRepository: NetworkRepository
+    private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
 ) : BaseViewModel(savedStateHandle) {
 
     val mutableFilterLiveData = MutableLiveData<HashMap<String, Int>>()
-    val mutableFilterConfigLiveData = savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
+    val mutableFilterConfigLiveData =
+        savedStateHandle.getLiveData<Outcome<HashMap<String, Float>>>("configFilter")
 
     private val mapValuesByFilter = hashMapOf<String, Int>()
     private val mapConfigFilter = hashMapOf<String, Float>()
@@ -49,13 +49,15 @@ class FilterViewModel(
     }
 
     fun makeConfigFilter() {
-        mNetworkRepository.getListOfCountry()
-            .map { list -> listOf(
-                list.minByOrNull { it.area.toInt()}?.area ?: 0.0,
-                list.maxByOrNull { it.area.toInt()}?.area ?: 0.0,
-                list.minByOrNull { it.population}?.population?.toDouble() ?: 0.0,
-                list.maxByOrNull { it.population}?.population?.toDouble() ?: 0.0
-            )}
+        mGetAllCountriesUseCase.execute()
+            .map { list ->
+                listOf(
+                    list.minByOrNull { it.area.toInt() }?.area ?: 0.0,
+                    list.maxByOrNull { it.area.toInt() }?.area ?: 0.0,
+                    list.minByOrNull { it.population }?.population?.toDouble() ?: 0.0,
+                    list.maxByOrNull { it.population }?.population?.toDouble() ?: 0.0
+                )
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -71,7 +73,6 @@ class FilterViewModel(
                     mutableFilterConfigLiveData.success((mutableFilterConfigLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
-
     }
 
 }

@@ -12,12 +12,11 @@ import com.example.course_android.databinding.FragmentStartBinding
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
 
-private const val LOCATION_PERMISSION_CODE = 1000
+
 
 class StartFragment : Fragment(R.layout.fragment_start) {
 
     private var binding: FragmentStartBinding? = null
-    private var permissionGps = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,12 +29,6 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         }
         setHasOptionsMenu(true)
 
-        //проверяем и запрашиваем пермишен Gps
-        if (context?.checkLocationPermission() == true) {
-            permissionGps = true
-        } else {
-            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
