@@ -67,6 +67,12 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
 
 @SuppressLint("MissingPermission")
  fun getCurrentLocation(context: Context) {
+    LocationServices.getFusedLocationProviderClient(context)
+        .lastLocation
+        .addOnSuccessListener { location ->
+            currentLocationOfUser = location
+        }
+
     val mLocationRequest = LocationRequest.create()
     mLocationRequest.interval = 60000
     mLocationRequest.fastestInterval = 5000

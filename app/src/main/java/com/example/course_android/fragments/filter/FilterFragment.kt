@@ -15,22 +15,26 @@ import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_AREA
 import com.example.course_android.Constants.FILTER_VALUE_FROM_KEY_POPULATION
 import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_AREA
 import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
+import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.course_android.base.mvvm.Outcome
 import com.example.course_android.databinding.FragmentFilterBinding
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
+import com.example.course_android.fragments.allCountries.AllCountriesViewModel
 import com.example.course_android.utils.toast
 import com.google.android.material.slider.RangeSlider
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import java.text.NumberFormat
 
-class FilterFragment : Fragment(), BaseMvvmView {
+class FilterFragment : ScopeFragment(), BaseMvvmView {
 
     private var binding: FragmentFilterBinding? = null
     private var sliderOfArea: RangeSlider? = null
     private var sliderOfPopulation: RangeSlider? = null
-    private val viewModelFilter = FilterViewModel(SavedStateHandle())
+    private val viewModelFilter: FilterViewModel by stateViewModel()
     private var startArea = 0.0F
     private var endArea = 0.0F
     private var startPopulation = 0.0F
@@ -130,7 +134,7 @@ class FilterFragment : Fragment(), BaseMvvmView {
 
     //отправляем конфиг в предыдущий фрагмент
     private fun sendSettingsOfFilter(map: HashMap<String, Int>) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("valueOfFilter", map)
+        findNavController().previousBackStackEntry?.savedStateHandle?.set(VALUE_OF_FILTER_KEY, map)
         findNavController().popBackStack()
     }
 

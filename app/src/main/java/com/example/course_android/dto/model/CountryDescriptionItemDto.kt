@@ -1,5 +1,7 @@
 package com.example.course_android.dto.model
 
+import java.io.Serializable
+
 data class CountryDescriptionItemDto(
 //    val alpha2Code: String,
 //    val alpha3Code: String,
@@ -25,4 +27,4 @@ data class CountryDescriptionItemDto(
 //    val timezones: List<String>,
 //    val topLevelDomain: List<String>,
 //    val translations: Translations
-)
+) : Serializable

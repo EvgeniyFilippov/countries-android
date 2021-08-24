@@ -1,7 +1,10 @@
 package com.example.course_android.fragments.allCountries
 
+import android.location.Location
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
@@ -10,29 +13,37 @@ import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
-import com.example.course_android.CountriesApp
-import com.example.course_android.api.RetrofitObj
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.dto.model.CountryDescriptionItemDto
-import com.example.course_android.dto.transformCountryToDto
 import com.example.course_android.room.CountryBaseInfoEntity
 import com.example.course_android.room.LanguagesInfoEntity
 import com.example.course_android.utils.*
+import com.repository.database.DatabaseCountryRepository
+import com.repository.database.DatabaseLanguageRepository
+import com.repository.network.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import org.koin.core.logger.KOIN_TAG
 import java.util.concurrent.TimeUnit
 
 class AllCountriesViewModel(
-    private val sortStatus: Int,
-    private val mSearchSubject: BehaviorSubject<String>,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val mDatabaseCountryRepository: DatabaseCountryRepository,
+    private val mDatabaseLanguageRepository: DatabaseLanguageRepository,
+    private val mNetworkRepository: NetworkRepository
 ) : BaseViewModel(savedStateHandle) {
 
+    private var sortStatus: Int = 0
+    private val mSearchSubject = BehaviorSubject.create<String>()
+//    val allCountriesLiveData =
+//        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
     val allCountriesLiveData =
-        MutableLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>()
+        savedStateHandle.getLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>(
+            ALL_COUNTRIES_LIVE_DATA
+        )
     val countriesFromSearchAndFilterLiveData =
         SingleLiveEvent<Outcome<MutableList<CountryDescriptionItemDto>>>()
 
@@ -40,8 +51,7 @@ class AllCountriesViewModel(
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi() {
-        RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { it.transformCountryToDto() }
+        mNetworkRepository.getListOfCountry()
             .map { it.sortBySortStatusFromPref(sortStatus) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -60,12 +70,10 @@ class AllCountriesViewModel(
 
 
     private fun getCountriesFromDB() {
-        val countriesFromDB = CountriesApp.base?.getCountryInfoDAO()?.getAllInfo()
-        val languagesFromDB = CountriesApp.base?.getLanguageInfoDAO()
-        countriesFromDB
-            ?.map { list ->
+        mDatabaseCountryRepository.getAllInfo()
+            .map { list ->
                 list.convertDBdataToRetrofitModel(
-                    languagesFromDB,
+                    mDatabaseLanguageRepository,
                     listOfCountriesFromDB
                 )
             }
@@ -87,8 +95,9 @@ class AllCountriesViewModel(
     private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         val listOfAllCountries: MutableList<CountryBaseInfoEntity> = mutableListOf()
         val listOfAllLanguages: MutableList<LanguagesInfoEntity> = mutableListOf()
-        listCountriesFromApiDto.let {
-            listCountriesFromApiDto.forEach { item ->
+        Flowable.just(listCountriesFromApiDto)
+            .flatMap { Flowable.fromIterable(it) }
+            .doOnNext { item ->
                 listOfAllCountries.add(
                     CountryBaseInfoEntity(
                         item.name,
@@ -105,12 +114,17 @@ class AllCountriesViewModel(
                     )
                 }
             }
-            CountriesApp.daoCountry?.addAll(listOfAllCountries)
-            CountriesApp.daoLanguage?.addAll(listOfAllLanguages)
-        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                mDatabaseCountryRepository.addAll(listOfAllCountries)
+                mDatabaseLanguageRepository.addAll(listOfAllLanguages)
+            }, {
+                Log.d(KOIN_TAG, it.message.toString())
+            })
     }
 
-    fun getCountriesFromSearch() {
+    fun getCountriesFromSearch(): BehaviorSubject<String> {
         mCompositeDisposable.add(
             executeJob(
                 mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
@@ -120,40 +134,26 @@ class AllCountriesViewModel(
                     .distinctUntilChanged()
                     .map { it.trim() }
                     .flatMap { text: String ->
-                        RetrofitObj.getCountriesApi().getCountryDetails(text)
-
-                            .map { it.transformCountryToDto() }
+                        mNetworkRepository.getCountryDetails(text)
                             .map {
                                 it.filter { country ->
                                     country.name.contains(text, true)
                                 }
                                     .toMutableList()
                             }
-                    }, countriesFromSearchAndFilterLiveData)
+                    }, countriesFromSearchAndFilterLiveData
+            )
         )
+        return mSearchSubject
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
-        val currentLocationOfUser = getResultOfCurrentLocation()
-        RetrofitObj.getCountriesApi().getListOfCountry()
-            .map { it.transformCountryToDto() }
+        mNetworkRepository.getListOfCountry()
             .doOnNext { list ->
+                val currentLocationOfUser = getResultOfCurrentLocation()
                 listCountriesFromFilter.clear()
                 list.forEach { country ->
-                    if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
-                        && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
-                    ) {
-                        val distance = calculateDistanceFiler(currentLocationOfUser, country)
-                        if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
-                            distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
-                        ) {
-                            if (country.population >= mapSettingsByFilter[START_POPULATION_FILTER_KEY] ?: 0
-                                && country.population <= mapSettingsByFilter[END_POPULATION_FILTER_KEY] ?: 0
-                            ) {
-                                listCountriesFromFilter.add(country)
-                            }
-                        }
-                    }
+                    makeListCountriesForFilter(country, mapSettingsByFilter, currentLocationOfUser)
                 }
             }
             .subscribeOn(Schedulers.io())
@@ -167,5 +167,30 @@ class AllCountriesViewModel(
                     countriesFromSearchAndFilterLiveData.success((countriesFromSearchAndFilterLiveData.value as Outcome.Next).data)
                 }
             }).also { mCompositeDisposable.add(it) }
+    }
+
+    private fun makeListCountriesForFilter(
+        country: CountryDescriptionItemDto,
+        mapSettingsByFilter: HashMap<String?, Int>,
+        currentLocationOfUser: Location
+    ) {
+        if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
+            && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
+        ) {
+            val distance = calculateDistanceFiler(currentLocationOfUser, country)
+            if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&
+                distance <= mapSettingsByFilter[END_DISTANCE_FILTER_KEY] ?: 0
+            ) {
+                if (country.population >= mapSettingsByFilter[START_POPULATION_FILTER_KEY] ?: 0
+                    && country.population <= mapSettingsByFilter[END_POPULATION_FILTER_KEY] ?: 0
+                ) {
+                    listCountriesFromFilter.add(country)
+                }
+            }
+        }
+    }
+
+    fun setSortStatus(value: Int) {
+        sortStatus = value
     }
 }
