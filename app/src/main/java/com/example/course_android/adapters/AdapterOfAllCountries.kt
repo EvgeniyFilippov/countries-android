@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.course_android.Constants.DEFAULT_KM
 import com.example.course_android.R
 import com.example.course_android.base.adapter.BaseAdapter
 import com.example.course_android.utils.getLanguageByKey
@@ -18,6 +19,7 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
         val tvCapital: AppCompatTextView = view.findViewById(R.id.item_detail)
         val tvLanguages: AppCompatTextView = view.findViewById(R.id.item_lang)
         val tvArea: AppCompatTextView = view.findViewById(R.id.item_area)
+        val tvDistance: AppCompatTextView = view.findViewById(R.id.like_bar_distance)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
@@ -33,6 +35,7 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
             holder.tvCapital.text = item.capital
             holder.tvLanguages.text = item.languages.getLanguageByKey()
             holder.tvArea.text = item.area.toString()
+            holder.tvDistance.text = item.distance.toString()
             holder.itemView.setOnClickListener { mClickFunction?.invoke(item) }
         }
     }

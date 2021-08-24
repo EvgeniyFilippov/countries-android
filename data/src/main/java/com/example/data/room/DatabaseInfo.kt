@@ -14,7 +14,6 @@ abstract class DatabaseInfo : RoomDatabase() {
     companion object {
         fun init(context: Context) =
             Room.databaseBuilder(context, DatabaseInfo::class.java, "database")
-                .allowMainThreadQueries()
                 .build()
     }
 }

@@ -23,10 +23,12 @@ class AllCapitalsViewModel(
         )
 
     fun getCapitalsCoroutines() {
-        CoroutineScope(viewModelScope.coroutineContext).launch {
+//        CoroutineScope(viewModelScope.coroutineContext).launch {
+        viewModelScope.launch {
             try {
                 allCapitalsLiveData.value = Outcome.loading(true)
-                val result = withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+//                val result = withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+                val result = withContext(Dispatchers.IO) {
                     mGetCapitalUseCase.execute()
                 }
                 allCapitalsLiveData.value = Outcome.loading(false)

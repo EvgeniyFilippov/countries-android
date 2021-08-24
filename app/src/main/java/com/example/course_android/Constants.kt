@@ -13,6 +13,10 @@ object Constants {
     const val DEFAULT_DOUBLE = 0.0
     const val MIN_SEARCH_STRING_LENGTH = 3
     const val DEBOUNCE_TIME_MILLIS = 500L
+    const val DEFAULT_LIKES = "125"
+    const val DEFAULT_COMMENTS = "4"
+    const val DEFAULT_KM = "Km"
+
 
     //FILTER
     const val START_AREA_FILTER_KEY = "START_AREA_FILTER_KEY"
