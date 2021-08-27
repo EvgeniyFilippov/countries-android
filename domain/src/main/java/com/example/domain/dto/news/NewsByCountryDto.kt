@@ -1,7 +1,7 @@
 package com.example.domain.dto.news
 
 data class NewsByCountryDto(
-    val articles: List<ArticleDto> = listOf(),
+    val newsItems: List<NewsItemDto> = listOf(),
 //    val status: String = "",
 //    val totalResults: Int?
 )

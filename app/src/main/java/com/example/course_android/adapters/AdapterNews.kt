@@ -7,9 +7,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.R
 import com.example.course_android.base.adapter.BaseAdapter
-import com.example.domain.dto.news.ArticleDto
+import com.example.domain.dto.news.NewsItemDto
 
-class AdapterNews : BaseAdapter<ArticleDto>() {
+class AdapterNews : BaseAdapter<NewsItemDto>() {
 
     class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 

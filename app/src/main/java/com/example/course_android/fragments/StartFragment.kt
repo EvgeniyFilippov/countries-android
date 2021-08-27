@@ -30,6 +30,9 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         binding?.btnCapitals?.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_allCapitalsFragment)
         }
+        binding?.btnNews?.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_newsFragment)
+        }
         setHasOptionsMenu(true)
 
     }

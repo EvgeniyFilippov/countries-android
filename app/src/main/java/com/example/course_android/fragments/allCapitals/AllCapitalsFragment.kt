@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterCapitals
 import com.example.course_android.base.mvvm.BaseMvvmView
-import com.example.course_android.base.mvvm.Outcome
+import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentAllCapitalsBinding
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog

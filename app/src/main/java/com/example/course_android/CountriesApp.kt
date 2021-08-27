@@ -22,7 +22,8 @@ class CountriesApp : Application() {
                 countryDetailsModule,
                 mapModule,
                 filterModule,
-                capitalListModule
+                capitalListModule,
+                newsModule
             )
         }
 

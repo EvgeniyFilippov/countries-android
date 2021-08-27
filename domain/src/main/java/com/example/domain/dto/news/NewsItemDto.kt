@@ -1,6 +1,6 @@
 package com.example.domain.dto.news
 
-data class ArticleDto(
+data class NewsItemDto(
     val author: String = "",
 //    val content: Any = "",
     val description: String = "",

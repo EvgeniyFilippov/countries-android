@@ -3,7 +3,6 @@ package com.example.course_android.fragments.allCountries
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import com.example.course_android.Constants
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.DEFAULT_KM
@@ -19,6 +18,7 @@ import com.example.course_android.utils.*
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.dto.room.RoomCountryDescriptionItemDto
 import com.example.domain.dto.room.RoomLanguageOfOneCountryDto
+import com.example.domain.outcome.Outcome
 import com.example.domain.repository.DatabaseCountryRepository
 import com.example.domain.repository.DatabaseLanguageRepository
 import com.example.domain.usecase.impl.GetAllCountriesUseCase

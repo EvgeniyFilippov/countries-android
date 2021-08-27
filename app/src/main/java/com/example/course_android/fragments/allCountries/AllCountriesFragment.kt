@@ -21,7 +21,7 @@ import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
-import com.example.course_android.base.mvvm.Outcome
+import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
