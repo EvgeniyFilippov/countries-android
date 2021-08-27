@@ -8,6 +8,7 @@ import com.example.domain.outcome.Outcome
 import com.example.domain.outcome.Transformer
 import com.example.domain.repository.NetworkNewsFlowRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class NetworkNewsRepositoryImpl(
     private val api: NewsFlowService,
@@ -15,6 +16,6 @@ class NetworkNewsRepositoryImpl(
 ) : NetworkNewsFlowRepository{
 
     override fun getListOfNews(): Flow<Outcome<List<NewsItemDto>>> =
-        modifyFlow(api.getListOfNews(), newsListTransformer)
+        modifyFlow(api.getListOfNews().map { it.articles }, newsListTransformer)
 
 }

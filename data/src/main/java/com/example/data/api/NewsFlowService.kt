@@ -8,5 +8,5 @@ import retrofit2.http.GET
 
 interface NewsFlowService {
     @GET (SERVER_API_NEWS)
-    fun getListOfNews(): Flow<List<NewsByCountry>>
+    fun getListOfNews(): Flow<NewsByCountry>
 }
