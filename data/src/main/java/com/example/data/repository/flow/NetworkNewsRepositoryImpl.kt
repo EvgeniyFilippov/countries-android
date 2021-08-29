@@ -1,8 +1,8 @@
 package com.example.data.repository.flow
 
 import com.example.data.api.NewsFlowService
+import com.example.data.ext.modifyFlowOutcome
 import com.example.data.ext.modifyFlow
-import com.example.data.ext.modifyFlow2
 import com.example.data.model.newsByCountry.Article
 import com.example.domain.dto.news.NewsItemDto
 import com.example.domain.outcome.Outcome
@@ -18,9 +18,9 @@ class NetworkNewsRepositoryImpl(
 ) : NetworkNewsFlowRepository{
 
     override fun getListOfNewsOutcome(): Flow<Outcome<List<NewsItemDto>>> =
-        modifyFlow(api.getListOfNews().map { it.articles }, newsListTransformer)
+        modifyFlowOutcome(api.getListOfNews("ru", "6a5cad1e580345b8b218480b1034d389").map { it.articles }, newsListTransformer)
 
     override fun getListOfNews(): Flow<List<NewsItemDto>> =
-        modifyFlow2(api.getListOfNews().map { it.articles }, newsListTransformer)
+        modifyFlow(api.getListOfNews("ru", "6a5cad1e580345b8b218480b1034d389").map { it.articles }, newsListTransformer)
 
 }

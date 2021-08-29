@@ -5,8 +5,9 @@ import com.example.data.model.newsByCountry.Article
 import com.example.data.model.newsByCountry.NewsByCountry
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface NewsFlowService {
     @GET (SERVER_API_NEWS)
-    fun getListOfNews(): Flow<NewsByCountry>
+    fun getListOfNews(@Query("country") country: String, @Query("apiKey") apiKey: String): Flow<NewsByCountry>
 }

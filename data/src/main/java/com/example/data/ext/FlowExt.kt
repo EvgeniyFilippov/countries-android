@@ -5,14 +5,14 @@ import com.example.domain.outcome.Transformer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
-fun <InputType, OutputType> modifyFlow(
+fun <InputType, OutputType> modifyFlowOutcome(
     data: Flow<InputType>,
     transformer: Transformer<InputType, OutputType>
 ): Flow<Outcome<OutputType>> {
-    return data.execute(transformer.convert)
+    return data.executeOutcome(transformer.convert)
 }
 
-fun <InputType, OutputType> Flow<InputType>.execute(convert: (InputType) -> OutputType): Flow<Outcome<OutputType>> =
+fun <InputType, OutputType> Flow<InputType>.executeOutcome(convert: (InputType) -> OutputType): Flow<Outcome<OutputType>> =
     this.flowOn(Dispatchers.IO)
         .map { dto -> convert(dto) }
         .map { list -> Outcome.success(list) }
@@ -20,13 +20,13 @@ fun <InputType, OutputType> Flow<InputType>.execute(convert: (InputType) -> Outp
         .onCompletion { emit(Outcome.loading(false)) }
         .catch { ex -> emit(Outcome.failure(ex)) }
 
-fun <InputType, OutputType> modifyFlow2(
+fun <InputType, OutputType> modifyFlow(
     data: Flow<InputType>,
     transformer: Transformer<InputType, OutputType>
 ): Flow<OutputType> {
-    return data.execute2(transformer.convert)
+    return data.execute(transformer.convert)
 }
 
-fun <InputType, OutputType> Flow<InputType>.execute2(convert: (InputType) -> OutputType): Flow<OutputType> =
+fun <InputType, OutputType> Flow<InputType>.execute(convert: (InputType) -> OutputType): Flow<OutputType> =
     this.flowOn(Dispatchers.IO)
         .map { dto -> convert(dto) }

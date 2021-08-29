@@ -10,7 +10,7 @@ object NetConstants {
 
     //API NEWS
     const val BASE_URL_NEWS = "https://newsapi.org/"
-    const val SERVER_API_NEWS = "v2/top-headlines?country=ru&apiKey=6a5cad1e580345b8b218480b1034d389"
+    const val SERVER_API_NEWS = "v2/top-headlines"
 
     //DEFAULT VALUES
     const val DEFAULT_INT = 0
