@@ -17,10 +17,10 @@ class NetworkNewsRepositoryImpl(
 
 ) : NetworkNewsFlowRepository{
 
-    override fun getListOfNewsOutcome(): Flow<Outcome<List<NewsItemDto>>> =
-        modifyFlowOutcome(api.getListOfNews("ru", "6a5cad1e580345b8b218480b1034d389").map { it.articles }, newsListTransformer)
+    override fun getListOfNewsOutcome(alpha_2_ISO_3166_1: String): Flow<Outcome<List<NewsItemDto>>> =
+        modifyFlowOutcome(api.getListOfNews(alpha_2_ISO_3166_1).map { it.articles }, newsListTransformer)
 
-    override fun getListOfNews(): Flow<List<NewsItemDto>> =
-        modifyFlow(api.getListOfNews("ru", "6a5cad1e580345b8b218480b1034d389").map { it.articles }, newsListTransformer)
+    override fun getListOfNews(alpha_2_ISO_3166_1: String): Flow<List<NewsItemDto>> =
+        modifyFlow(api.getListOfNews(alpha_2_ISO_3166_1).map { it.articles }, newsListTransformer)
 
 }

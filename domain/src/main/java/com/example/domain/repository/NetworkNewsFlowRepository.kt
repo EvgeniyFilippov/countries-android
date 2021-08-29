@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface NetworkNewsFlowRepository {
 
-    fun getListOfNewsOutcome(): Flow<Outcome<List<NewsItemDto>>>
+    fun getListOfNewsOutcome(alpha_2_ISO_3166_1: String): Flow<Outcome<List<NewsItemDto>>>
 
-    fun getListOfNews(): Flow<List<NewsItemDto>>
+    fun getListOfNews(alpha_2_ISO_3166_1: String): Flow<List<NewsItemDto>>
 
 }

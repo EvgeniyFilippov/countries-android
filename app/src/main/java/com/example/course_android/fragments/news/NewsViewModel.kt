@@ -2,6 +2,7 @@ package com.example.course_android.fragments.news
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants
+import com.example.course_android.Constants.RU
 import com.example.course_android.base.mvvm.BaseViewModel
 import com.example.domain.dto.news.NewsItemDto
 import com.example.domain.outcome.Outcome
@@ -17,7 +18,7 @@ class NewsViewModel(
 ) : BaseViewModel(savedStateHandle) {
 
     fun getNewsFlow(): Flow<Outcome<List<NewsItemDto>>> =
-        mNetworkNewsFlowRepository.getListOfNewsOutcome()
+        mNetworkNewsFlowRepository.getListOfNewsOutcome(RU)
 
     var searchText = MutableStateFlow("")
 
@@ -29,7 +30,7 @@ class NewsViewModel(
                 .debounce(500)
                 .distinctUntilChanged()
                 .flatMapLatest { text ->
-                    mNetworkNewsFlowRepository.getListOfNews()
+                    mNetworkNewsFlowRepository.getListOfNews(RU)
                         .map {
                             it.filter { news ->
                                 news.title.contains(text, true)

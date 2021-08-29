@@ -37,4 +37,7 @@ object Constants {
     const val ALL_COUNTRIES_LIVE_DATA = "allCountriesLiveData"
     const val ALL_CAPITALS_LIVE_DATA = "allCapitalsLiveData"
     const val NEWS_FROM_SEARCH_LIVE_DATA = "newsFromSearchLiveData"
+
+    //alpha_2 ISO_3166_1
+    const val RU = "ru"
 }
