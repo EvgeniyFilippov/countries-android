@@ -19,3 +19,14 @@ fun <InputType, OutputType> Flow<InputType>.execute(convert: (InputType) -> Outp
         .onStart { emit(Outcome.loading(true)) }
         .onCompletion { emit(Outcome.loading(false)) }
         .catch { ex -> emit(Outcome.failure(ex)) }
+
+fun <InputType, OutputType> modifyFlow2(
+    data: Flow<InputType>,
+    transformer: Transformer<InputType, OutputType>
+): Flow<OutputType> {
+    return data.execute2(transformer.convert)
+}
+
+fun <InputType, OutputType> Flow<InputType>.execute2(convert: (InputType) -> OutputType): Flow<OutputType> =
+    this.flowOn(Dispatchers.IO)
+        .map { dto -> convert(dto) }

@@ -36,4 +36,5 @@ object Constants {
     //LIVE DATA
     const val ALL_COUNTRIES_LIVE_DATA = "allCountriesLiveData"
     const val ALL_CAPITALS_LIVE_DATA = "allCapitalsLiveData"
+    const val NEWS_FROM_SEARCH_LIVE_DATA = "newsFromSearchLiveData"
 }

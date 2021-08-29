@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface NetworkNewsFlowRepository {
 
-    fun getListOfNews(): Flow<Outcome<List<NewsItemDto>>>
+    fun getListOfNewsOutcome(): Flow<Outcome<List<NewsItemDto>>>
+
+    fun getListOfNews(): Flow<List<NewsItemDto>>
 
 }
