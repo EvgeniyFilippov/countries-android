@@ -32,6 +32,8 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
     var adapterNews = AdapterNews()
     private val viewModel: NewsViewModel by stateViewModel()
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
@@ -55,24 +57,23 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
                 }
             })
 
-
-        viewModel.newsFromSearchLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is Outcome.Progress -> {
-                    if (it.loading) showProgress() else hideProgress()
+        viewModel.getNewsFromSearch().asLiveData(lifecycleScope.coroutineContext)
+            .observe(viewLifecycleOwner, {
+                when (it) {
+                    is Outcome.Failure -> {
+                        showError()
+                    }
+                    is Outcome.Next -> {
+                        Log.e("hz", "")
+                    }
+                    is Outcome.Progress -> {
+                        if (it.loading) showProgress() else hideProgress()
+                    }
+                    is Outcome.Success -> {
+                        showNews(it.data.toMutableList())
+                    }
                 }
-                is Outcome.Failure -> {
-                    showError()
-                }
-                is Outcome.Success -> {
-                    showNews(it.data)
-                }
-
-                else -> {
-
-                }
-            }
-        }
+            })
 
         binding?.recyclerNews?.setHasFixedSize(true)
         binding?.recyclerNews?.layoutManager = LinearLayoutManager(context)
@@ -98,13 +99,15 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    viewModel.getNewsFromSearch().value = query
+                    viewModel.searchText.value = query
+                    viewModel.getNewsFromSearch()
                 }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.getNewsFromSearch().value = newText
+                viewModel.searchText.value = newText
+                viewModel.getNewsFromSearch()
                 return true
             }
         })
@@ -137,23 +140,5 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
     override fun hideProgress() {
         binding?.progressBar?.visibility = View.GONE
     }
-
-//    fun SearchView.getQueryTextChangeStateFlow(): StateFlow<String> {
-//
-//        val query = MutableStateFlow("")
-//
-//        setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                query.value = newText
-//                return true
-//            }
-//        })
-//
-//        return query
-//    }
 
 }
