@@ -23,13 +23,13 @@ val appModule = module {
     single { RetrofitObj.getNewsApi() }
 
     //Data level
-    single { NetworkRepositoryImpl(get()) as NetworkRepository }
-    single { NetworkCapitalRepositoryImpl(get()) as NetworkCapitalsRepository }
+    single<NetworkRepository> { NetworkRepositoryImpl(get()) }
+    single<NetworkCapitalsRepository> { NetworkCapitalRepositoryImpl(get()) }
 
     single<Transformer<List<Article>, List<NewsItemDto>>> { ListArticlesToListArticlesDtoTransformer() }
     single<NetworkNewsFlowRepository> { NetworkNewsRepositoryImpl(get(), get()) }
 
-    single { DatabaseCountryRepositoryImpl(get()) as DatabaseCountryRepository }
-    single { DatabaseLanguageRepositoryImpl(get()) as DatabaseLanguageRepository }
+    single<DatabaseCountryRepository> { DatabaseCountryRepositoryImpl(get()) }
+    single<DatabaseLanguageRepository> { DatabaseLanguageRepositoryImpl(get()) }
 
 }
