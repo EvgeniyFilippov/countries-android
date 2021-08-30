@@ -61,5 +61,9 @@
     <fragment
         android:id="@+id/newsFragment"
         android:name="com.example.course_android.fragments.news.NewsFragment"
-        android:label="NewsFragment" />
+        android:label="NewsFragment" >
+        <action
+            android:id="@+id/action_newsFragment_to_mapOfAllCountriesFragment2"
+            app:destination="@id/mapOfAllCountriesFragment2" />
+    </fragment>
 </navigation>

@@ -1,6 +1,7 @@
 package com.example.course_android.fragments.news
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.example.course_android.Constants
 import com.example.course_android.Constants.RU
 import com.example.course_android.base.mvvm.BaseViewModel
@@ -11,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class NewsViewModel(
     savedStateHandle: SavedStateHandle,
@@ -20,7 +22,13 @@ class NewsViewModel(
     fun getNewsFlow(): Flow<Outcome<List<NewsItemDto>>> =
         mNetworkNewsFlowRepository.getListOfNewsOutcome(RU)
 
+    private val triggerSharedFlowNav: MutableSharedFlow<Long> = MutableSharedFlow()
+
     var searchText = MutableStateFlow("")
+
+    fun getTriggerForNavSharedFlow(): MutableSharedFlow<Long> {
+        return triggerSharedFlowNav
+    }
 
     @FlowPreview
     @ExperimentalCoroutinesApi
@@ -43,8 +51,15 @@ class NewsViewModel(
                 .onCompletion { emit(Outcome.loading(false)) }
                 .catch { ex -> emit(Outcome.failure(ex)) }
 
-    fun doOnListItemClick() {
-
+    fun doOnListItemClick()
+    {
+        viewModelScope.launch {
+            getNewsFlow().collect {
+                if (it is Outcome.Success<List<NewsItemDto>>) {
+                    triggerSharedFlowNav.emit(it.data.size.toLong())
+                }
+            }
+        }
     }
 
 }

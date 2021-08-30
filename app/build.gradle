@@ -62,7 +62,7 @@ dependencies {
     final gms = "18.0.0"
     final rxJavaAndroid = "3.0.0"
     final koinVersion ="3.1.2"
-    final lifecycleRuntimeKtx = "2.3.1"
+    final lifecycleRuntimeKtx = "2.4.0-alpha03"
     final lifecycleExtensions = "2.2.0"
     final lifecycleViewmodelKtx = "2.3.1"
     final lifecycleLivedataKtx = "2.3.1"

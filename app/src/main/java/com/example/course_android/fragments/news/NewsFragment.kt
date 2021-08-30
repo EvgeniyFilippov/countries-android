@@ -6,8 +6,11 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.widget.SearchView
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterNews
@@ -19,9 +22,8 @@ import com.example.course_android.utils.toast
 import com.example.domain.dto.news.NewsItemDto
 import com.example.domain.outcome.Outcome
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
@@ -31,15 +33,25 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
     private val mCompositeDisposable = CompositeDisposable()
     var adapterNews = AdapterNews()
     private val viewModel: NewsViewModel by stateViewModel()
+    private lateinit var mShredFlowJob: Job
 
-    @ExperimentalCoroutinesApi
-    @FlowPreview
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
         setHasOptionsMenu(true)
+        mShredFlowJob = Job()
 
         adapterNews.setItemClick { viewModel.doOnListItemClick() }
+
+        CoroutineScope(lifecycleScope.coroutineContext + mShredFlowJob).launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.getTriggerForNavSharedFlow().collect{
+                    findNavController().navigate(R.id.action_newsFragment_to_mapOfAllCountriesFragment2)
+                    hideProgress()
+                }
+            }
+        }
 
         viewModel.getNewsFlow().asLiveData(lifecycleScope.coroutineContext)
             .observe(viewLifecycleOwner, {
