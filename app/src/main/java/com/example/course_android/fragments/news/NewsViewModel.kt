@@ -43,4 +43,8 @@ class NewsViewModel(
                 .onCompletion { emit(Outcome.loading(false)) }
                 .catch { ex -> emit(Outcome.failure(ex)) }
 
+    fun doOnListItemClick() {
+
+    }
+
 }

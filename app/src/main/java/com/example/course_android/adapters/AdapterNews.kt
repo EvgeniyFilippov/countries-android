@@ -30,6 +30,7 @@ class AdapterNews : BaseAdapter<NewsItemDto>() {
             val item = mDataList[position]
             holder.tvTitle.text = item.title
             holder.tvDescription.text = item.description
+            holder.itemView.setOnClickListener { mClickFunction?.invoke(item) }
         }
     }
 

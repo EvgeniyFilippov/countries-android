@@ -39,6 +39,8 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         binding = FragmentNewsBinding.bind(view)
         setHasOptionsMenu(true)
 
+        adapterNews.setItemClick { viewModel.doOnListItemClick() }
+
         viewModel.getNewsFlow().asLiveData(lifecycleScope.coroutineContext)
             .observe(viewLifecycleOwner, {
                 when (it) {
