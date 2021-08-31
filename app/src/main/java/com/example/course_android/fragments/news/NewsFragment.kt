@@ -29,12 +29,9 @@ import kotlinx.coroutines.flow.collect
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
-private const val LOCATION_PERMISSION_CODE = 1000
-
 class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
 
     private var binding: FragmentNewsBinding? = null
-    private var permissionGps = false
     private val mCompositeDisposable = CompositeDisposable()
     var adapterNews = AdapterNews()
     private val viewModel: NewsViewModel by stateViewModel()
@@ -47,13 +44,6 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
         setHasOptionsMenu(true)
-
-        if (context?.checkLocationPermission() == true) {
-            permissionGps = true
-        } else {
-            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
-        }
-
         mShredFlowJob = Job()
 
         adapterNews.setItemClick {

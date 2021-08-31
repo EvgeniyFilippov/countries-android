@@ -24,6 +24,8 @@ import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
+import com.example.course_android.ext.askLocationPermission
+import com.example.course_android.ext.checkLocationPermission
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
@@ -34,12 +36,15 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
+private const val LOCATION_PERMISSION_CODE = 1000
+
 class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), BaseMvvmView {
 
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
+    private var permissionGps = false
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val viewModel: AllCountriesViewModel by stateViewModel()
 
@@ -54,6 +59,12 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
+
+        if (context?.checkLocationPermission() == true) {
+            permissionGps = true
+        } else {
+            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
