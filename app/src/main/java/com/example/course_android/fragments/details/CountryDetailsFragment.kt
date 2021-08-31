@@ -126,7 +126,12 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun showNews(news: MutableList<NewsItemDto>) {
 
-        adapterNews.repopulate(news)
+        if (news.size >= 1) {
+            adapterNews.repopulate(news)
+        } else {
+            binding?.mNoNews?.visibility = View.VISIBLE
+        }
+
     }
 
     override fun showError(error: String, throwable: Throwable) {
