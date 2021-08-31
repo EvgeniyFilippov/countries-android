@@ -1,5 +1,7 @@
 package com.example.course_android.fragments.news
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -39,8 +41,10 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
     var adapterNews = AdapterNews()
     private val viewModel: NewsViewModel by stateViewModel()
     private lateinit var mShredFlowJob: Job
+    private var onClickedItemDto = NewsItemDto("", "", "", "", "", "")
 
-
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
@@ -54,13 +58,17 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
 
         mShredFlowJob = Job()
 
-        adapterNews.setItemClick { viewModel.doOnListItemClick() }
+        adapterNews.setItemClick {
+            onClickedItemDto = it
+            viewModel.doOnListItemClick()
+        }
 
         CoroutineScope(lifecycleScope.coroutineContext + mShredFlowJob).launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.getTriggerForNavSharedFlow().collect{
-                    findNavController().navigate(R.id.action_newsFragment_to_mapOfAllCountriesFragment2)
-                    hideProgress()
+                viewModel.getTriggerForNavSharedFlow().collect {
+                    val openURL = Intent(Intent.ACTION_VIEW)
+                    openURL.data = Uri.parse(onClickedItemDto.url)
+                    startActivity(openURL)
                 }
             }
         }
