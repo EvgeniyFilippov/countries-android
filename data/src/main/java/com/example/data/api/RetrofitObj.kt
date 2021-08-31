@@ -41,14 +41,23 @@ object RetrofitObj {
         .baseUrl(BASE_URL_NEWS)
         .build()
 
+    private val retrofitNewsFlowableBuilder = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL_NEWS)
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+        .client(okHttpClient)
+        .build()
+
     val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
     val COROUTINE_COUNTRY_SERVICE: CoroutineCountryService = coroutineRetrofitBuilder.create(CoroutineCountryService::class.java)
     val FLOW_NEWS_SERVICE: NewsFlowService =
         flowRetrofitBuildr.create(NewsFlowService::class.java)
+    val NEWS_SERVICE: NewsFlowableService = retrofitNewsFlowableBuilder.create(NewsFlowableService::class.java)
 
     fun getCountriesApi(): CountryService = COUNTRY_SERVICE
     fun getCapitalsApi(): CoroutineCountryService = COROUTINE_COUNTRY_SERVICE
     fun getNewsApi(): NewsFlowService = FLOW_NEWS_SERVICE
+    fun getFlowableNewsApi(): NewsFlowableService = NEWS_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

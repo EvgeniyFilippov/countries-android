@@ -7,6 +7,7 @@ import com.example.data.repository.database.DatabaseCountryRepositoryImpl
 import com.example.data.repository.database.DatabaseLanguageRepositoryImpl
 import com.example.data.repository.flow.NetworkNewsRepositoryImpl
 import com.example.data.repository.network.NetworkCapitalRepositoryImpl
+import com.example.data.repository.network.NetworkNewsFlowableRepositoryImpl
 import com.example.data.repository.network.NetworkRepositoryImpl
 import com.example.data.room.DatabaseInfo
 import com.example.domain.dto.news.NewsItemDto
@@ -21,6 +22,7 @@ val appModule = module {
     single { RetrofitObj.getCountriesApi() }
     single { RetrofitObj.getCapitalsApi() }
     single { RetrofitObj.getNewsApi() }
+    single { RetrofitObj.getFlowableNewsApi() }
 
     //Data level
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
@@ -31,5 +33,9 @@ val appModule = module {
 
     single<DatabaseCountryRepository> { DatabaseCountryRepositoryImpl(get()) }
     single<DatabaseLanguageRepository> { DatabaseLanguageRepositoryImpl(get()) }
+
+    single<NetworkNewsFlowableRepository> { NetworkNewsFlowableRepositoryImpl(get(), get()) }
+
+
 
 }

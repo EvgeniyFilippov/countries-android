@@ -8,7 +8,7 @@ import org.koin.dsl.module
 val countryDetailsModule = module {
 
     scope<CountryDetailsFragment> {
-        scoped { CountryDetailsPresenter(get()) }
+        scoped { CountryDetailsPresenter(get(), get()) }
         scoped { GetCountryListByNameUseCase(get()) }
     }
 }

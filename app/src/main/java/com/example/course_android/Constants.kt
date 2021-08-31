@@ -10,6 +10,7 @@ object Constants {
     const val DEFAULT_SORT_STATUS = 0
     const val ERROR = "ERROR"
     const val COUNTRY_NAME_KEY = "COUNTRY_NAME_KEY"
+    const val COUNTRY_ALPHA_NAME_KEY = "COUNTRY_ALPHA_NAME_KEY"
     const val DEFAULT_DOUBLE = 0.0
     const val MIN_SEARCH_STRING_LENGTH = 3
     const val DEBOUNCE_TIME_MILLIS = 500L

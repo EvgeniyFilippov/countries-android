@@ -10,6 +10,7 @@ import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.Constants.COUNTRY_ALPHA_NAME_KEY
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
@@ -190,6 +191,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         adapterOfAllCountries.setItemClick { item ->
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_KEY, item.name)
+            bundle.putString(COUNTRY_ALPHA_NAME_KEY, item.alpha2Code)
             findNavController().navigate(
                 R.id.action_secondFragment_to_countryDetailsFragment,
                 bundle

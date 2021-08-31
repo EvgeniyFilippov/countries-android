@@ -3,7 +3,7 @@ package com.example.domain.dto.model
 import java.io.Serializable
 
 data class CountryDescriptionItemDto(
-//    val alpha2Code: String,
+    var alpha2Code: String = "",
 //    val alpha3Code: String,
 //    val altSpellings: List<String>,
     var area: Double = 0.0,

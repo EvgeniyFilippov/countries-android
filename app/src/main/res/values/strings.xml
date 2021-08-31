@@ -44,6 +44,7 @@
     <string name="capitals">Столицы</string>
     <string name="default_likes">125ы</string>
     <string name="news">Новости</string>
+    <string name="news_header">Новости:</string>
 
     <string-array name="rangeSliderValues">
         <item>1000</item>
