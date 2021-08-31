@@ -1,8 +1,11 @@
 package com.example.course_android.fragments.details
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants.COUNTRY_ALPHA_NAME_KEY
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -130,6 +133,12 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
             adapterNews.repopulate(news)
         } else {
             binding?.mNoNews?.visibility = View.VISIBLE
+        }
+
+        adapterNews.setItemClick { item ->
+            val openURL = Intent(Intent.ACTION_VIEW)
+            openURL.data = Uri.parse(item.url)
+            startActivity(openURL)
         }
 
     }
