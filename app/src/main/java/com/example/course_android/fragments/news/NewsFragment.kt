@@ -79,14 +79,15 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
                     is Outcome.Failure -> {
                         showError()
                     }
-                    is Outcome.Next -> {
-                        Log.e("hz", "")
-                    }
+
                     is Outcome.Progress -> {
                         if (it.loading) showProgress() else hideProgress()
                     }
                     is Outcome.Success -> {
                         showNews(it.data.toMutableList())
+                    }
+                    else -> {
+                        showError()
                     }
                 }
             })
@@ -94,17 +95,11 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         viewModel.getNewsFromSearch().asLiveData(lifecycleScope.coroutineContext)
             .observe(viewLifecycleOwner, {
                 when (it) {
-                    is Outcome.Failure -> {
-                        showError()
-                    }
-                    is Outcome.Next -> {
-                        Log.e("hz", "")
-                    }
-                    is Outcome.Progress -> {
-                        if (it.loading) showProgress() else hideProgress()
-                    }
                     is Outcome.Success -> {
                         showNews(it.data.toMutableList())
+                    }
+                    else -> {
+                        showError()
                     }
                 }
             })

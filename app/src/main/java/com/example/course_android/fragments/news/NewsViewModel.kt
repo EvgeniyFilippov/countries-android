@@ -47,9 +47,6 @@ class NewsViewModel(
                 }
                 .flowOn(Dispatchers.IO)
                 .map { list -> Outcome.success(list) }
-                .onStart { emit(Outcome.loading(true)) }
-                .onCompletion { emit(Outcome.loading(false)) }
-                .catch { ex -> emit(Outcome.failure(ex)) }
 
     fun doOnListItemClick()
     {
