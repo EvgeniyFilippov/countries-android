@@ -45,15 +45,15 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context?.let { location ->
+            viewModel.getCountriesFromApi(requireContext())
+        }
         readSortStatus()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
-        context?.let { location ->
-            viewModel.getCountriesFromApi(requireContext())
-        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
