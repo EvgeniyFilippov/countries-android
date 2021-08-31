@@ -3,7 +3,6 @@ package com.example.course_android.fragments.news
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterNews
@@ -142,7 +140,13 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         })
 
         mSvMenu.setOnCloseListener {
-            viewModel.getNewsFlow()
+            CoroutineScope(lifecycleScope.coroutineContext + mShredFlowJob).launch {
+                viewModel.getNewsFlow().collect {
+                    if (it is Outcome.Success<List<NewsItemDto>>) {
+                        adapterNews.repopulate(it.data.toMutableList())
+                    }
+                }
+            }
             false
         }
     }

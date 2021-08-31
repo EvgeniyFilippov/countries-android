@@ -7,7 +7,6 @@ import com.example.course_android.Constants.RU
 import com.example.course_android.base.mvvm.BaseViewModel
 import com.example.domain.dto.news.NewsItemDto
 import com.example.domain.outcome.Outcome
-import com.example.domain.repository.NetworkNewsFlowRepository
 import com.example.domain.usecase.impl.GetNewsByNameFlowUseCase
 import com.example.domain.usecase.impl.GetNewsByNameOutcomeFlowUseCase
 import kotlinx.coroutines.Dispatchers
