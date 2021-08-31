@@ -51,7 +51,9 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
-        context?.let { getCurrentLocation(it) }
+        context?.let { location ->
+            viewModel.getCountriesFromApi(requireContext())
+        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
@@ -97,7 +99,6 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
             }
         }
 
-        viewModel.getCountriesFromApi()
         binding?.recyclerView?.setHasFixedSize(true)
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.adapter = adapterOfAllCountries
@@ -134,7 +135,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         })
 
         mSvMenu.setOnCloseListener {
-            viewModel.getCountriesFromApi()
+            context?.let { it1 -> viewModel.getCountriesFromApi(it1) }
             false
         }
     }

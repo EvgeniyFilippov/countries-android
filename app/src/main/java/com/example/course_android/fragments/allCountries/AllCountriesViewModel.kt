@@ -1,5 +1,6 @@
 package com.example.course_android.fragments.allCountries
 
+import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -54,14 +55,20 @@ class AllCountriesViewModel(
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
-    fun getCountriesFromApi() {
-        val currentLocationOfUser = getResultOfCurrentLocation()
-        mGetAllCountriesUseCase.execute()
-            .map { it.sortBySortStatusFromPref(sortStatus) }
+    fun getCountriesFromApi(context: Context) {
+        Flowable.just(context)
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { getCurrentLocation(context = it) }
+            .observeOn(Schedulers.io())
+            .flatMap { location -> mGetAllCountriesUseCase.execute().map { Pair(it, location) } }
+            .map {
+                it.first.sortBySortStatusFromPref(sortStatus)
+                return@map it
+            }
             .doOnNext {
-                it.forEach { country ->
+                it.first.forEach { country ->
                     country.distance = calculateDistanceFiler(
-                        currentLocationOfUser,
+                        it.second,
                         country
                     ).toString() + DEFAULT_KM
                 }
@@ -69,8 +76,8 @@ class AllCountriesViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                allCountriesLiveData.next(it)
-                saveToDBfromApi(it)
+                allCountriesLiveData.next(it.first)
+                saveToDBfromApi(it.first)
             }, {
                 allCountriesLiveData.failed(it)
                 getCountriesFromDB()

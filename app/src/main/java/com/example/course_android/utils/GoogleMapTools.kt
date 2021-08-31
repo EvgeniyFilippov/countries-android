@@ -14,6 +14,9 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
+import java.lang.Exception
 
 private lateinit var currentCountryLatLng: LatLng
 private var googleMap: GoogleMap? = null
@@ -66,29 +69,36 @@ private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
 //}
 
 @SuppressLint("MissingPermission")
- fun getCurrentLocation(context: Context) {
-    LocationServices.getFusedLocationProviderClient(context)
-        .lastLocation
-        .addOnSuccessListener { location ->
-            currentLocationOfUser = location
-        }
+fun getCurrentLocation(context: Context): Flowable<Location> {
+    return Flowable.create<Location>({
+        LocationServices.getFusedLocationProviderClient(context)
+            .lastLocation
+            .addOnSuccessListener { location ->
+                currentLocationOfUser = location
+            }
 
-    val mLocationRequest = LocationRequest.create()
-    mLocationRequest.interval = 60000
-    mLocationRequest.fastestInterval = 5000
-    mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    val mLocationCallback: LocationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            for (location in locationResult.locations) {
-                if (location != null) {
-                    currentLocationOfUser = location
-                    Log.d(LOG_TAG, location.toString())
+        val mLocationRequest = LocationRequest.create()
+        mLocationRequest.interval = 60000
+        mLocationRequest.fastestInterval = 5000
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        val mLocationCallback: LocationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location in locationResult.locations) {
+                    if (location != null) {
+                        currentLocationOfUser = location
+                        it.onNext(location)
+                        it.onComplete()
+                        Log.d(LOG_TAG, location.toString())
+                    } else {
+                        it.onError(Exception())
+                        it.onComplete()
+                    }
                 }
             }
         }
-    }
-    LocationServices.getFusedLocationProviderClient(context)
-        .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
+        LocationServices.getFusedLocationProviderClient(context)
+            .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
+    }, BackpressureStrategy.LATEST)
 }
 
 fun getResultOfCurrentLocation(): Location {
