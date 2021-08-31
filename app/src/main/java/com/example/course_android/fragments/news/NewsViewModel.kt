@@ -56,7 +56,7 @@ class NewsViewModel(
         viewModelScope.launch {
             getNewsFlow().collect {
                 if (it is Outcome.Success<List<NewsItemDto>>) {
-                    triggerSharedFlowNav.emit(it.data.size.toLong())
+                    triggerSharedFlowNav.emit(0L)
                 }
             }
         }

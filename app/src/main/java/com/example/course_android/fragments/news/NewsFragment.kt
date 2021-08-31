@@ -148,6 +148,7 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         super.onDestroyView()
         binding = null
         mCompositeDisposable.clear()
+        mShredFlowJob.cancel()
     }
 
     override fun showError() {
