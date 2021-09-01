@@ -23,6 +23,7 @@ import com.example.domain.dto.model.LanguageOfOneCountryDto
             countryDescriptionItemDto.area = country.area ?: DEFAULT_DOUBLE
             countryDescriptionItemDto.capital = country.capital ?: DEFAULT_STRING
             countryDescriptionItemDto.population = country.population ?: DEFAULT_INT
+            countryDescriptionItemDto.alpha2Code = country.alpha2Code ?: DEFAULT_STRING
 
             countryDescriptionItemDto.latlng =
                 country.latlng ?: arrayListOf(DEFAULT_DOUBLE, DEFAULT_DOUBLE)

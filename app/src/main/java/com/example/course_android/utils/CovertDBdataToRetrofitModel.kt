@@ -23,6 +23,7 @@ fun List<RoomCountryDescriptionItemDto>?.convertDBdataToRetrofitModel(
             listOfLanguagesFromDB.add(languageItem)
         }
         val countryDataItem = CountryDescriptionItemDto(
+            DEFAULT_STRING,
             countryDB.area,
             countryDB.capital,
             DEFAULT_STRING,

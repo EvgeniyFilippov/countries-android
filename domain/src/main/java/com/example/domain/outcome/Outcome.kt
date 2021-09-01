@@ -1,4 +1,4 @@
-package com.example.course_android.base.mvvm
+package com.example.domain.outcome
 
 import java.io.Serializable
 

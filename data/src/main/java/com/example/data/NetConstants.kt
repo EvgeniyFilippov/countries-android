@@ -1,12 +1,16 @@
 package com.example.data
 
 object NetConstants {
-    //API
+    //API COUNTRIES
     const val BASE_URL = "https://restcountries.eu/"
     const val SERVER_API = "rest/v2/all"
     const val SERVER_API_DESCRIPTION = "rest/v2/name/{country}"
     const val API_PATH_VALUE = "country"
     const val SERVER_API_CAPITALS = "rest/v2/all?fields=capital"
+
+    //API NEWS
+    const val BASE_URL_NEWS = "https://newsapi.org/"
+    const val SERVER_API_NEWS = "v2/top-headlines"
 
     //DEFAULT VALUES
     const val DEFAULT_INT = 0

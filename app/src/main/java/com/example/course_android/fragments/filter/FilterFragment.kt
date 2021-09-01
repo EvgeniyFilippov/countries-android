@@ -16,7 +16,7 @@ import com.example.course_android.Constants.FILTER_VALUE_TO_KEY_POPULATION
 import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.base.mvvm.BaseMvvmView
-import com.example.course_android.base.mvvm.Outcome
+import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentFilterBinding
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission

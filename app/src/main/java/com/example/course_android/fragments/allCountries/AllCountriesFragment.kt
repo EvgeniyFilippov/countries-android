@@ -10,6 +10,7 @@ import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.Constants.COUNTRY_ALPHA_NAME_KEY
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
@@ -21,8 +22,10 @@ import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
-import com.example.course_android.base.mvvm.Outcome
+import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
+import com.example.course_android.ext.askLocationPermission
+import com.example.course_android.ext.checkLocationPermission
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
@@ -33,24 +36,35 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
+private const val LOCATION_PERMISSION_CODE = 1000
+
 class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), BaseMvvmView {
 
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
+    private var permissionGps = false
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val viewModel: AllCountriesViewModel by stateViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context?.let { location ->
+            viewModel.getCountriesFromApi(requireContext())
+        }
         readSortStatus()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
-        context?.let { getCurrentLocation(it) }
+
+        if (context?.checkLocationPermission() == true) {
+            permissionGps = true
+        } else {
+            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
@@ -96,7 +110,6 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
             }
         }
 
-        viewModel.getCountriesFromApi()
         binding?.recyclerView?.setHasFixedSize(true)
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.adapter = adapterOfAllCountries
@@ -133,7 +146,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         })
 
         mSvMenu.setOnCloseListener {
-            viewModel.getCountriesFromApi()
+            context?.let { it1 -> viewModel.getCountriesFromApi(it1) }
             false
         }
     }
@@ -190,6 +203,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         adapterOfAllCountries.setItemClick { item ->
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_KEY, item.name)
+            bundle.putString(COUNTRY_ALPHA_NAME_KEY, item.alpha2Code)
             findNavController().navigate(
                 R.id.action_secondFragment_to_countryDetailsFragment,
                 bundle
