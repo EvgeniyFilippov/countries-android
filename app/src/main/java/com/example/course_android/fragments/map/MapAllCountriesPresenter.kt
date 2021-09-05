@@ -7,10 +7,10 @@ class MapAllCountriesPresenter(
     private val mGetAllCountriesUseCase: GetAllCountriesUseCase
 ) : BaseMvpPresenter<MapAllCountriesView>() {
 
-    fun getAllCountries(isRefresh: Boolean) {
+    fun getAllCountries() {
         addDisposable(
             inBackground(
-                handleProgress(mGetAllCountriesUseCase.execute(), isRefresh)
+                mGetAllCountriesUseCase.execute()
             ).subscribe({ response ->
                 getView()?.showAllCountriesOnMap(response)
             }, {

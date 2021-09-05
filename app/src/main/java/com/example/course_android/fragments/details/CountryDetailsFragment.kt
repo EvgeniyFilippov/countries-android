@@ -66,11 +66,11 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         binding?.recyclerNews?.adapter = adapterNews
 
         binding?.srCountryDetails?.setOnRefreshListener {
-            getPresenter().getCountryInfo(mCountryName, true)
-            getPresenter().getNews(mCountryAlphaName, true)
+            getPresenter().getCountryInfo(mCountryName)
+            getPresenter().getNews(mCountryAlphaName)
         }
-        getPresenter().getCountryInfo(mCountryName, false)
-        getPresenter().getNews(mCountryAlphaName, false)
+        getPresenter().getCountryInfo(mCountryName)
+        getPresenter().getNews(mCountryAlphaName)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -166,6 +166,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
                 .title(country.name)
         )
         googleMap?.moveCamera(CameraUpdateFactory.newLatLng(countryLatLng))
+        hideProgress()
     }
 
 }

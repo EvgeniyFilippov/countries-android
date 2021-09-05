@@ -35,7 +35,7 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
         binding = FragmentMapAllCountriesBinding.inflate(inflater, container, false)
         mapFragment =
             childFragmentManager.findFragmentById(R.id.allMapFragmentContainer) as? SupportMapFragment?
-        getPresenter().getAllCountries(false)
+
         return binding?.root
     }
 
@@ -43,6 +43,7 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
         super.onViewCreated(view, savedInstanceState)
         getPresenter().attachView(this)
         setHasOptionsMenu(true)
+        getPresenter().getAllCountries()
     }
 
     override fun createPresenter() {
@@ -70,6 +71,7 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
                     .title(country.name)
             )
         }
+        hideProgress()
     }
 
     override fun showError(error: String, throwable: Throwable) {
