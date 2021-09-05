@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -66,6 +67,7 @@ dependencies {
     final lifecycleExtensions = "2.2.0"
     final lifecycleViewmodelKtx = "2.3.1"
     final lifecycleLivedataKtx = "2.3.1"
+    final googlePlayVersion = "17.0.0"
 
     implementation project(":domain")
     implementation project(':data')
@@ -97,8 +99,9 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxandroid:$rxJavaAndroid"
 
     //Maps
-    implementation "com.google.android.gms:play-services-location:$gms"
-    implementation "com.google.android.libraries.maps:maps:$maps"
+    implementation "com.google.android.gms:play-services-location:$googlePlayVersion"
+    implementation "com.google.android.gms:play-services-maps:$googlePlayVersion"
+//    implementation "com.google.android.libraries.maps:maps:$maps"
 
     //Koin
     implementation "io.insert-koin:koin-core:$koinVersion"

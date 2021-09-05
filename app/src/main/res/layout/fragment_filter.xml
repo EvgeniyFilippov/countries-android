@@ -42,7 +42,7 @@
         android:layout_marginTop="@dimen/margin_top_30"
         android:paddingLeft="@dimen/padding_left_4"
         android:text="@string/def_value_edit_text"
-        android:background="@color/qu_grey_600"
+        android:background="@color/gray"
         android:inputType="number"
         app:layout_constraintEnd_toStartOf="@id/between"
         app:layout_constraintTop_toBottomOf="@id/header2"
@@ -68,7 +68,7 @@
         android:paddingLeft="@dimen/padding_left_4"
         android:text="@string/def_value_edit_text"
         android:inputType="number"
-        android:background="@color/qu_grey_600"
+        android:background="@color/gray"
         app:layout_constraintStart_toEndOf="@id/between"
         app:layout_constraintTop_toBottomOf="@id/header2"/>
 

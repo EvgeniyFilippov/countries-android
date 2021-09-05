@@ -1,7 +1,6 @@
 package com.example.course_android.fragments.map
 
 import com.example.course_android.base.mvp.BaseMvpPresenter
-import com.example.domain.repository.NetworkRepository
 import com.example.domain.usecase.impl.GetAllCountriesUseCase
 
 class MapAllCountriesPresenter(
