@@ -18,5 +18,6 @@ object NetConstants {
     const val DEFAULT_FLAG = "https://static.wikia.nocookie.net/science/images/2/2a/Flag_of_None.svg/revision/latest?cb=20091012151312&path-prefix=ru"
     const val DEFAULT_DOUBLE = 0.0
     const val DEFAULT_LATLNG_SIZE = 2
+    const val SESSION_TIMEOUT = 30L
 
 }

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants.COUNTRY_ALPHA_NAME_KEY
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -19,13 +18,18 @@ import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.*
 import com.example.course_android.utils.*
 import com.example.domain.dto.news.NewsItemDto
-import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import org.koin.android.ext.android.inject
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
 class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(),
-    CountryDetailsView {
+    CountryDetailsView, OnMapReadyCallback {
 
     private lateinit var mCountryName: String
     private lateinit var mCountryAlphaName: String
@@ -35,6 +39,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     private var adapterNews = AdapterNews()
     private var permissionGps = false
     private val mModulePresenter : CountryDetailsPresenter by inject()
+    private lateinit var country: CountryDescriptionItemDto
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,11 +66,11 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         binding?.recyclerNews?.adapter = adapterNews
 
         binding?.srCountryDetails?.setOnRefreshListener {
-            getPresenter().getCountryInfo(mCountryName, true)
-            getPresenter().getNews(mCountryAlphaName, true)
+            getPresenter().getCountryInfo(mCountryName)
+            getPresenter().getNews(mCountryAlphaName)
         }
-        getPresenter().getCountryInfo(mCountryName, false)
-        getPresenter().getNews(mCountryAlphaName, false)
+        getPresenter().getCountryInfo(mCountryName)
+        getPresenter().getNews(mCountryAlphaName)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -97,14 +102,17 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun getPresenter(): CountryDetailsPresenter = mPresenter
 
-    override fun showCountryInfo(country: List<CountryDescriptionItemDto>) {
+    override fun showCountryInfo(countryList: List<CountryDescriptionItemDto>) {
+
+        country = countryList[0]
+
         //языки ресайкл
-        adapterLanguages.repopulate(country[0].languages)
+        adapterLanguages.repopulate(country.languages)
 
         binding?.srCountryDetails?.isRefreshing = false
 
         //флаг
-        binding?.itemFlag?.loadSvg(country[0].flag)
+        binding?.itemFlag?.loadSvg(country.flag)
 
         //проверяем и запрашиваем пермишен Gps
         if (context?.checkLocationPermission() == true) {
@@ -114,17 +122,8 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         }
 
         //карта гугл
-        mapFragment?.run {
-            getMapAsync { map ->
-                activity?.let {
-                    initMapOfCountryDetails(
-                        map,
-                        country[0],
-                        permissionGps
-                    )
-                }
-            }
-        }
+        mapFragment?.getMapAsync(this)
+
     }
 
     override fun showNews(news: MutableList<NewsItemDto>) {
@@ -157,6 +156,17 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun hideProgress() {
         binding?.progress?.visibility = View.GONE
+    }
+
+    override fun onMapReady(googleMap: GoogleMap?) {
+        val countryLatLng = LatLng(country.latlng[0], country.latlng[1])
+        googleMap?.addMarker(
+            MarkerOptions()
+                .position(countryLatLng)
+                .title(country.name)
+        )
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLng(countryLatLng))
+        hideProgress()
     }
 
 }
