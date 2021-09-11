@@ -19,10 +19,7 @@ val appModule = module {
 
     //Model level
     single { DatabaseInfo.init(get()) }
-//    single { RetrofitObj.getCountriesApi() }
-//    single { RetrofitObj.getCapitalsApi() }
-//    single { RetrofitObj.getNewsApi() }
-//    single { RetrofitObj.getFlowableNewsApi() }
+
     val creator = RetrofitCreator()
     single<CountryService> { creator.createFlowableCountriesService(CountryService::class.java) }
     single<CoroutineCountryService> { creator.createCoroutineCountriesService(CoroutineCountryService::class.java) }

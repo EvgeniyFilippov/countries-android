@@ -56,7 +56,7 @@ class AllCountriesViewModel(
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
     fun getCountriesFromApi(context: Context) {
-        Flowable.just(context)
+        val test = Flowable.just(context)
             .observeOn(AndroidSchedulers.mainThread())
             .flatMap { getCurrentLocation(context = it) }
             .observeOn(Schedulers.io())
@@ -85,7 +85,7 @@ class AllCountriesViewModel(
                 if (allCountriesLiveData.value is Outcome.Next) {
                     allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
                 }
-            }).also { mCompositeDisposable.add(it) }
+            })
     }
 
 
