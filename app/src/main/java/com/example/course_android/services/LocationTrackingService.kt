@@ -1,6 +1,7 @@
 package com.example.course_android.services
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -33,8 +34,6 @@ class LocationTrackingService : Service(), LocationListener {
     protected var mLocationManager: LocationManager? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return super.onStartCommand(intent, flags, startId)
-
         intent?.let {
             if (!intent.hasExtra("kill_self")) {
                 initLocationScan()
@@ -43,6 +42,7 @@ class LocationTrackingService : Service(), LocationListener {
                 killSelf()
             }
         }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun initNotification() {
@@ -95,7 +95,7 @@ class LocationTrackingService : Service(), LocationListener {
             mCheckIsGPSTurnedOn = mLocationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true
 
             if (!mCheckIsGPSTurnedOn) {
-                Log.e("hz", "gps turned off")
+                Log.e("YF service: ", "gps turned off")
             } else {
                 mCanGetLocation = true
                 applicationContext?.let {
@@ -105,7 +105,7 @@ class LocationTrackingService : Service(), LocationListener {
                                 Manifest.permission.ACCESS_FINE_LOCATION
 
                             ) == PackageManager.PERMISSION_GRANTED
-                                    && ContextCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                                    && ContextCompat.checkSelfPermission(it, Manifest.permission.ACCESS_COARSE_LOCATION) ==
                                 PackageManager.PERMISSION_GRANTED)
                         {
                             mLocationManager?.requestLocationUpdates(
@@ -114,7 +114,7 @@ class LocationTrackingService : Service(), LocationListener {
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this
                             )
                             if (mLocationManager != null) {
-                                mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                                mLocation = mLocationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                                 if (mLocation != null) {
                                     mLatitude = mLocation?.latitude ?: 0.0
                                     mLongitude = mLocation?.longitude ?: 0.0
@@ -130,13 +130,37 @@ class LocationTrackingService : Service(), LocationListener {
         return mLocation
     }
 
+    private fun stopListening() {
+        if(mLocationManager != null) {
+            mLocationManager?.let {
+                manager ->
+                applicationContext?.let { context ->
+                    manager.removeUpdates(this@LocationTrackingService)
+                }
+            }
+        }
+    }
 
+    private fun killSelf() {
+        stopListening()
+        stopForeground(true)
+        stopSelf()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        killSelf()
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override fun onLocationChanged(location: Location) {
-        TODO("Not yet implemented")
+        val intent = Intent()
+        intent.action = NEW_LOCATION_ACTION
+        intent.putExtra("lat", location.latitude)
+        intent.putExtra("long", location.longitude)
+        sendBroadcast(intent)
     }
 }

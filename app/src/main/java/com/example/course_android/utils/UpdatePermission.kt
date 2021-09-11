@@ -28,9 +28,9 @@ fun Fragment.createLocationPermissionRequest(
                         it,
                         android.Manifest.permission.ACCESS_FINE_LOCATION
                     )
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                         it, android.Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
+                    ) == PackageManager.PERMISSION_GRANTED
                 ) {
                     doOnSuccess.invoke()
                 }
