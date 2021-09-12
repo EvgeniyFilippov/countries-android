@@ -92,7 +92,7 @@ class LocationTrackingService : Service(), LocationListener {
             mCheckIsGPSTurnedOn = mLocationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
 
             //get network provider status
-            mCheckIsGPSTurnedOn = mLocationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true
+            mCheckNetworkIsTurnedOn = mLocationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true
 
             if (!mCheckIsGPSTurnedOn) {
                 Log.e("YF service: ", "gps turned off")
@@ -134,7 +134,7 @@ class LocationTrackingService : Service(), LocationListener {
         if(mLocationManager != null) {
             mLocationManager?.let {
                 manager ->
-                applicationContext?.let { context ->
+                applicationContext?.let {
                     manager.removeUpdates(this@LocationTrackingService)
                 }
             }
@@ -147,6 +147,7 @@ class LocationTrackingService : Service(), LocationListener {
         stopSelf()
     }
 
+    //kill WITH lifecycle app
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         killSelf()

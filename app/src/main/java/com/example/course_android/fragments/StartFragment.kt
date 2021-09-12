@@ -11,13 +11,16 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentStartBinding
+import com.example.course_android.ext.askLocationPermission
+import com.example.course_android.ext.checkLocationPermission
 import com.example.course_android.services.LocationTrackingService
-import com.example.course_android.utils.createLocationPermissionRequest
 
+private const val LOCATION_PERMISSION_CODE = 1000
 
 class StartFragment : Fragment(R.layout.fragment_start) {
 
@@ -43,17 +46,17 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         context?.registerReceiver(mLocationBroadcastReceiver, intentFilter)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentStartBinding.bind(view)
 
+        if (context?.checkLocationPermission() == false) {
+            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+        }
 
         binding?.btnMain?.setOnClickListener {
-            this.createLocationPermissionRequest (
-                context,
-                { findNavController().navigate(R.id.action_startFragment_to_secondFragment)},
-                { Log.d("hz", "no permissions")}
-            )
+             findNavController().navigate(R.id.action_startFragment_to_secondFragment)
         }
 
         binding?.btnMap?.setOnClickListener {
@@ -103,5 +106,10 @@ class StartFragment : Fragment(R.layout.fragment_start) {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        context?.unregisterReceiver(mLocationBroadcastReceiver)
     }
 }

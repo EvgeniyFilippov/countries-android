@@ -56,7 +56,8 @@ fun getResultOfCurrentLocation(): Location {
     return currentLocationOfUser
 }
 
-fun getDistance(context: Context): Int {
+fun getDistance(context: Context, country: CountryDescriptionItemDto): Int {
+    currentCountryLatLng = LatLng(country.latlng[0], country.latlng[1])
     getCurrentLocation(context)
     calculateDistance(currentLocationOfUser)
     return distance
