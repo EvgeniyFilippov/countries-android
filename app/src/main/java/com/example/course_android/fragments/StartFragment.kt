@@ -67,6 +67,11 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         binding?.btnNews?.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_newsFragment)
         }
+
+        binding?.btnNewsLocal?.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_newsByLocationFragment)
+        }
+
         setHasOptionsMenu(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

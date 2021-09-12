@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_startFragment_to_newsFragment"
             app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_newsByLocationFragment"
+            app:destination="@id/newsByLocationFragment" />
     </fragment>
 
     <fragment
@@ -66,4 +69,9 @@
             android:id="@+id/action_newsFragment_to_mapOfAllCountriesFragment2"
             app:destination="@id/mapOfAllCountriesFragment2" />
     </fragment>
+    <fragment
+        android:id="@+id/newsByLocationFragment"
+        android:name="com.example.course_android.fragments.newsByLocation.NewsByLocationFragment"
+        android:label="fragment_news_by_location"
+        tools:layout="@layout/fragment_news_by_location" />
 </navigation>
