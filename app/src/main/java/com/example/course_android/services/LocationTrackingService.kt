@@ -1,10 +1,10 @@
 package com.example.course_android.services
 
-import android.Manifest
-import android.annotation.SuppressLint
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.*
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -13,23 +13,28 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.example.course_android.Constants.DEFAULT_DOUBLE
+import com.example.course_android.Constants.DEFAULT_LONG
+import com.example.course_android.Constants.MIN_TIME_BW_UPDATES_VALUE
+import com.example.course_android.Constants.NEW_LOCATION_ACTION_VALUE
+import com.example.course_android.Constants.SERVICE_ID_VALUE
 import com.example.course_android.R
 
 class LocationTrackingService : Service(), LocationListener {
 
     companion object {
-        const val SERVICE_ID = 12321
-        const val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 0
-        const val MIN_TIME_BW_UPDATES = (1000 * 10 * 1).toLong()
-        const val NEW_LOCATION_ACTION = "NEW_LOCATION_ACTION"
+        const val SERVICE_ID = SERVICE_ID_VALUE
+        const val MIN_DISTANCE_CHANGE_FOR_UPDATES = DEFAULT_LONG
+        const val MIN_TIME_BW_UPDATES = MIN_TIME_BW_UPDATES_VALUE
+        const val NEW_LOCATION_ACTION = NEW_LOCATION_ACTION_VALUE
     }
 
     var mCheckIsGPSTurnedOn = false
     var mCheckNetworkIsTurnedOn = false
     var mCanGetLocation = false
     var mLocation: Location? = null
-    var mLatitude = 0.0
-    var mLongitude = 0.0
+    var mLatitude = DEFAULT_DOUBLE
+    var mLongitude = DEFAULT_DOUBLE
 
     protected var mLocationManager: LocationManager? = null
 
@@ -86,35 +91,37 @@ class LocationTrackingService : Service(), LocationListener {
 
     private fun initLocationScan(): Location? {
         try {
-            mLocationManager = applicationContext?.getSystemService(LOCATION_SERVICE) as LocationManager
+            mLocationManager =
+                applicationContext?.getSystemService(LOCATION_SERVICE) as LocationManager
 
             //get gps status
-            mCheckIsGPSTurnedOn = mLocationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
+            mCheckIsGPSTurnedOn =
+                mLocationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
 
             //get network provider status
-            mCheckNetworkIsTurnedOn = mLocationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true
+            mCheckNetworkIsTurnedOn =
+                mLocationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true
 
             if (!mCheckIsGPSTurnedOn) {
                 Log.e("YF service: ", "gps turned off")
             } else {
                 mCanGetLocation = true
                 applicationContext?.let {
-                    if(mCheckIsGPSTurnedOn) {
+                    if (mCheckIsGPSTurnedOn) {
                         if (ContextCompat.checkSelfPermission(
-                                it,
-                                Manifest.permission.ACCESS_FINE_LOCATION
-
-                            ) == PackageManager.PERMISSION_GRANTED
-                                    && ContextCompat.checkSelfPermission(it, Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                                PackageManager.PERMISSION_GRANTED)
-                        {
+                                it, ACCESS_FINE_LOCATION
+                            ) == PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(it, ACCESS_COARSE_LOCATION) ==
+                            PERMISSION_GRANTED
+                        ) {
                             mLocationManager?.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this
                             )
                             if (mLocationManager != null) {
-                                mLocation = mLocationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                                mLocation =
+                                    mLocationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                                 if (mLocation != null) {
                                     mLatitude = mLocation?.latitude ?: 0.0
                                     mLongitude = mLocation?.longitude ?: 0.0
@@ -131,9 +138,8 @@ class LocationTrackingService : Service(), LocationListener {
     }
 
     private fun stopListening() {
-        if(mLocationManager != null) {
-            mLocationManager?.let {
-                manager ->
+        if (mLocationManager != null) {
+            mLocationManager?.let { manager ->
                 applicationContext?.let {
                     manager.removeUpdates(this@LocationTrackingService)
                 }
@@ -160,8 +166,7 @@ class LocationTrackingService : Service(), LocationListener {
     override fun onLocationChanged(location: Location) {
         val intent = Intent()
         intent.action = NEW_LOCATION_ACTION
-        intent.putExtra("lat", location.latitude)
-        intent.putExtra("long", location.longitude)
+        intent.putExtra("location", location)
         sendBroadcast(intent)
     }
 }

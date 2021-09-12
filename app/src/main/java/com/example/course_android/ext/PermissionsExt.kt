@@ -1,6 +1,9 @@
 package com.example.course_android.ext
 
 import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -12,14 +15,14 @@ fun Context.checkLocationPermission() =
     this.let {
         ContextCompat.checkSelfPermission(
             it,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
             it,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-@RequiresApi(Build.VERSION_CODES.M)
+@SuppressLint("NewApi")
 fun Activity.askLocationPermission(locationPermissionCode: Int) {
-    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+    requestPermissions(arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION), locationPermissionCode)
 }

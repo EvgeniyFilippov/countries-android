@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,9 +12,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.course_android.Constants.DEFAULT_DOUBLE
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentStartBinding
 import com.example.course_android.ext.askLocationPermission
@@ -29,8 +30,7 @@ class StartFragment : Fragment(R.layout.fragment_start) {
             if (intent != null && intent.action != null) {
                 when (intent.action) {
                     LocationTrackingService.NEW_LOCATION_ACTION -> {
-                        Log.e("YF service: Lat ", intent.getDoubleExtra("lat", 0.0).toString())
-                        Log.e("YF service: Long ", intent.getDoubleExtra("long", 0.0).toString())
+                        Log.e("YF service GPS: ", intent.getParcelableExtra<Location>("location").toString())
                     }
                 }
             }
@@ -46,7 +46,6 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         context?.registerReceiver(mLocationBroadcastReceiver, intentFilter)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentStartBinding.bind(view)
@@ -56,7 +55,7 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         }
 
         binding?.btnMain?.setOnClickListener {
-             findNavController().navigate(R.id.action_startFragment_to_secondFragment)
+            findNavController().navigate(R.id.action_startFragment_to_secondFragment)
         }
 
         binding?.btnMap?.setOnClickListener {

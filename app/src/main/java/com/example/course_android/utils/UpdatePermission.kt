@@ -1,6 +1,7 @@
 package com.example.course_android.utils
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
@@ -22,15 +23,15 @@ fun Fragment.createLocationPermissionRequest(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissionData ->
             Log.e("permission check", permissionData.toString())
-            if (permissionData[Manifest.permission.ACCESS_FINE_LOCATION] == true
-                && permissionData[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+            if (permissionData[ACCESS_FINE_LOCATION] == true
+                && permissionData[ACCESS_COARSE_LOCATION] == true
             ) {
                 if (ActivityCompat.checkSelfPermission(
                         it,
-                        Manifest.permission.ACCESS_FINE_LOCATION
+                        ACCESS_FINE_LOCATION
                     )
                     == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        it, Manifest.permission.ACCESS_COARSE_LOCATION
+                        it, ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
                     doOnSuccess.invoke()
@@ -47,8 +48,8 @@ fun Fragment.createLocationPermissionRequest(
 fun ActivityResultLauncher<Array<String>>.requestLocationPermissions() {
     this.launch(
         arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            ACCESS_FINE_LOCATION,
+            ACCESS_COARSE_LOCATION
         )
     )
 }

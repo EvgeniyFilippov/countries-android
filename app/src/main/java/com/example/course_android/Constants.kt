@@ -2,6 +2,7 @@ package com.example.course_android
 
 object Constants {
     const val DEFAULT_INT = 0
+    const val DEFAULT_LONG = 0L
     const val KEY_SORT_STATUS = "sortStatus"
     const val FILE_NAME_PREF = "data"
     const val DEFAULT_STRING = ""
@@ -41,4 +42,9 @@ object Constants {
 
     //alpha_2 ISO_3166_1
     const val RU = "ru"
+
+    //service
+    const val SERVICE_ID_VALUE = 12321
+    const val MIN_TIME_BW_UPDATES_VALUE = 20000L
+    const val NEW_LOCATION_ACTION_VALUE = "NEW_LOCATION_ACTION"
 }
