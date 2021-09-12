@@ -31,7 +31,5 @@ abstract class BaseMviFragment<INTENT : ViewIntent, ACTION : ViewAction, STATE :
     abstract fun initUI()
     abstract fun initDATA()
     abstract fun initEVENT()
-//    fun dispatchIntent(intent: INTENT) {
-//        viewModel.dispatchIntent(intent)
-//    }
+    abstract fun dispatchIntent(intent: INTENT)
 }

@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.adapters.AdapterNews
 import com.example.course_android.base.mvi.BaseMviFragment
 import com.example.course_android.databinding.FragmentNewsByLocationBinding
+import com.example.course_android.ext.getMessage
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 class NewsByLocationFragment :
@@ -45,7 +47,7 @@ class NewsByLocationFragment :
     }
 
     override fun initDATA() {
-
+        dispatchIntent(NewsIntent.LoadAllCharacters)
     }
 
     override fun initEVENT() {
@@ -53,6 +55,19 @@ class NewsByLocationFragment :
     }
 
     override fun render(state: NewsState) {
+        binding?.progressLocalNews?.isVisible = state is NewsState.Loading
+        when (state) {
+            is NewsState.ResultAllPersona -> {
+                adapterNews.repopulate(state.data.toMutableList())
+            }
 
+            is NewsState.Exception -> {
+                binding?.newsMessage?.text = context?.let { state.callErrors.message }
+            }
+        }
+    }
+
+    override fun dispatchIntent(intent: NewsIntent) {
+        viewModel.dispatchIntent(intent)
     }
 }
