@@ -6,7 +6,7 @@ import org.koin.androidx.scope.ScopeFragment
 abstract class BaseMviFragment<INTENT : ViewIntent, ACTION : ViewAction, STATE : ViewState>:
     IViewRenderer<STATE>,
     ScopeFragment() {
-    private lateinit var viewState: STATE
+    lateinit var viewState: STATE
     val mState get() = viewState
 
 //    private val viewModel: VM by lazy {
@@ -28,9 +28,6 @@ abstract class BaseMviFragment<INTENT : ViewIntent, ACTION : ViewAction, STATE :
 //        initEVENT()
 //    }
 
-
-    @LayoutRes
-    abstract fun getLayoutResId(): Int
     abstract fun initUI()
     abstract fun initDATA()
     abstract fun initEVENT()
