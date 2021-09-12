@@ -2,6 +2,7 @@ package com.example.course_android.services
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -89,6 +90,7 @@ class LocationTrackingService : Service(), LocationListener {
 
     }
 
+    @SuppressLint("MissingPermission")
     private fun initLocationScan(): Location? {
         try {
             mLocationManager =
