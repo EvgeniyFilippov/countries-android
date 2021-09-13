@@ -1,12 +1,9 @@
 package com.example.course_android.fragments.newsByLocation
 
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterNews
@@ -14,8 +11,6 @@ import com.example.course_android.base.mvi.BaseMviFragment
 import com.example.course_android.databinding.FragmentNewsByLocationBinding
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
-import com.example.course_android.ext.getMessage
-
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 private const val LOCATION_PERMISSION_CODE = 1000
@@ -48,7 +43,6 @@ class NewsByLocationFragment :
             render(it)
         })
         initDATA()
-        initEVENT()
     }
 
     override fun initUI() {
@@ -58,17 +52,13 @@ class NewsByLocationFragment :
     }
 
     override fun initDATA() {
-        dispatchIntent(NewsIntent.LoadAllCharacters)
-    }
-
-    override fun initEVENT() {
-
+        dispatchIntent(NewsIntent.LoadNewsIntent)
     }
 
     override fun render(state: NewsState) {
-//        binding?.progressLocalNews?.isVisible = state is NewsState.Loading
+
         when (state) {
-            is NewsState.ResultAllPersona -> {
+            is NewsState.ResultAllNews -> {
                 if (state.data.isNotEmpty()) {
                     adapterNews.repopulate(state.data.toMutableList())
                 } else {
@@ -94,4 +84,5 @@ class NewsByLocationFragment :
     override fun dispatchIntent(intent: NewsIntent) {
         viewModel.dispatchIntent(intent)
     }
+
 }

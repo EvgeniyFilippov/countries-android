@@ -4,5 +4,5 @@ import com.example.course_android.base.mvi.ViewAction
 
 sealed class NewsAction : ViewAction {
 
-    object AllCharacters : NewsAction()
+    object LoadNewsAction : NewsAction()
 }

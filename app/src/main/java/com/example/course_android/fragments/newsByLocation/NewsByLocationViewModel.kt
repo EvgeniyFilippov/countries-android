@@ -17,10 +17,9 @@ class NewsByLocationViewModel(
     BaseMviViewModel<NewsIntent, NewsAction, NewsState>() {
     override fun intentToAction(intent: NewsIntent): NewsAction {
         return when (intent) {
-            is NewsIntent.LoadAllCharacters -> NewsAction.AllCharacters
+            is NewsIntent.LoadNewsIntent -> NewsAction.LoadNewsAction
         }
     }
-
 
     private val locationProviderClient = getLocationProviderClient(context)
     private val geocoder = getGeocoder(context)
@@ -30,7 +29,7 @@ class NewsByLocationViewModel(
     override fun handleAction(action: NewsAction) {
         launchOnUI {
             when (action) {
-                is NewsAction.AllCharacters -> {
+                is NewsAction.LoadNewsAction -> {
                     locationProviderClient
                         .lastLocation
                         .addOnSuccessListener { location ->
