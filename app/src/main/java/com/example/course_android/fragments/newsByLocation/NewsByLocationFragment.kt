@@ -12,8 +12,13 @@ import com.example.course_android.R
 import com.example.course_android.adapters.AdapterNews
 import com.example.course_android.base.mvi.BaseMviFragment
 import com.example.course_android.databinding.FragmentNewsByLocationBinding
+import com.example.course_android.ext.askLocationPermission
+import com.example.course_android.ext.checkLocationPermission
 import com.example.course_android.ext.getMessage
+
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
+
+private const val LOCATION_PERMISSION_CODE = 1000
 
 class NewsByLocationFragment :
     BaseMviFragment<NewsIntent, NewsAction, NewsState>() {
@@ -34,6 +39,9 @@ class NewsByLocationFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (context?.checkLocationPermission() == false) {
+            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+        }
         initUI()
         viewModel.state.observe(viewLifecycleOwner, {
             viewState = it
