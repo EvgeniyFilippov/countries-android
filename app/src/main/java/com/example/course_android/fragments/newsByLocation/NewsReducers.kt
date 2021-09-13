@@ -7,7 +7,7 @@ fun Outcome<List<NewsItemDto>>.reduce(): NewsState {
     return when (this) {
         is Outcome.Success -> NewsState.ResultAllPersona(data)
         is Outcome.Failure -> NewsState.Exception(e)
-        is Outcome.Progress -> NewsState.Loading
+        is Outcome.Progress -> NewsState.Loading(loading)
         else -> NewsState.Exception(Throwable(""))
     }
 }

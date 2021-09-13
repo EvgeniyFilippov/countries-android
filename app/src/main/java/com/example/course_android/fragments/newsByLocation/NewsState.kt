@@ -5,7 +5,7 @@ import com.example.course_android.base.mvi.ViewState
 import com.example.domain.dto.news.NewsItemDto
 
 sealed class NewsState : ViewState {
-    object Loading : NewsState()
+    data class Loading(val loading : Boolean) : NewsState()
     data class ResultAllPersona(val data : List<NewsItemDto>): NewsState()
     data class Exception(val callErrors: Throwable) : NewsState()
 }

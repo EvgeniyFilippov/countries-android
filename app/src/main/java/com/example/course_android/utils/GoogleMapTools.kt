@@ -83,4 +83,15 @@ fun calculateDistanceFiler(location: Location, countryDetailsDto: CountryDescrip
     }
     distance = location.distanceTo(currentCountryLocation).toInt() / 1000
     return distance
+
+}
+
+@SuppressLint("MissingPermission")
+fun getMyLocation(context: Context): Location {
+        LocationServices.getFusedLocationProviderClient(context)
+            .lastLocation
+            .addOnSuccessListener { location ->
+                currentLocationOfUser = location
+            }
+    return currentLocationOfUser
 }

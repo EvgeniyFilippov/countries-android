@@ -1,7 +1,5 @@
 package com.example.course_android.di
 
-import androidx.lifecycle.SavedStateHandle
-import com.example.course_android.fragments.allCountries.AllCountriesViewModel
 import com.example.course_android.fragments.newsByLocation.NewsByLocationFragment
 import com.example.course_android.fragments.newsByLocation.NewsByLocationViewModel
 import com.example.domain.usecase.impl.GetNewsByNameOutcomeFlowUseCase
@@ -14,6 +12,6 @@ val newsByLocationModule = module {
 
         scoped { GetNewsByNameOutcomeFlowUseCase(get()) }
 
-        viewModel { (handle: SavedStateHandle) -> NewsByLocationViewModel(get()) }
+        viewModel { NewsByLocationViewModel(get(), get()) }
     }
 }

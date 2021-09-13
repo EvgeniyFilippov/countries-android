@@ -1,9 +1,11 @@
 package com.example.course_android.fragments.newsByLocation
 
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.adapters.AdapterNews
@@ -55,10 +57,19 @@ class NewsByLocationFragment :
     }
 
     override fun render(state: NewsState) {
-        binding?.progressLocalNews?.isVisible = state is NewsState.Loading
+//        binding?.progressLocalNews?.isVisible = state is NewsState.Loading
         when (state) {
             is NewsState.ResultAllPersona -> {
                 adapterNews.repopulate(state.data.toMutableList())
+            }
+
+            is NewsState.Loading -> {
+                if (state.loading) {
+                    binding?.progressLocalNews?.visibility = View.VISIBLE
+                } else {
+                    binding?.progressLocalNews?.visibility = View.GONE
+                }
+
             }
 
             is NewsState.Exception -> {
