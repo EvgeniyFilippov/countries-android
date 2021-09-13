@@ -44,6 +44,7 @@
     <string name="capitals">Столицы</string>
     <string name="default_likes">125ы</string>
     <string name="news">Новости RU</string>
+    <string name="noLocalNews">NO NEWS BY THIS LOCATION</string>
     <string name="news_header">Новости:</string>
     <string name="NoNews">Новостей по данной стране нет.</string>
     <string name="foreground_channel_name">channel_name</string>

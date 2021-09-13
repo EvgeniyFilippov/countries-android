@@ -139,6 +139,7 @@ class LocationTrackingService : Service(), LocationListener {
         return mLocation
     }
 
+    @SuppressLint("MissingPermission")
     private fun stopListening() {
         if (mLocationManager != null) {
             mLocationManager?.let { manager ->

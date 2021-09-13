@@ -49,6 +49,6 @@ object Constants {
     const val NEW_LOCATION_ACTION_VALUE = "NEW_LOCATION_ACTION"
 
     //countries
-    const val DEFAULT_COUNTRY_CODE = "RU"
+    const val NO_CODE = "code"
 
 }

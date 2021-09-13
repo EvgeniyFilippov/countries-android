@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.R
 import com.example.course_android.adapters.AdapterNews
 import com.example.course_android.base.mvi.BaseMviFragment
 import com.example.course_android.databinding.FragmentNewsByLocationBinding
@@ -60,7 +61,11 @@ class NewsByLocationFragment :
 //        binding?.progressLocalNews?.isVisible = state is NewsState.Loading
         when (state) {
             is NewsState.ResultAllPersona -> {
-                adapterNews.repopulate(state.data.toMutableList())
+                if (state.data.isNotEmpty()) {
+                    adapterNews.repopulate(state.data.toMutableList())
+                } else {
+                    binding?.newsMessage?.text = getString(R.string.noLocalNews)
+                }
             }
 
             is NewsState.Loading -> {
