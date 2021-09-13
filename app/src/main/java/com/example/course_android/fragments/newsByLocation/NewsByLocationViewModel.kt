@@ -3,6 +3,7 @@ package com.example.course_android.fragments.newsByLocation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
+import android.location.Location
 import com.example.course_android.Constants.DEFAULT_COUNTRY_CODE
 import com.example.course_android.Constants.RU
 import com.example.course_android.base.mvi.BaseMviViewModel
@@ -17,6 +18,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -31,20 +33,13 @@ class NewsByLocationViewModel(
         }
     }
 
-    private val context2 = context
 
-    private fun getCountryCode(context: Context): String {
-        var countryCode = DEFAULT_COUNTRY_CODE
-        val geocoder = Geocoder(context)
-        val myLocation = getMyLocation(context)
-        val answerFromGeocoder =
-            geocoder.getFromLocation(myLocation.latitude, myLocation.longitude, 1)
-        if (answerFromGeocoder.size == 1) {
-            countryCode = answerFromGeocoder[0].countryCode
-        }
-        return countryCode
-    }
 
+    @SuppressLint("MissingPermission")
+    val fdfd: Task<Location> =  LocationServices.getFusedLocationProviderClient(context)
+        .lastLocation
+
+    private val geocoder = Geocoder(context)
 
     @SuppressLint("MissingPermission")
     @InternalCoroutinesApi
@@ -52,17 +47,14 @@ class NewsByLocationViewModel(
         launchOnUI {
             when (action) {
                 is NewsAction.AllCharacters -> {
-                    LocationServices.getFusedLocationProviderClient(context2)
-                        .lastLocation
+                    fdfd
                         .addOnSuccessListener { location ->
                             var countryCode = DEFAULT_COUNTRY_CODE
-                            val geocoder = Geocoder(context2)
                             val answerFromGeocoder =
                                 geocoder.getFromLocation(location.latitude, location.longitude, 1)
                             if (answerFromGeocoder.size == 1) {
                                 countryCode = answerFromGeocoder[0].countryCode
                             }
-
                             launchOnUI {
                                 mGetNewsByNameOutcomeFlowUseCase.setParams(countryCode)
                                     .execute().collect {

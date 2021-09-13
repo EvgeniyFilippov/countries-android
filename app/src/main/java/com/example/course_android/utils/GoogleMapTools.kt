@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.Task
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 
@@ -87,11 +88,8 @@ fun calculateDistanceFiler(location: Location, countryDetailsDto: CountryDescrip
 }
 
 @SuppressLint("MissingPermission")
-fun getMyLocation(context: Context): Location {
-        LocationServices.getFusedLocationProviderClient(context)
-            .lastLocation
-            .addOnSuccessListener { location ->
-                currentLocationOfUser = location
-            }
-    return currentLocationOfUser
+fun getMyLocation(context: Context): Task<Location> {
+    return LocationServices.getFusedLocationProviderClient(context)
+        .lastLocation
+
 }
