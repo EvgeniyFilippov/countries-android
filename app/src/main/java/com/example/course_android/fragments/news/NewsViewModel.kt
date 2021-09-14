@@ -24,13 +24,13 @@ class NewsViewModel(
     fun getNewsFlow(): Flow<Outcome<List<NewsItemDto>>> =
         mGetNewsByNameOutcomeFlowUseCase.setParams(RU).execute()
 
-    private val triggerSharedFlowNav: MutableSharedFlow<Long> = MutableSharedFlow()
+//    private val triggerSharedFlowNav: MutableSharedFlow<Long> = MutableSharedFlow()
 
     var searchText = MutableStateFlow("")
 
-    fun getTriggerForNavSharedFlow(): MutableSharedFlow<Long> {
-        return triggerSharedFlowNav
-    }
+//    fun getTriggerForNavSharedFlow(): MutableSharedFlow<Long> {
+//        return triggerSharedFlowNav
+//    }
 
     @FlowPreview
     @ExperimentalCoroutinesApi
@@ -49,15 +49,5 @@ class NewsViewModel(
             }
             .flowOn(Dispatchers.IO)
             .map { list -> Outcome.success(list) }
-
-    fun doOnListItemClick() {
-        viewModelScope.launch {
-            getNewsFlow().collect {
-                if (it is Outcome.Success<List<NewsItemDto>>) {
-                    triggerSharedFlowNav.emit(0L)
-                }
-            }
-        }
-    }
 
 }

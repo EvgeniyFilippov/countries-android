@@ -65,13 +65,14 @@ class AllCountriesViewModel(
                 it.first.sortBySortStatusFromPref(sortStatus)
                 return@map it
             }
-            .doOnNext {
+            .map {
                 it.first.forEach { country ->
                     country.distance = calculateDistanceFiler(
                         it.second,
                         country
                     ).toString() + DEFAULT_KM
                 }
+                return@map it
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

@@ -10,4 +10,6 @@ interface CountryDetailsView : BaseMvpView {
 
     fun showNews(news: MutableList<NewsItemDto>)
 
+    fun noNews()
+
 }

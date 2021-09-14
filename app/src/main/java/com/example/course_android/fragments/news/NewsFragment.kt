@@ -32,11 +32,8 @@ import org.koin.androidx.viewmodel.ext.android.stateViewModel
 class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
 
     private var binding: FragmentNewsBinding? = null
-    private val mCompositeDisposable = CompositeDisposable()
     var adapterNews = AdapterNews()
     private val viewModel: NewsViewModel by stateViewModel()
-    private lateinit var mShredFlowJob: Job
-    private var onClickedItemDto = NewsItemDto("", "", "", "", "", "")
 
     @ExperimentalCoroutinesApi
     @FlowPreview
@@ -44,21 +41,11 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentNewsBinding.bind(view)
         setHasOptionsMenu(true)
-        mShredFlowJob = Job()
 
         adapterNews.setItemClick {
-            onClickedItemDto = it
-            viewModel.doOnListItemClick()
-        }
-
-        CoroutineScope(lifecycleScope.coroutineContext + mShredFlowJob).launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.getTriggerForNavSharedFlow().collect {
-                    val openURL = Intent(Intent.ACTION_VIEW)
-                    openURL.data = Uri.parse(onClickedItemDto.url)
-                    startActivity(openURL)
-                }
-            }
+            val openURL = Intent(Intent.ACTION_VIEW)
+            openURL.data = Uri.parse(it.url)
+            startActivity(openURL)
         }
 
         viewModel.getNewsFlow().asLiveData(lifecycleScope.coroutineContext)
@@ -115,10 +102,7 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
-                    viewModel.searchText.value = query
-                    viewModel.getNewsFromSearch()
-                }
+
                 return false
             }
 
@@ -130,7 +114,7 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
         })
 
         mSvMenu.setOnCloseListener {
-            CoroutineScope(lifecycleScope.coroutineContext + mShredFlowJob).launch {
+            CoroutineScope(lifecycleScope.coroutineContext).launch {
                 viewModel.getNewsFlow().collect {
                     if (it is Outcome.Success<List<NewsItemDto>>) {
                         adapterNews.repopulate(it.data.toMutableList())
@@ -144,8 +128,6 @@ class NewsFragment : ScopeFragment(R.layout.fragment_news), BaseMvvmView {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        mCompositeDisposable.clear()
-        mShredFlowJob.cancel()
     }
 
     override fun showError() {

@@ -15,7 +15,10 @@ class CountryDetailsPresenter(
     fun getCountryInfo(mCountryName: String, isRefresh: Boolean) {
         addDisposable(
             inBackground(
-                handleProgress(mGetCountryListByNameUseCase.setParams(mCountryName).execute(), isRefresh)
+                handleProgress(
+                    mGetCountryListByNameUseCase.setParams(mCountryName).execute(),
+                    isRefresh
+                )
             ).subscribe({ response ->
                 getView()?.showCountryInfo(response)
             }, {
@@ -27,15 +30,21 @@ class CountryDetailsPresenter(
     fun getNews(alpha_2_ISO_3166_1: String, isRefresh: Boolean) {
         addDisposable(
             inBackground(
-                handleProgress(mNetworkNewsFlowableRepository.getListOfNews(alpha_2_ISO_3166_1), isRefresh)
+                handleProgress(
+                    mNetworkNewsFlowableRepository.getListOfNews(alpha_2_ISO_3166_1),
+                    isRefresh
+                )
             ).subscribe({ response ->
-                getView()?.showNews(response as MutableList<NewsItemDto>)
+                if (response.isNotEmpty()) {
+                    getView()?.showNews(response as MutableList<NewsItemDto>)
+                } else {
+                    getView()?.noNews()
+                }
             }, {
                 it.message?.let { it1 -> getView()?.showError(it1, it) }
             })
         )
     }
-
 
 
 }
