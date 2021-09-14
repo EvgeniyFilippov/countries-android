@@ -113,8 +113,10 @@ class LocationTrackingService : Service(), LocationListener {
                         if (ContextCompat.checkSelfPermission(
                                 it, ACCESS_FINE_LOCATION
                             ) == PERMISSION_GRANTED
-                            && ContextCompat.checkSelfPermission(it, ACCESS_COARSE_LOCATION) ==
-                            PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(
+                                it,
+                                ACCESS_COARSE_LOCATION
+                            ) == PERMISSION_GRANTED
                         ) {
                             mLocationManager?.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER,
