@@ -24,13 +24,7 @@ class NewsViewModel(
     fun getNewsFlow(): Flow<Outcome<List<NewsItemDto>>> =
         mGetNewsByNameOutcomeFlowUseCase.setParams(RU).execute()
 
-//    private val triggerSharedFlowNav: MutableSharedFlow<Long> = MutableSharedFlow()
-
     var searchText = MutableStateFlow("")
-
-//    fun getTriggerForNavSharedFlow(): MutableSharedFlow<Long> {
-//        return triggerSharedFlowNav
-//    }
 
     @FlowPreview
     @ExperimentalCoroutinesApi
