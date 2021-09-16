@@ -1,7 +1,7 @@
 package com.example.data.model.oneCountry
 
 data class CountryDescriptionItem(
-//    val alpha2Code: String,
+    val alpha2Code: String?,
 //    val alpha3Code: String,
 //    val altSpellings: List<String>,
     val area: Double?,

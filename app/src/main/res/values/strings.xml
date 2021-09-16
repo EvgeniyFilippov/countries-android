@@ -43,6 +43,9 @@
     <string name="def_value_edit_text">0</string>
     <string name="capitals">Столицы</string>
     <string name="default_likes">125ы</string>
+    <string name="news">Новости</string>
+    <string name="news_header">Новости:</string>
+    <string name="NoNews">Новостей по данной стране нет.</string>
 
     <string-array name="rangeSliderValues">
         <item>1000</item>

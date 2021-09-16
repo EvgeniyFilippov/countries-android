@@ -13,7 +13,7 @@ import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
-import com.example.domain.repository.NetworkRepository
+import com.example.domain.outcome.Outcome
 import com.example.domain.usecase.impl.GetAllCountriesUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers

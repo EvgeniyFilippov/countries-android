@@ -1,9 +1,9 @@
 package com.example.course_android.fragments.allCountries
 
+import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import com.example.course_android.Constants
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
 import com.example.course_android.Constants.DEBOUNCE_TIME_MILLIS
 import com.example.course_android.Constants.DEFAULT_KM
@@ -19,6 +19,7 @@ import com.example.course_android.utils.*
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.dto.room.RoomCountryDescriptionItemDto
 import com.example.domain.dto.room.RoomLanguageOfOneCountryDto
+import com.example.domain.outcome.Outcome
 import com.example.domain.repository.DatabaseCountryRepository
 import com.example.domain.repository.DatabaseLanguageRepository
 import com.example.domain.usecase.impl.GetAllCountriesUseCase
@@ -54,23 +55,30 @@ class AllCountriesViewModel(
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
-    fun getCountriesFromApi() {
-        val currentLocationOfUser = getResultOfCurrentLocation()
-        mGetAllCountriesUseCase.execute()
-            .map { it.sortBySortStatusFromPref(sortStatus) }
-            .doOnNext {
-                it.forEach { country ->
+    fun getCountriesFromApi(context: Context) {
+        Flowable.just(context)
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { getCurrentLocation(context = it) }
+            .observeOn(Schedulers.io())
+            .flatMap { location -> mGetAllCountriesUseCase.execute().map { Pair(it, location) } }
+            .map {
+                it.first.sortBySortStatusFromPref(sortStatus)
+                return@map it
+            }
+            .map {
+                it.first.forEach { country ->
                     country.distance = calculateDistanceFiler(
-                        currentLocationOfUser,
+                        it.second,
                         country
                     ).toString() + DEFAULT_KM
                 }
+                return@map it
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                allCountriesLiveData.next(it)
-                saveToDBfromApi(it)
+                allCountriesLiveData.next(it.first)
+                saveToDBfromApi(it.first)
             }, {
                 allCountriesLiveData.failed(it)
                 getCountriesFromDB()
