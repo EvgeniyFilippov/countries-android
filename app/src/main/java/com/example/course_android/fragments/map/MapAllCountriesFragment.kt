@@ -6,31 +6,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.course_android.R
-import com.example.course_android.utils.initMapOfAllCountries
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentMapAllCountriesBinding
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.utils.toast
-import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.android.ext.android.inject
 
 class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCountriesPresenter>(),
-    MapAllCountriesView {
+    MapAllCountriesView, OnMapReadyCallback {
 
     private var binding: FragmentMapAllCountriesBinding? = null
-    private var mapFragment2: SupportMapFragment? = null
+    private var mapFragment: SupportMapFragment? = null
     private val mCompositeDisposable = CompositeDisposable()
-    private val mModulePresenter : MapAllCountriesPresenter by inject()
+    private val mModulePresenter: MapAllCountriesPresenter by inject()
+    private lateinit var listCountries: List<CountryDescriptionItemDto>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapAllCountriesBinding.inflate(inflater, container, false)
-        mapFragment2 =
+        mapFragment =
             childFragmentManager.findFragmentById(R.id.allMapFragmentContainer) as? SupportMapFragment?
+
         return binding?.root
     }
 
@@ -38,10 +43,7 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
         super.onViewCreated(view, savedInstanceState)
         getPresenter().attachView(this)
         setHasOptionsMenu(true)
-        binding?.srCountryMap?.setOnRefreshListener {
-            getPresenter().getAllCountries(true)
-        }
-        getPresenter().getAllCountries(false)
+        getPresenter().getAllCountries()
     }
 
     override fun createPresenter() {
@@ -50,13 +52,26 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
 
     override fun getPresenter(): MapAllCountriesPresenter = mPresenter
 
-    override fun showAllCountriesOnMap(listOfCountries: List<CountryDescriptionItemDto>) {
-        binding?.srCountryMap?.isRefreshing = false
+    override fun showAllCountriesOnMap(list: List<CountryDescriptionItemDto>) {
+        listCountries = list
+        mapFragment?.getMapAsync(this)
+    }
 
-        //карта гугл
-        mapFragment2?.run {
-            getMapAsync { map -> activity?.let { initMapOfAllCountries(map, listOfCountries) } }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+        mCompositeDisposable.clear()
+    }
+
+    override fun onMapReady(googleMap: GoogleMap?) {
+        listCountries.forEach { country ->
+            googleMap?.addMarker(
+                MarkerOptions()
+                    .position(LatLng(country.latlng[0], country.latlng[1]))
+                    .title(country.name)
+            )
         }
+        hideProgress()
     }
 
     override fun showError(error: String, throwable: Throwable) {
@@ -73,11 +88,5 @@ class MapAllCountriesFragment : BaseMvpFragment<MapAllCountriesView, MapAllCount
 
     override fun hideProgress() {
         binding?.progressMap?.visibility = View.GONE
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
-        mCompositeDisposable.clear()
     }
 }

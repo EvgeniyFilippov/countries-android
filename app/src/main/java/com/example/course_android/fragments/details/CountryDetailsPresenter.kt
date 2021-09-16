@@ -2,9 +2,7 @@ package com.example.course_android.fragments.details
 
 import com.example.course_android.base.mvp.BaseMvpPresenter
 import com.example.domain.dto.news.NewsItemDto
-import com.example.domain.repository.NetworkNewsFlowRepository
 import com.example.domain.repository.NetworkNewsFlowableRepository
-import com.example.domain.repository.NetworkRepository
 import com.example.domain.usecase.impl.GetCountryListByNameUseCase
 
 class CountryDetailsPresenter(
@@ -12,13 +10,10 @@ class CountryDetailsPresenter(
     private val mNetworkNewsFlowableRepository: NetworkNewsFlowableRepository
 ) : BaseMvpPresenter<CountryDetailsView>() {
 
-    fun getCountryInfo(mCountryName: String, isRefresh: Boolean) {
+    fun getCountryInfo(mCountryName: String) {
         addDisposable(
             inBackground(
-                handleProgress(
-                    mGetCountryListByNameUseCase.setParams(mCountryName).execute(),
-                    isRefresh
-                )
+                mGetCountryListByNameUseCase.setParams(mCountryName).execute()
             ).subscribe({ response ->
                 getView()?.showCountryInfo(response)
             }, {
@@ -27,13 +22,10 @@ class CountryDetailsPresenter(
         )
     }
 
-    fun getNews(alpha_2_ISO_3166_1: String, isRefresh: Boolean) {
+    fun getNews(alpha_2_ISO_3166_1: String) {
         addDisposable(
             inBackground(
-                handleProgress(
-                    mNetworkNewsFlowableRepository.getListOfNews(alpha_2_ISO_3166_1),
-                    isRefresh
-                )
+                mNetworkNewsFlowableRepository.getListOfNews(alpha_2_ISO_3166_1)
             ).subscribe({ response ->
                 if (response.isNotEmpty()) {
                     getView()?.showNews(response as MutableList<NewsItemDto>)
@@ -45,6 +37,7 @@ class CountryDetailsPresenter(
             })
         )
     }
+
 
 
 }

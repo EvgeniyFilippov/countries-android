@@ -6,7 +6,7 @@ import com.example.domain.dto.news.NewsItemDto
 
 interface CountryDetailsView : BaseMvpView {
 
-    fun showCountryInfo(country: List<CountryDescriptionItemDto>)
+    fun showCountryInfo(countryList: List<CountryDescriptionItemDto>)
 
     fun showNews(news: MutableList<NewsItemDto>)
 

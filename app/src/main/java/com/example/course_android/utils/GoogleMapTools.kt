@@ -10,63 +10,14 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.LatLng
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
-import java.lang.Exception
 
 private lateinit var currentCountryLatLng: LatLng
-private var googleMap: GoogleMap? = null
 private const val LOG_TAG = "CountryDetailsFragment"
 private var distance: Int = 0
 private var currentLocationOfUser = Location("")
-private lateinit var currentCountryLatLngFilter: LatLng
-
-@SuppressLint("MissingPermission")
-fun initMapOfCountryDetails(
-    map: GoogleMap,
-    countryDetailsDto: CountryDescriptionItemDto,
-    permissionGps: Boolean
-) {
-    currentCountryLatLng = LatLng(
-        countryDetailsDto.latlng[0],
-        countryDetailsDto.latlng[1]
-    )
-    googleMap = map.apply {
-
-        val cameraLocation = CameraUpdateFactory.newLatLngZoom(currentCountryLatLng, 7.0f)
-        moveCamera(cameraLocation)
-        if (permissionGps) {
-            isMyLocationEnabled = true
-        }
-    }
-    addMarkerOnMap(currentCountryLatLng, countryDetailsDto.name)
-}
-
-//добавляем маркер
-private fun addMarkerOnMap(markerPosition: LatLng, mCountryName: String) {
-    val markerOptions = MarkerOptions()
-        .position(markerPosition)
-        .title(mCountryName)
-    googleMap?.addMarker(markerOptions)
-}
-
-//@SuppressLint("MissingPermission")
-//private fun calculateDistance(context: Context) {
-//    val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
-//        latitude = currentCountryLatLng.latitude
-//        longitude = currentCountryLatLng.longitude
-//    }
-//    LocationServices.getFusedLocationProviderClient(context)
-//        .lastLocation
-//        .addOnSuccessListener { location ->
-//            distance = location.distanceTo(currentCountryLocation).toInt() / 1000
-//            Log.d(LOG_TAG, location.toString())
-//        }
-//}
 
 @SuppressLint("MissingPermission")
 fun getCurrentLocation(context: Context): Flowable<Location> {
@@ -105,7 +56,8 @@ fun getResultOfCurrentLocation(): Location {
     return currentLocationOfUser
 }
 
-fun getDistance(context: Context): Int {
+fun getDistance(context: Context, country: CountryDescriptionItemDto): Int {
+    currentCountryLatLng = LatLng(country.latlng[0], country.latlng[1])
     getCurrentLocation(context)
     calculateDistance(currentLocationOfUser)
     return distance
@@ -131,19 +83,4 @@ fun calculateDistanceFiler(location: Location, countryDetailsDto: CountryDescrip
     }
     distance = location.distanceTo(currentCountryLocation).toInt() / 1000
     return distance
-}
-
-fun initMapOfAllCountries(map: GoogleMap, listOfCountries: List<CountryDescriptionItemDto>) {
-    googleMap = map
-
-    listOfCountries.forEach { country ->
-        if (country.latlng.size == 2) {
-            addMarkerOnMap(
-                LatLng(
-                    country.latlng[0],
-                    country.latlng[1]
-                ), country.name
-            )
-        }
-    }
 }

@@ -1,6 +1,6 @@
 package com.example.course_android.di
 
-import com.example.data.api.RetrofitObj
+import com.example.data.api.*
 import com.example.data.ext.ListArticlesToListArticlesDtoTransformer
 import com.example.data.model.newsByCountry.Article
 import com.example.data.repository.database.DatabaseCountryRepositoryImpl
@@ -19,10 +19,12 @@ val appModule = module {
 
     //Model level
     single { DatabaseInfo.init(get()) }
-    single { RetrofitObj.getCountriesApi() }
-    single { RetrofitObj.getCapitalsApi() }
-    single { RetrofitObj.getNewsApi() }
-    single { RetrofitObj.getFlowableNewsApi() }
+
+    val creator = RetrofitCreator()
+    single<CountryService> { creator.createFlowableCountriesService(CountryService::class.java) }
+    single<CoroutineCountryService> { creator.createCoroutineCountriesService(CoroutineCountryService::class.java) }
+    single<NewsFlowService> { creator.createFlowNewsService(NewsFlowService::class.java) }
+    single<NewsFlowableService> { creator.createFlowableNewsService(NewsFlowableService::class.java) }
 
     //Data level
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }

@@ -46,6 +46,9 @@
     <string name="news">Новости</string>
     <string name="news_header">Новости:</string>
     <string name="NoNews">Новостей по данной стране нет.</string>
+    <string name="foreground_channel_name">channel_name</string>
+    <string name="foreground_channel_id">id</string>
+    <string name="foreground_notification_name">name</string>
 
     <string-array name="rangeSliderValues">
         <item>1000</item>
