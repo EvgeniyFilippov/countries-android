@@ -60,9 +60,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
 
-        if (context?.checkLocationPermission() == true) {
-            permissionGps = true
-        } else {
+        if (context?.checkLocationPermission() == false) {
             activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
         }
 

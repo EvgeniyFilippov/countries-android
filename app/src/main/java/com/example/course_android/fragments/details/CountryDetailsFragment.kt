@@ -132,18 +132,17 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun showNews(news: MutableList<NewsItemDto>) {
 
-        if (news.size >= 1) {
-            adapterNews.repopulate(news)
-        } else {
-            binding?.mNoNews?.visibility = View.VISIBLE
-        }
+        adapterNews.repopulate(news)
 
         adapterNews.setItemClick { item ->
             val openURL = Intent(Intent.ACTION_VIEW)
             openURL.data = Uri.parse(item.url)
             startActivity(openURL)
         }
+    }
 
+    override fun noNews() {
+        binding?.mNoNews?.visibility = View.VISIBLE
     }
 
     override fun showError(error: String, throwable: Throwable) {
