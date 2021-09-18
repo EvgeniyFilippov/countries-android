@@ -31,4 +31,5 @@
     <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_4dp">4dp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
+    <dimen name="zero_dp">0dp</dimen>
 </resources>

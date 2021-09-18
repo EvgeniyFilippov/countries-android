@@ -8,18 +8,17 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.course_android.Constants.DEFAULT_DOUBLE
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentStartBinding
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
 import com.example.course_android.services.LocationTrackingService
+import com.example.course_android.utils.animateButton
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
@@ -30,7 +29,10 @@ class StartFragment : Fragment(R.layout.fragment_start) {
             if (intent != null && intent.action != null) {
                 when (intent.action) {
                     LocationTrackingService.NEW_LOCATION_ACTION -> {
-                        Log.e("YF service GPS: ", intent.getParcelableExtra<Location>("location").toString())
+                        Log.e(
+                            "YF service GPS: ",
+                            intent.getParcelableExtra<Location>("location").toString()
+                        )
                     }
                 }
             }
@@ -38,6 +40,8 @@ class StartFragment : Fragment(R.layout.fragment_start) {
     }
 
     private var binding: FragmentStartBinding? = null
+    private var tractor: AppCompatImageView? = null
+    private var alreadyExecuted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,28 +52,56 @@ class StartFragment : Fragment(R.layout.fragment_start) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding = FragmentStartBinding.bind(view)
+
+        val listOfButton = listOf(
+            binding?.btnMain,
+            binding?.btnMap,
+            binding?.btnCapitals,
+            binding?.btnNews,
+            binding?.btnNewsLocal
+        )
+
+        if (!alreadyExecuted) {
+            makeVisibility(listOfButton, false)
+            tractor = binding?.tractor
+            tractor?.alpha = .0f
+            tractor?.animate()
+                ?.setDuration(6000)
+                ?.alpha(1f)
+                ?.withEndAction {
+                    makeVisibility(listOfButton, true)}
+                        ?.start()
+            alreadyExecuted = true
+
+        }
 
         if (context?.checkLocationPermission() == false) {
             activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
         }
 
         binding?.btnMain?.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_secondFragment)
+            animateButton(it)
+            { findNavController().navigate(R.id.action_startFragment_to_secondFragment) }
         }
 
         binding?.btnMap?.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_mapOfAllCountriesFragment2)
+            animateButton(it)
+            { findNavController().navigate(R.id.action_startFragment_to_mapOfAllCountriesFragment2) }
         }
         binding?.btnCapitals?.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_allCapitalsFragment)
+            animateButton(it)
+            { findNavController().navigate(R.id.action_startFragment_to_allCapitalsFragment) }
         }
         binding?.btnNews?.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_newsFragment)
+            animateButton(it)
+            { findNavController().navigate(R.id.action_startFragment_to_newsFragment) }
         }
 
         binding?.btnNewsLocal?.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_newsByLocationFragment)
+            animateButton(it)
+            { findNavController().navigate(R.id.action_startFragment_to_newsByLocationFragment) }
         }
 
         setHasOptionsMenu(true)
@@ -92,20 +124,20 @@ class StartFragment : Fragment(R.layout.fragment_start) {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    private fun makeVisibility(list: List<AppCompatButton?>, visible: Boolean) {
 
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.item1) {
-            findNavController().navigate(R.id.action_startFragment_to_secondFragment)
-        } else if (item.itemId == R.id.item2) {
-            findNavController().navigate(R.id.action_startFragment_to_mapOfAllCountriesFragment2)
+        if (visible) {
+            list.forEach {
+                it?.visibility = View.VISIBLE
+            }
+        } else {
+            list.forEach {
+                it?.visibility = View.GONE
+            }
         }
-        return super.onOptionsItemSelected(item)
+
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
