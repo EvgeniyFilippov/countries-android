@@ -6,7 +6,6 @@ import com.example.course_android.Constants.NO_CODE
 import com.example.course_android.base.mvi.BaseMviViewModel
 import com.example.course_android.utils.getGeocoder
 import com.example.course_android.utils.getLocationProviderClient
-import com.example.domain.repository.NetworkNewsFlowRepository
 import com.example.domain.usecase.impl.GetNewsByNameOutcomeFlowUseCase
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 class NewsByLocationViewModel @Inject constructor(
 
-    context: Context, private val mGetNewsByNameOutcomeFlowUseCase: NetworkNewsFlowRepository
+    context: Context, private val mGetNewsByNameOutcomeFlowUseCase: GetNewsByNameOutcomeFlowUseCase
 ) :
     BaseMviViewModel<NewsIntent, NewsAction, NewsState>() {
     override fun intentToAction(intent: NewsIntent): NewsAction {
@@ -48,7 +47,7 @@ class NewsByLocationViewModel @Inject constructor(
                                 }
                             }
                             launchOnUI {
-                                mGetNewsByNameOutcomeFlowUseCase.getListOfNewsOutcome(countryCode)
+                                mGetNewsByNameOutcomeFlowUseCase.setParams(countryCode).execute()
                                     .collect {
                                         mState.postValue(it.reduce())
                                     }

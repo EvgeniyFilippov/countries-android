@@ -6,6 +6,7 @@ import com.example.data.api.NewsFlowService
 import com.example.data.ext.ListArticlesToListArticlesDtoTransformer
 import com.example.data.repository.flow.NetworkNewsRepositoryImpl
 import com.example.domain.repository.NetworkNewsFlowRepository
+import com.example.domain.usecase.impl.GetNewsByNameOutcomeFlowUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -17,7 +18,7 @@ class ApplicationModule {
     fun provideApplicationContext(application: CountriesApp): Context = application.applicationContext
 
     @Provides
-    fun providesTransformerComponent(): ListArticlesToListArticlesDtoTransformer = ListArticlesToListArticlesDtoTransformer()
+    fun providesTransformerAccessor(): ListArticlesToListArticlesDtoTransformer = ListArticlesToListArticlesDtoTransformer()
 
     @Provides
     @Singleton
@@ -26,5 +27,11 @@ class ApplicationModule {
         transformer: ListArticlesToListArticlesDtoTransformer
     ): NetworkNewsFlowRepository =
         NetworkNewsRepositoryImpl(apiService, transformer)
+
+    @Provides
+    @Singleton
+    fun providesNetworkNewsFlowUseCaseAccessor(
+        repository: NetworkNewsFlowRepository
+    ): GetNewsByNameOutcomeFlowUseCase = GetNewsByNameOutcomeFlowUseCase(repository)
 
 }
