@@ -16,10 +16,9 @@ import org.koin.androidx.viewmodel.ext.android.stateViewModel
 private const val LOCATION_PERMISSION_CODE = 1000
 
 class NewsByLocationFragment :
-    BaseMviFragment<NewsIntent, NewsAction, NewsState>() {
+    BaseMviFragment<NewsIntent, NewsAction, NewsState, NewsByLocationViewModel>(NewsByLocationViewModel::class.java) {
 
     private var binding: FragmentNewsByLocationBinding? = null
-    private val viewModel: NewsByLocationViewModel by stateViewModel()
     var adapterNews = AdapterNews()
 
     override fun onCreateView(
@@ -28,22 +27,24 @@ class NewsByLocationFragment :
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentNewsByLocationBinding.inflate(inflater, container, false)
-
-        return binding?.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         if (context?.checkLocationPermission() == false) {
             activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
         }
-        initUI()
-        viewModel.state.observe(viewLifecycleOwner, {
-            viewState = it
-            render(it)
-        })
-        initDATA()
+        return binding?.root
     }
+
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        if (context?.checkLocationPermission() == false) {
+//            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
+//        }
+//        initUI()
+//        viewModel.state.observe(viewLifecycleOwner, {
+//            viewState = it
+//            render(it)
+//        })
+//        initDATA()
+//    }
 
     override fun initUI() {
         binding?.recyclerLocalNews?.setHasFixedSize(true)
@@ -81,8 +82,6 @@ class NewsByLocationFragment :
         }
     }
 
-    override fun dispatchIntent(intent: NewsIntent) {
-        viewModel.dispatchIntent(intent)
-    }
+
 
 }
