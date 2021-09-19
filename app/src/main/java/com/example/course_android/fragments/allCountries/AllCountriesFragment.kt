@@ -95,7 +95,8 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
                     showProgress()
                 }
                 is Outcome.Failure -> {
-                    showError()
+                    adapterOfAllCountries.clear()
+                    hideProgress()
                 }
 
                 is Outcome.Next -> {
@@ -194,6 +195,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     }
 
     private fun showCountries(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+        hideProgress()
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )
