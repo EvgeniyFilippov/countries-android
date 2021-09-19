@@ -10,12 +10,14 @@ import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_ALPHA_NAME_KEY
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
 import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
+import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.Constants.SORT_STATUS_DOWN
 import com.example.course_android.Constants.SORT_STATUS_UP
 import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
@@ -92,7 +94,8 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         viewModel.countriesFromSearchAndFilterLiveData.singleObserve(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
-                    showProgress()
+                    if (it.loading) showProgress() else hideProgress()
+
                 }
                 is Outcome.Failure -> {
                     adapterOfAllCountries.clear()
@@ -134,12 +137,13 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { viewModel.getCountriesFromSearch().onNext(query) }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.getCountriesFromSearch().onNext(newText)
+                if (newText.length >= MIN_SEARCH_STRING_LENGTH) {
+                    viewModel.getCountriesFromSearch().onNext(newText)
+                }
                 return true
             }
         })
