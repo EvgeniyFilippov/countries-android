@@ -76,11 +76,15 @@ class LocationTrackingService : Service(), LocationListener {
         //text style notification
         val bigTextStyle = NotificationCompat.BigTextStyle()
         bigTextStyle.setBigContentTitle(getString(R.string.foreground_notification_name))
-        builder.setStyle(bigTextStyle)
-        builder.setWhen(System.currentTimeMillis())
 
-        //head-up notification
-        builder.setFullScreenIntent(pendingIntent, true)
+        builder.apply {
+            this
+                .setStyle(bigTextStyle)
+                .setWhen(System.currentTimeMillis())
+                .setFullScreenIntent(pendingIntent, true)
+                .setSmallIcon(R.drawable.ic_baseline_navigation_24)
+                .setContentText(getString(R.string.service_notification_text))
+        }
 
         //build notification
         val notification: Notification = builder.build()

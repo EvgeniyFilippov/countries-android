@@ -48,12 +48,13 @@
     <string name="news_header">Новости:</string>
     <string name="NoNews">Новостей по данной стране нет.</string>
     <string name="foreground_channel_name">channel_name</string>
-    <string name="foreground_channel_id">id</string>
+    <string name="foreground_channel_id">436643</string>
     <string name="foreground_notification_name">name</string>
     <string name="local_news">Локальные новости</string>
     <string name="error_empty_data">Empty data</string>
     <string name="error_server_error">Server error</string>
     <string name="error_exception">Error loading data</string>
+    <string name="service_notification_text">Tracking gps location</string>
 
     <string-array name="rangeSliderValues">
         <item>1000</item>
