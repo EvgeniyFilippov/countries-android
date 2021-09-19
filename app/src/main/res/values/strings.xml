@@ -49,7 +49,7 @@
     <string name="NoNews">Новостей по данной стране нет.</string>
     <string name="foreground_channel_name">channel_name</string>
     <string name="foreground_channel_id">436643</string>
-    <string name="foreground_notification_name">name</string>
+    <string name="foreground_notification_name">Countries  App</string>
     <string name="local_news">Локальные новости</string>
     <string name="error_empty_data">Empty data</string>
     <string name="error_server_error">Server error</string>
