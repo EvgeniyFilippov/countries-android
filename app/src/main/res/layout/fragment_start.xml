@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".fragments.StartFragment">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/earth01"
@@ -51,12 +58,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/earth_part_004" />
 
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/backGr"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#B007497A"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/hello_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_name_fragment"
         android:text="@string/start_fragment"
+        android:textColor="@color/black"
         android:textSize="@dimen/text_name_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,10 +84,10 @@
         android:id="@+id/btn_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_background"
         android:paddingHorizontal="20dp"
-        android:minWidth="270dp"
-        android:textColor="@color/white"
+        android:minWidth="220dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
         android:text="@string/main_button"
         android:layout_marginTop="@dimen/margin_top_name_fragment"
         app:layout_constraintTop_toBottomOf="@id/hello_text"
@@ -80,7 +98,9 @@
         android:id="@+id/btn_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="270dp"
+        android:minWidth="220dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
         android:layout_marginTop="@dimen/margin_top_button"
         android:text="@string/main_map"
         app:layout_constraintTop_toBottomOf="@id/btn_main"
@@ -92,7 +112,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_button"
-        android:minWidth="270dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
+        android:minWidth="220dp"
         android:text="@string/capitals"
         app:layout_constraintTop_toBottomOf="@id/btn_map"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,7 +124,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_button"
-        android:minWidth="270dp"
+        android:minWidth="220dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
         android:text="@string/news"
         app:layout_constraintTop_toBottomOf="@id/btn_capitals"
         app:layout_constraintEnd_toEndOf="parent"
@@ -113,7 +137,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_button"
-        android:minWidth="270dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
+        android:minWidth="220dp"
         android:text="@string/local_news"
         app:layout_constraintTop_toBottomOf="@id/btn_news"
         app:layout_constraintEnd_toEndOf="parent"
