@@ -9,8 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.course_android.R
@@ -19,6 +17,8 @@ import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
 import com.example.course_android.services.LocationTrackingService
 import com.example.course_android.utils.animateButton
+import com.example.course_android.utils.animateMainPicture
+import com.example.course_android.utils.makeVisibility
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
@@ -40,7 +40,6 @@ class StartFragment : Fragment(R.layout.fragment_start) {
     }
 
     private var binding: FragmentStartBinding? = null
-    private var tractor: AppCompatImageView? = null
     private var alreadyExecuted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,16 +62,17 @@ class StartFragment : Fragment(R.layout.fragment_start) {
             binding?.btnNewsLocal
         )
 
+        val listOfPicture = listOf(
+            binding?.earth01,
+            binding?.earth02,
+            binding?.earth03,
+            binding?.earth04
+        )
+
         if (!alreadyExecuted) {
+
             makeVisibility(listOfButton, false)
-            tractor = binding?.tractor
-            tractor?.alpha = .0f
-            tractor?.animate()
-                ?.setDuration(6000)
-                ?.alpha(1f)
-                ?.withEndAction {
-                    makeVisibility(listOfButton, true)}
-                        ?.start()
+            animateMainPicture(listOfPicture, listOfButton)
             alreadyExecuted = true
 
         }
@@ -123,21 +123,6 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         }
 
     }
-
-    private fun makeVisibility(list: List<AppCompatButton?>, visible: Boolean) {
-
-        if (visible) {
-            list.forEach {
-                it?.visibility = View.VISIBLE
-            }
-        } else {
-            list.forEach {
-                it?.visibility = View.GONE
-            }
-        }
-
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
