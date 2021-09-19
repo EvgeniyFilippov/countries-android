@@ -27,15 +27,18 @@ fun animateButton(button: View, func: () -> Unit) {
     }
 }
 
-fun animateMainPicture(listPartOfPicture: List<AppCompatImageView?>, listButtons: List<AppCompatButton?>) {
+fun animateMainPicture(
+    listPartOfPicture: List<AppCompatImageView?>,
+    listButtons: List<AppCompatButton?>
+) {
 
-    listPartOfPicture[0]?.alpha = .0f
+//    listPartOfPicture[0]?.alpha = .0f
     listPartOfPicture[0]?.translationY = -300f
-    listPartOfPicture[1]?.alpha = .0f
+//    listPartOfPicture[1]?.alpha = .0f
     listPartOfPicture[1]?.translationY = -300f
-    listPartOfPicture[2]?.alpha = .0f
+//    listPartOfPicture[2]?.alpha = .0f
     listPartOfPicture[2]?.translationY = 300f
-    listPartOfPicture[3]?.alpha = .0f
+//    listPartOfPicture[3]?.alpha = .0f
     listPartOfPicture[3]?.translationY = 300f
 
     listPartOfPicture[0]?.animate()
@@ -58,7 +61,7 @@ fun animateMainPicture(listPartOfPicture: List<AppCompatImageView?>, listButtons
                                 ?.translationYBy(-300f)
                                 ?.alpha(1f)
                                 ?.withEndAction {
-                                    makeVisibility(listButtons, true)
+                                    makeVisibilityButtons(listButtons, true)
                                 }
                         }
 
@@ -67,15 +70,31 @@ fun animateMainPicture(listPartOfPicture: List<AppCompatImageView?>, listButtons
         ?.start()
 }
 
-fun makeVisibility(list: List<View?>, visible: Boolean) {
+fun makeVisibilityButtons(listButton: List<View?>, visible: Boolean) {
 
     if (visible) {
-        list.forEach {
+        listButton.forEach {
             it?.visibility = View.VISIBLE
         }
     } else {
-        list.forEach {
+        listButton.forEach {
             it?.visibility = View.GONE
+        }
+    }
+
+}
+
+fun makeVisibilityPictures(
+    listPicture: List<AppCompatImageView?>,
+    visible: Boolean
+) {
+    if (visible) {
+        listPicture.forEach {
+            it?.alpha = 1f
+        }
+    } else {
+        listPicture.forEach {
+            it?.alpha = .0f
         }
     }
 

@@ -16,13 +16,10 @@ fun Context.checkLocationPermission() =
         ContextCompat.checkSelfPermission(
             it,
             ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-            it,
-            ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
 @SuppressLint("NewApi")
 fun Activity.askLocationPermission(locationPermissionCode: Int) {
-    requestPermissions(arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION), locationPermissionCode)
+    requestPermissions(arrayOf(ACCESS_FINE_LOCATION), locationPermissionCode)
 }
