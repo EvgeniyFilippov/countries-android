@@ -29,7 +29,7 @@
     <string name="text_of_languages">Languages:\u0020</string>
     <string name="text_of_area">Area:\u0020</string>
     <string name="dialog_ok">ОК</string>
-    <string name="distanceToYou">The distance from you to %1$s is %2$s km </string>
+    <string name="distanceToYou">Distance to you to %1$s km </string>
     <string name="sort">Sort</string>
     <string name="error">Error</string>
     <string name="yes">Yes</string>

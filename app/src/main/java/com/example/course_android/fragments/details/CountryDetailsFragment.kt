@@ -85,7 +85,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         if (item.itemId == R.id.gps_distance) {
             activity?.showDialogWithOneButton(
                 null,
-                getString(R.string.distanceToYou, mCountryName, getDistance(country)),
+                getString(R.string.distanceToYou, getDistance(country)),
                 R.string.dialog_ok,
                 null
             )
