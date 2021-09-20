@@ -70,9 +70,17 @@ class StartFragment : Fragment(R.layout.fragment_start) {
 
                 }
                 !shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION) -> {
+                    if (!alreadyExecuted) {
+                        animateMainPicture(listOfPicture, listOfButton)
+                    }
+                    alreadyExecuted = true
 
                 }
                 else -> {
+                    if (!alreadyExecuted) {
+                        animateMainPicture(listOfPicture, listOfButton)
+                    }
+                    alreadyExecuted = true
 
                 }
             }
@@ -120,6 +128,10 @@ class StartFragment : Fragment(R.layout.fragment_start) {
 
         if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
             activity?.showAlertDialogWithMessage(getString(R.string.explain_why_access_is_needed))
+            if (!alreadyExecuted) {
+                animateMainPicture(listOfPicture, listOfButton)
+            }
+            alreadyExecuted = true
 
         } else {
             singlePermission.launch(ACCESS_FINE_LOCATION)
