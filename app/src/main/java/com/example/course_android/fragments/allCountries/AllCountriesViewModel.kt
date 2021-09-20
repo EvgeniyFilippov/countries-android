@@ -55,42 +55,26 @@ class AllCountriesViewModel(
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
-    fun getCountriesFromApi(context: Context) {
-        val test = Flowable.just(context)
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap { getCurrentLocation(context = it) }
-            .observeOn(Schedulers.io())
-            .flatMap { location -> mGetAllCountriesUseCase.execute().map { Pair(it, location) } }
-            .map {
-                it.first.sortBySortStatusFromPref(sortStatus)
-                return@map it
-            }
-            .map {
-                it.first.forEach { country ->
-                    country.distance = calculateDistanceFiler(
-                        it.second,
-                        country
-                    ).toString() + DEFAULT_KM
-                }
-                return@map it
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                allCountriesLiveData.next(it.first)
-                saveToDBfromApi(it.first)
-            }, {
-                allCountriesLiveData.failed(it)
-                getCountriesFromDB()
-            }, {
-                if (allCountriesLiveData.value is Outcome.Next) {
-                    allCountriesLiveData.success((allCountriesLiveData.value as Outcome.Next).data)
-                }
-            })
+    fun getCountriesFromApi(location: Location) {
+        mCompositeDisposable.add(
+            executeJob(
+                mGetAllCountriesUseCase.execute()
+                    .map { it.sortBySortStatusFromPref(sortStatus) }
+                    .map {
+                        it.forEach { country ->
+                            country.distance = calculateDistanceFiler(
+                                location,
+                                country
+                            ).toString() + DEFAULT_KM
+                        }
+                        return@map it
+                    }, allCountriesLiveData
+            )
+        )
     }
 
 
-    private fun getCountriesFromDB() {
+    fun getCountriesFromDB() {
         mGetListCountriesFromDbUseCase.execute()
             .map { list ->
                 list.convertDBdataToRetrofitModel(
@@ -113,7 +97,7 @@ class AllCountriesViewModel(
             }).also { mCompositeDisposable.add(it) }
     }
 
-    private fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+    fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         Flowable.just(listCountriesFromApiDto)
             .doOnNext {
                 val listOfAllCountries: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()

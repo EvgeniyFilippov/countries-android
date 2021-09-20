@@ -1,6 +1,10 @@
 package com.example.course_android.fragments.allCountries
 
+import android.annotation.SuppressLint
+import android.app.Service
 import android.content.Context
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -26,13 +30,14 @@ import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
-import com.example.course_android.ext.askLocationPermission
-import com.example.course_android.ext.checkLocationPermission
+import com.example.course_android.ext.*
+import com.example.course_android.services.LocationTrackingService.Companion.defaultLocation
 import com.example.domain.dto.model.CountryDescriptionItemDto
-import com.example.course_android.ext.isOnline
-import com.example.course_android.ext.showAlertDialog
+import com.example.course_android.services.LocationTrackingService.Companion.mCheckIsGPSTurnedOn
+import com.example.course_android.services.LocationTrackingService.Companion.mLocation
 import com.example.course_android.utils.getCurrentLocation
 import com.example.course_android.utils.toast
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.androidx.scope.ScopeFragment
@@ -50,11 +55,23 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val viewModel: AllCountriesViewModel by stateViewModel()
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.let { location ->
-            viewModel.getCountriesFromApi(requireContext())
+
+        val currentLocation = mLocation
+
+        if (currentLocation != null) {
+            viewModel.getCountriesFromApi(currentLocation)
+        } else {
+            if (!mCheckIsGPSTurnedOn) {
+                activity?.showAlertDialogWithMessage("Включите, пожалуйста, gps")
+            }
+            else {
+                viewModel.getCountriesFromApi(defaultLocation)
+            }
         }
+
         readSortStatus()
     }
 
@@ -80,10 +97,12 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
                 }
                 is Outcome.Failure -> {
                     showError()
+                    viewModel.getCountriesFromDB()
                 }
 
                 is Outcome.Next -> {
                     showCountries(it.data)
+                    viewModel.saveToDBfromApi(it.data)
                 }
                 else -> {
 
@@ -149,7 +168,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         })
 
         mSvMenu.setOnCloseListener {
-            context?.let { it1 -> viewModel.getCountriesFromApi(it1) }
+            mLocation?.let { viewModel.getCountriesFromApi(it) }
             false
         }
     }

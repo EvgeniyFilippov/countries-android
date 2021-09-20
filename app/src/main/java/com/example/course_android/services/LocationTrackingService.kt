@@ -29,12 +29,14 @@ class LocationTrackingService : Service(), LocationListener {
         const val MIN_DISTANCE_CHANGE_FOR_UPDATES = DEFAULT_LONG
         const val MIN_TIME_BW_UPDATES = MIN_TIME_BW_UPDATES_VALUE
         const val NEW_LOCATION_ACTION = NEW_LOCATION_ACTION_VALUE
+        var mCheckIsGPSTurnedOn = false
+        var mLocation: Location? = null
+        var defaultLocation = Location("")
     }
 
-    var mCheckIsGPSTurnedOn = false
+
     var mCheckNetworkIsTurnedOn = false
     var mCanGetLocation = false
-    var mLocation: Location? = null
     var mLatitude = DEFAULT_DOUBLE
     var mLongitude = DEFAULT_DOUBLE
 
@@ -97,6 +99,8 @@ class LocationTrackingService : Service(), LocationListener {
 
     @SuppressLint("MissingPermission")
     private fun initLocationScan(): Location? {
+        defaultLocation.latitude = DEFAULT_DOUBLE
+        defaultLocation.longitude = DEFAULT_DOUBLE
         try {
             mLocationManager =
                 applicationContext?.getSystemService(LOCATION_SERVICE) as LocationManager
