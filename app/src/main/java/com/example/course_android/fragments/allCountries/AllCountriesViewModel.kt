@@ -1,6 +1,5 @@
 package com.example.course_android.fragments.allCountries
 
-import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -11,12 +10,12 @@ import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
-import com.example.course_android.Constants.N_A
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
 import com.example.course_android.services.LocationTrackingService.Companion.defaultLocation
+import com.example.course_android.services.LocationTrackingService.Companion.mLocation
 import com.example.course_android.utils.*
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.dto.room.RoomCountryDescriptionItemDto
@@ -64,16 +63,11 @@ class AllCountriesViewModel(
                     .map { it.sortBySortStatusFromPref(sortStatus) }
                     .map {
                         it.forEach { country ->
-                            if (location != defaultLocation) {
-                                country.distance = calculateDistanceFiler(
-                                    location,
-                                    country
-                                ).toString() + DEFAULT_KM
-                            } else {
-                                country.distance = N_A
-                            }
 
-                        }
+                                country.distance = getDistance(
+                                    country
+                                ) + DEFAULT_KM
+                            }
                         return@map it
                     }, allCountriesLiveData
             )
@@ -165,10 +159,9 @@ class AllCountriesViewModel(
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
         mGetAllCountriesUseCase.execute()
             .doOnNext { list ->
-                val currentLocationOfUser = getResultOfCurrentLocation()
                 listCountriesFromFilter.clear()
                 list.forEach { country ->
-                    makeListCountriesForFilter(country, mapSettingsByFilter, currentLocationOfUser)
+                    makeListCountriesForFilter(country, mapSettingsByFilter)
                 }
             }
             .subscribeOn(Schedulers.io())
@@ -186,12 +179,12 @@ class AllCountriesViewModel(
 
     private fun makeListCountriesForFilter(
         country: CountryDescriptionItemDto,
-        mapSettingsByFilter: HashMap<String?, Int>,
-        currentLocationOfUser: Location
+        mapSettingsByFilter: HashMap<String?, Int>
     ) {
         if (country.area >= mapSettingsByFilter[START_AREA_FILTER_KEY] ?: 0
             && country.area <= mapSettingsByFilter[END_AREA_FILTER_KEY] ?: 0
         ) {
+            val currentLocationOfUser = mLocation ?: defaultLocation
             val distance = calculateDistanceFiler(currentLocationOfUser, country)
             country.distance = distance.toString() + DEFAULT_KM
             if (distance >= mapSettingsByFilter[START_DISTANCE_FILTER_KEY] ?: 0 &&

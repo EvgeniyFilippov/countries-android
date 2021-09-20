@@ -1,10 +1,7 @@
 package com.example.course_android.fragments.allCountries
 
 import android.annotation.SuppressLint
-import android.app.Service
 import android.content.Context
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,7 +11,6 @@ import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.course_android.Constants
 import com.example.course_android.Constants.COUNTRY_ALPHA_NAME_KEY
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
 import com.example.course_android.Constants.DEFAULT_INT
@@ -28,16 +24,16 @@ import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
-import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
-import com.example.course_android.ext.*
+import com.example.course_android.ext.isOnline
+import com.example.course_android.ext.showAlertDialog
+import com.example.course_android.ext.showAlertDialogWithMessage
 import com.example.course_android.services.LocationTrackingService.Companion.defaultLocation
-import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.services.LocationTrackingService.Companion.mCheckIsGPSTurnedOn
 import com.example.course_android.services.LocationTrackingService.Companion.mLocation
-import com.example.course_android.utils.getCurrentLocation
 import com.example.course_android.utils.toast
-import com.google.android.gms.location.LocationServices
+import com.example.domain.dto.model.CountryDescriptionItemDto
+import com.example.domain.outcome.Outcome
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.androidx.scope.ScopeFragment
