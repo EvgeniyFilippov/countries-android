@@ -43,15 +43,12 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
-private const val LOCATION_PERMISSION_CODE = 1000
-
 class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), BaseMvvmView {
 
     private var binding: FragmentAllCountriesBinding? = null
     private var sortStatus = DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
-    private var permissionGps = false
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val viewModel: AllCountriesViewModel by stateViewModel()
 
@@ -65,7 +62,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
             viewModel.getCountriesFromApi(currentLocation)
         } else {
             if (!mCheckIsGPSTurnedOn) {
-                activity?.showAlertDialogWithMessage("Включите, пожалуйста, gps")
+                activity?.showAlertDialogWithMessage(getString(R.string.turn_on_gps))
             }
             else {
                 viewModel.getCountriesFromApi(defaultLocation)
@@ -78,10 +75,6 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
-
-        if (context?.checkLocationPermission() == false) {
-            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
-        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
