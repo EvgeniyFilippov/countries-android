@@ -58,6 +58,7 @@
     <string name="error_server_error">Server error</string>
     <string name="error_exception">Error loading data</string>
     <string name="service_notification_text">Tracking gps location</string>
+    <string name="languages_title">Languages</string>
 
     <string-array name="rangeSliderValues">
         <item>1000</item>

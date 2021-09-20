@@ -11,12 +11,11 @@ import com.example.course_android.base.adapter.BaseAdapter
 import com.example.course_android.utils.loadSvg
 import com.example.domain.dto.news.NewsItemDto
 
-class AdapterNews : BaseAdapter<NewsItemDto>() {
+class AdapterNewsShort : BaseAdapter<NewsItemDto>() {
 
     class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val tvTitle: AppCompatTextView = view.findViewById(R.id.news_title)
-        val tvPicture: AppCompatImageView = view.findViewById(R.id.news_picture)
         val tvDescription: AppCompatTextView = view.findViewById(R.id.news_description)
     }
 
@@ -33,7 +32,6 @@ class AdapterNews : BaseAdapter<NewsItemDto>() {
             val item = mDataList[position]
             holder.tvTitle.text = item.title
             holder.tvDescription.text = item.description
-            holder.tvPicture.loadSvg(item.urlToImage)
             holder.itemView.setOnClickListener { mClickFunction?.invoke(item) }
         }
     }

@@ -14,6 +14,7 @@ import com.example.course_android.Constants.ERROR
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.adapters.AdapterNews
+import com.example.course_android.adapters.AdapterNewsShort
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.domain.dto.model.CountryDescriptionItemDto
@@ -42,7 +43,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     private var permissionGps = false
     private val mModulePresenter : CountryDetailsPresenter by inject()
     private lateinit var country: CountryDescriptionItemDto
-    private lateinit var currentCountryLocation: LatLng
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
