@@ -119,8 +119,19 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         }
 
         if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+            if (!alreadyExecuted) {
+                makeVisibilityButtons(listOfButton, false)
+                makeVisibilityPictures(listOfPicture, false)
+                animateMainPicture(listOfPicture, listOfButton)
+            }
             activity?.showAlertDialogWithMessage(getString(R.string.explain_why_access_is_needed))
+
         } else {
+            if (!alreadyExecuted) {
+                makeVisibilityButtons(listOfButton, false)
+                makeVisibilityPictures(listOfPicture, false)
+                animateMainPicture(listOfPicture, listOfButton)
+            }
             singlePermission.launch(ACCESS_FINE_LOCATION)
         }
 

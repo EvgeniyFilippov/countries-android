@@ -42,22 +42,22 @@ fun animateMainPicture(
     listPartOfPicture[3]?.translationY = 300f
 
     listPartOfPicture[0]?.animate()
-        ?.setDuration(150)
+        ?.setDuration(1500)
         ?.translationYBy(300f)
         ?.alpha(1f)
         ?.withEndAction {
             listPartOfPicture[1]?.animate()
-                ?.setDuration(150)
+                ?.setDuration(1500)
                 ?.translationYBy(300f)
                 ?.alpha(1f)
                 ?.withEndAction {
                     listPartOfPicture[2]?.animate()
-                        ?.setDuration(150)
+                        ?.setDuration(1500)
                         ?.translationYBy(-300f)
                         ?.alpha(1f)
                         ?.withEndAction {
                             listPartOfPicture[3]?.animate()
-                                ?.setDuration(150)
+                                ?.setDuration(1500)
                                 ?.translationYBy(-300f)
                                 ?.alpha(1f)
                                 ?.withEndAction {
