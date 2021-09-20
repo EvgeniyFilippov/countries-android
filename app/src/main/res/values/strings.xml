@@ -29,7 +29,7 @@
     <string name="text_of_languages">Languages:\u0020</string>
     <string name="text_of_area">Area:\u0020</string>
     <string name="dialog_ok">ОК</string>
-    <string name="distanceToYou">Distance to you to %1$s km </string>
+    <string name="distanceToYou">Distance from you is %1$s km </string>
     <string name="sort">Sort</string>
     <string name="error">Error</string>
     <string name="yes">Yes</string>
@@ -38,7 +38,7 @@
     <string name="marker_title">Check internet connection, please</string>
     <string name="area">Area from %1$d to %2$d sq. km.</string>
     <string name="population">Population from %1$d to %2$d people.</string>
-    <string name="Distance">Distance</string>
+    <string name="Distance">Distance from you to the country</string>
     <string name="filter_name">Filter</string>
     <string name="def_value_edit_text">0</string>
     <string name="farthest_point">20038</string>
