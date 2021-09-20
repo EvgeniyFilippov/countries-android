@@ -18,6 +18,7 @@ object Constants {
     const val DEFAULT_LIKES = "125"
     const val DEFAULT_COMMENTS = "4"
     const val DEFAULT_KM = "Km"
+    const val N_A = "N/A"
 
 
     //FILTER
@@ -45,7 +46,7 @@ object Constants {
 
     //service
     const val SERVICE_ID_VALUE = 12321
-    const val MIN_TIME_BW_UPDATES_VALUE = 20000L
+    const val MIN_TIME_BW_UPDATES_VALUE = 5000L
     const val NEW_LOCATION_ACTION_VALUE = "NEW_LOCATION_ACTION"
 
     //countries

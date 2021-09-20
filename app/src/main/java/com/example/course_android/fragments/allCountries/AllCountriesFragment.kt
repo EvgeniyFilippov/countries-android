@@ -63,6 +63,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         } else {
             if (!mCheckIsGPSTurnedOn) {
                 activity?.showAlertDialogWithMessage(getString(R.string.turn_on_gps))
+                viewModel.getCountriesFromApi(defaultLocation)
             }
             else {
                 viewModel.getCountriesFromApi(defaultLocation)

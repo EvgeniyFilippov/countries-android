@@ -11,10 +11,12 @@ import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
+import com.example.course_android.Constants.N_A
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
+import com.example.course_android.services.LocationTrackingService.Companion.defaultLocation
 import com.example.course_android.utils.*
 import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.domain.dto.room.RoomCountryDescriptionItemDto
@@ -62,10 +64,15 @@ class AllCountriesViewModel(
                     .map { it.sortBySortStatusFromPref(sortStatus) }
                     .map {
                         it.forEach { country ->
-                            country.distance = calculateDistanceFiler(
-                                location,
-                                country
-                            ).toString() + DEFAULT_KM
+                            if (location != defaultLocation) {
+                                country.distance = calculateDistanceFiler(
+                                    location,
+                                    country
+                                ).toString() + DEFAULT_KM
+                            } else {
+                                country.distance = N_A
+                            }
+
                         }
                         return@map it
                     }, allCountriesLiveData

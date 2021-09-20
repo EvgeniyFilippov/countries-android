@@ -14,7 +14,6 @@ import com.example.course_android.Constants.ERROR
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterLanguages
 import com.example.course_android.adapters.AdapterNews
-import com.example.course_android.adapters.AdapterNewsShort
 import com.example.course_android.base.mvp.BaseMvpFragment
 import com.example.course_android.databinding.FragmentCountryDetailsBinding
 import com.example.domain.dto.model.CountryDescriptionItemDto
