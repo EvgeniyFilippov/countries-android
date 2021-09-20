@@ -99,8 +99,7 @@ class LocationTrackingService : Service(), LocationListener {
 
     @SuppressLint("MissingPermission")
     private fun initLocationScan(): Location? {
-        defaultLocation.latitude = DEFAULT_DOUBLE
-        defaultLocation.longitude = DEFAULT_DOUBLE
+
         try {
             mLocationManager =
                 applicationContext?.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -185,6 +184,14 @@ class LocationTrackingService : Service(), LocationListener {
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+
+    }
+
+    override fun onProviderDisabled(provider: String) {
+
+    }
+
+    override fun onProviderEnabled(provider: String) {
 
     }
 }

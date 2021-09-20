@@ -15,10 +15,13 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.course_android.Constants
+import com.example.course_android.Constants.DEFAULT_DOUBLE
 import com.example.course_android.R
 import com.example.course_android.databinding.FragmentStartBinding
 import com.example.course_android.ext.showAlertDialogWithMessage
 import com.example.course_android.services.LocationTrackingService
+import com.example.course_android.services.LocationTrackingService.Companion.defaultLocation
 import com.example.course_android.utils.animateButton
 import com.example.course_android.utils.animateMainPicture
 import com.example.course_android.utils.makeVisibilityButtons
@@ -82,11 +85,11 @@ class StartFragment : Fragment(R.layout.fragment_start) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        defaultLocation.latitude = DEFAULT_DOUBLE
+        defaultLocation.longitude = DEFAULT_DOUBLE
         val intentFilter = IntentFilter()
         intentFilter.addAction(LocationTrackingService.NEW_LOCATION_ACTION)
         context?.registerReceiver(mLocationBroadcastReceiver, intentFilter)
-
-
 
     }
 
