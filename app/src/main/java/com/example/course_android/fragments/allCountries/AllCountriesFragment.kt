@@ -107,6 +107,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
             }
         }
 
+        viewModel.getCountriesFromSearch()
         binding?.recyclerView?.setHasFixedSize(true)
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.adapter = adapterOfAllCountries
@@ -137,7 +138,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.length >= MIN_SEARCH_STRING_LENGTH) {
-                    viewModel.getCountriesFromSearch().onNext(newText)
+                    viewModel.mSearchSubject.onNext(newText)
                 }
                 return true
             }

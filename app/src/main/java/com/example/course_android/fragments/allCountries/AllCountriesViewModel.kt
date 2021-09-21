@@ -32,6 +32,7 @@ import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import org.koin.core.logger.KOIN_TAG
 import java.util.concurrent.TimeUnit
 
@@ -46,7 +47,7 @@ class AllCountriesViewModel(
 ) : BaseViewModel(savedStateHandle) {
 
     private var sortStatus: Int = 0
-    private val mSearchSubject = BehaviorSubject.create<String>()
+    val mSearchSubject = PublishSubject.create<String>()
     val allCountriesLiveData =
         savedStateHandle.getLiveData<Outcome<MutableList<CountryDescriptionItemDto>>>(
             ALL_COUNTRIES_LIVE_DATA
@@ -120,7 +121,7 @@ class AllCountriesViewModel(
      * PRESENTATION
      */
 
-    fun getCountriesFromSearch(): BehaviorSubject<String> {
+    fun getCountriesFromSearch() {
         mCompositeDisposable.add(
             executeJob(
                 mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
@@ -137,10 +138,10 @@ class AllCountriesViewModel(
                                 }
                                     .toMutableList()
                             }
+
                     }, countriesFromSearchAndFilterLiveData
             )
         )
-        return mSearchSubject
     }
 
     fun getCountriesFromFilter(mapSettingsByFilter: HashMap<String?, Int>) {
