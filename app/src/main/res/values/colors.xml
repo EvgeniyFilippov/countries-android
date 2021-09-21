@@ -10,4 +10,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background_color_recycler">#00BCD4</color>
     <color name="ok_button">#00BCD4</color>
+    <color name="recycler_main_background">#EDEFEF</color>
+    <color name="news_description_color">#CD000000</color>
 </resources>
