@@ -52,4 +52,6 @@ object Constants {
     //countries
     const val NO_CODE = "code"
 
+    //DR
+    const val SAVED_TO_DB = "Saved to database"
 }

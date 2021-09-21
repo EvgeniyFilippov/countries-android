@@ -1,6 +1,5 @@
 package com.example.course_android.fragments.allCountries
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.Constants.ALL_COUNTRIES_LIVE_DATA
@@ -10,10 +9,12 @@ import com.example.course_android.Constants.END_AREA_FILTER_KEY
 import com.example.course_android.Constants.END_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.END_POPULATION_FILTER_KEY
 import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
+import com.example.course_android.Constants.SAVED_TO_DB
 import com.example.course_android.Constants.START_AREA_FILTER_KEY
 import com.example.course_android.Constants.START_DISTANCE_FILTER_KEY
 import com.example.course_android.Constants.START_POPULATION_FILTER_KEY
 import com.example.course_android.base.mvvm.*
+import com.example.course_android.ext.convertApiDtoToRoomDto
 import com.example.course_android.services.LocationTrackingService.Companion.defaultLocation
 import com.example.course_android.services.LocationTrackingService.Companion.mLocation
 import com.example.course_android.utils.*
@@ -56,6 +57,10 @@ class AllCountriesViewModel(
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
+    /**
+     * PRESENTATION
+     */
+
     fun getCountriesFromApi() {
         mCompositeDisposable.add(
             executeJob(
@@ -63,10 +68,10 @@ class AllCountriesViewModel(
                     .map { it.sortBySortStatusFromPref(sortStatus) }
                     .map {
                         it.forEach { country ->
-                                country.distance = getDistance(
-                                    country
-                                ) + DEFAULT_KM
-                            }
+                            country.distance = getDistance(
+                                country
+                            ) + DEFAULT_KM
+                        }
                         return@map it
                     }, allCountriesLiveData
             )
@@ -99,38 +104,21 @@ class AllCountriesViewModel(
 
     fun saveToDBfromApi(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
         Flowable.just(listCountriesFromApiDto)
-            .doOnNext {
-                val listOfAllCountries: MutableList<RoomCountryDescriptionItemDto> = mutableListOf()
-                val listOfAllLanguages: MutableList<RoomLanguageOfOneCountryDto> = mutableListOf()
-                it.forEach { item ->
-                    listOfAllCountries.add(
-                        RoomCountryDescriptionItemDto(
-                            item.name,
-                            item.capital,
-                            item.area
-                        )
-                    )
-                    item.languages.forEach { language ->
-                        listOfAllLanguages.add(
-                            RoomLanguageOfOneCountryDto(
-                                item.name,
-                                language.name
-                            )
-                        )
-                    }
-                }
-                mDatabaseCountryRepository.addAll(listOfAllCountries)
-                mDatabaseLanguageRepository.addAll(listOfAllLanguages)
+            .map {
+                it.convertApiDtoToRoomDto(mDatabaseCountryRepository, mDatabaseLanguageRepository)
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-
-                Log.d(KOIN_TAG, "Saved to DB")
+                Log.d(KOIN_TAG, SAVED_TO_DB)
             }, {
                 Log.d(KOIN_TAG, it.message.toString())
             })
     }
+
+    /**
+     * PRESENTATION
+     */
 
     fun getCountriesFromSearch(): BehaviorSubject<String> {
         mCompositeDisposable.add(
