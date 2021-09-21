@@ -169,6 +169,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
             showSortResetDialog()
         }
         if (item.itemId == R.id.filter) {
+            adapterOfAllCountries.clear()
             findNavController().navigate(R.id.action_allCountriesFragment_to_filterFragment)
         }
 

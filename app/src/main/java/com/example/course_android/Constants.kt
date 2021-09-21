@@ -46,7 +46,7 @@ object Constants {
 
     //service
     const val SERVICE_ID_VALUE = 12321
-    const val MIN_TIME_BW_UPDATES_VALUE = 5000L
+    const val MIN_TIME_BW_UPDATES_VALUE = 10000L
     const val NEW_LOCATION_ACTION_VALUE = "NEW_LOCATION_ACTION"
 
     //countries
