@@ -56,14 +56,13 @@ class AllCountriesViewModel(
     private var listOfCountriesFromDB: MutableList<CountryDescriptionItemDto> = arrayListOf()
     private var listCountriesFromFilter: MutableList<CountryDescriptionItemDto> = arrayListOf()
 
-    fun getCountriesFromApi(location: Location) {
+    fun getCountriesFromApi() {
         mCompositeDisposable.add(
             executeJob(
                 mGetAllCountriesUseCase.execute()
                     .map { it.sortBySortStatusFromPref(sortStatus) }
                     .map {
                         it.forEach { country ->
-
                                 country.distance = getDistance(
                                     country
                                 ) + DEFAULT_KM

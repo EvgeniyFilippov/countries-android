@@ -51,21 +51,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val currentLocation = mLocation
-
-        if (currentLocation != null) {
-            viewModel.getCountriesFromApi(currentLocation)
-        } else {
-            if (!mCheckIsGPSTurnedOn) {
-                activity?.showAlertDialogWithMessage(getString(R.string.turn_on_gps))
-                viewModel.getCountriesFromApi(defaultLocation)
-            }
-            else {
-                viewModel.getCountriesFromApi(defaultLocation)
-            }
-        }
-
+        viewModel.getCountriesFromApi()
         readSortStatus()
     }
 
@@ -158,7 +144,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         })
 
         mSvMenu.setOnCloseListener {
-            mLocation?.let { viewModel.getCountriesFromApi(it) }
+            mLocation?.let { viewModel.getCountriesFromApi() }
             false
         }
     }
