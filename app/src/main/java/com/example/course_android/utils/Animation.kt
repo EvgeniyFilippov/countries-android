@@ -10,14 +10,12 @@ fun animateButton(button: View, func: () -> Unit) {
         duration = 600
         alpha(.5f)
         scaleXBy(.5f)
-//        rotationYBy(360f)
         translationYBy(200f)
     }?.withEndAction {
         button.animate()?.apply {
             duration = 600
             alpha(1f)
             scaleXBy(-.5f)
-//            rotationYBy(360f)
             translationYBy(-200f)
         }
             ?.withEndAction {
@@ -32,13 +30,9 @@ fun animateMainPicture(
     listButtons: List<AppCompatButton?>
 ) {
 
-//    listPartOfPicture[0]?.alpha = .0f
     listPartOfPicture[0]?.translationY = -300f
-//    listPartOfPicture[1]?.alpha = .0f
     listPartOfPicture[1]?.translationY = -300f
-//    listPartOfPicture[2]?.alpha = .0f
     listPartOfPicture[2]?.translationY = 300f
-//    listPartOfPicture[3]?.alpha = .0f
     listPartOfPicture[3]?.translationY = 300f
 
     listPartOfPicture[0]?.animate()

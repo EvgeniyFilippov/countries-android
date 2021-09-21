@@ -53,6 +53,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         super.onCreate(savedInstanceState)
         viewModel.getCountriesFromApi()
         readSortStatus()
+        viewModel.getCountriesFromSearch()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -107,7 +108,6 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
             }
         }
 
-        viewModel.getCountriesFromSearch()
         binding?.recyclerView?.setHasFixedSize(true)
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.adapter = adapterOfAllCountries
