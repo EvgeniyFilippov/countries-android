@@ -125,7 +125,6 @@ class AllCountriesViewModel(
         mCompositeDisposable.add(
             executeJob(
                 mSearchSubject.toFlowable(BackpressureStrategy.LATEST)
-                    .onErrorResumeNext { Flowable.just("") }
                     .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
                     .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
                     .distinctUntilChanged()
@@ -137,7 +136,7 @@ class AllCountriesViewModel(
                                     country.name.contains(text, true)
                                 }
                                     .toMutableList()
-                            }
+                            }.onErrorResumeNext { Flowable.just(mutableListOf()) }
 
                     }, countriesFromSearchAndFilterLiveData
             )
