@@ -3,8 +3,10 @@ package com.example.course_android.fragments.details
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.*
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.Constants.COUNTRY_ALPHA_NAME_KEY
 import com.example.course_android.Constants.COUNTRY_NAME_KEY
@@ -40,6 +42,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     private var permissionGps = false
     private val mModulePresenter : CountryDetailsPresenter by inject()
     private lateinit var country: CountryDescriptionItemDto
+    private lateinit var currentCountryLocation: LatLng
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,7 +86,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         if (item.itemId == R.id.gps_distance) {
             activity?.showDialogWithOneButton(
                 null,
-                getString(R.string.distanceToYou, mCountryName, context?.let { getDistance(it) }),
+                getString(R.string.distanceToYou, mCountryName, context?.let { getDistance(it, country) }),
                 R.string.dialog_ok,
                 null
             )
@@ -102,6 +105,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun getPresenter(): CountryDetailsPresenter = mPresenter
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun showCountryInfo(countryList: List<CountryDescriptionItemDto>) {
 
         country = countryList[0]
@@ -128,18 +132,17 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
 
     override fun showNews(news: MutableList<NewsItemDto>) {
 
-        if (news.size >= 1) {
-            adapterNews.repopulate(news)
-        } else {
-            binding?.mNoNews?.visibility = View.VISIBLE
-        }
+        adapterNews.repopulate(news)
 
         adapterNews.setItemClick { item ->
             val openURL = Intent(Intent.ACTION_VIEW)
             openURL.data = Uri.parse(item.url)
             startActivity(openURL)
         }
+    }
 
+    override fun noNews() {
+        binding?.mNoNews?.visibility = View.VISIBLE
     }
 
     override fun showError(error: String, throwable: Throwable) {

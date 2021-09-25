@@ -2,15 +2,14 @@ package com.example.course_android.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.util.Log
 import com.example.domain.dto.model.CountryDescriptionItemDto
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.Task
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 
@@ -56,7 +55,8 @@ fun getResultOfCurrentLocation(): Location {
     return currentLocationOfUser
 }
 
-fun getDistance(context: Context): Int {
+fun getDistance(context: Context, country: CountryDescriptionItemDto): Int {
+    currentCountryLatLng = LatLng(country.latlng[0], country.latlng[1])
     getCurrentLocation(context)
     calculateDistance(currentLocationOfUser)
     return distance
@@ -82,4 +82,12 @@ fun calculateDistanceFiler(location: Location, countryDetailsDto: CountryDescrip
     }
     distance = location.distanceTo(currentCountryLocation).toInt() / 1000
     return distance
+
 }
+
+@SuppressLint("MissingPermission")
+fun getLocationProviderClient(context: Context): FusedLocationProviderClient {
+    return LocationServices.getFusedLocationProviderClient(context)
+}
+
+fun getGeocoder(context: Context) = Geocoder(context)

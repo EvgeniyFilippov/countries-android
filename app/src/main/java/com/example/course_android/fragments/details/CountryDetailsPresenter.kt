@@ -27,7 +27,11 @@ class CountryDetailsPresenter(
             inBackground(
                 mNetworkNewsFlowableRepository.getListOfNews(alpha_2_ISO_3166_1)
             ).subscribe({ response ->
-                getView()?.showNews(response as MutableList<NewsItemDto>)
+                if (response.isNotEmpty()) {
+                    getView()?.showNews(response as MutableList<NewsItemDto>)
+                } else {
+                    getView()?.noNews()
+                }
             }, {
                 it.message?.let { it1 -> getView()?.showError(it1, it) }
             })

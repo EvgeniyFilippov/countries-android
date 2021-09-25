@@ -5,20 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/card_recycler_margin"
-    tools:context=".fragments.news.NewsFragment">
+    tools:context=".fragments.newsByLocation.NewsByLocationFragment">
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progressLocalNews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/newsMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_news"
+        android:id="@+id/recycler_local_news"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

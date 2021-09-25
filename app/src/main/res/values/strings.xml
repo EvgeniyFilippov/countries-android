@@ -5,7 +5,7 @@
     <string name="main_button">Список стран</string>
     <string name="main_map">Карта</string>
     <string name="filter">Фильтр</string>
-    <string name="start_fragment">Start fragment</string>
+    <string name="start_fragment">Countries and News</string>
     <string name="menu_item1">Показать список стран</string>
     <string name="menu_item2">Показать все страны</string>
     <string name="menu_item3">item 3</string>
@@ -43,9 +43,17 @@
     <string name="def_value_edit_text">0</string>
     <string name="capitals">Столицы</string>
     <string name="default_likes">125ы</string>
-    <string name="news">Новости</string>
+    <string name="news">Новости RU</string>
+    <string name="noLocalNews">NO NEWS BY THIS LOCATION</string>
     <string name="news_header">Новости:</string>
     <string name="NoNews">Новостей по данной стране нет.</string>
+    <string name="foreground_channel_name">channel_name</string>
+    <string name="foreground_channel_id">id</string>
+    <string name="foreground_notification_name">name</string>
+    <string name="local_news">Локальные новости</string>
+    <string name="error_empty_data">Empty data</string>
+    <string name="error_server_error">Server error</string>
+    <string name="error_exception">Error loading data</string>
 
     <string-array name="rangeSliderValues">
         <item>1000</item>
