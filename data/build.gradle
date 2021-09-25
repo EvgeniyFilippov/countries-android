@@ -44,11 +44,11 @@ dependencies {
     implementation project(':domain')
 
     //Network
-    implementation "com.squareup.retrofit2:retrofit:$retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$converterGson"
-    implementation"com.squareup.okhttp3:okhttp:$okhttp"
-    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:$rxJavaRetrofit"
-    implementation "com.squareup.okhttp3:logging-interceptor:$loggingInterceptor"
+    api "com.squareup.retrofit2:retrofit:$retrofit"
+    api "com.squareup.retrofit2:converter-gson:$converterGson"
+    api "com.squareup.okhttp3:okhttp:$okhttp"
+    api "com.github.akarnokd:rxjava3-retrofit-adapter:$rxJavaRetrofit"
+    api  "com.squareup.okhttp3:logging-interceptor:$loggingInterceptor"
 
     //Room
     implementation("androidx.room:room-runtime:$room_version")
@@ -66,5 +66,5 @@ dependencies {
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 
     //Flow
-    implementation 'com.github.chenxyu:retrofit-adapter-flow:1.1.4'
+    api 'com.github.chenxyu:retrofit-adapter-flow:1.1.4'
 }

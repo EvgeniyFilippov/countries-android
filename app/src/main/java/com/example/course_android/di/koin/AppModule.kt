@@ -1,4 +1,4 @@
-package com.example.course_android.di
+package com.example.course_android.di.koin
 
 import com.example.data.api.*
 import com.example.data.ext.ListArticlesToListArticlesDtoTransformer
@@ -37,7 +37,5 @@ val appModule = module {
     single<DatabaseLanguageRepository> { DatabaseLanguageRepositoryImpl(get()) }
 
     single<NetworkNewsFlowableRepository> { NetworkNewsFlowableRepositoryImpl(get(), get()) }
-
-
 
 }

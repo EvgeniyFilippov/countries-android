@@ -1,4 +1,4 @@
-package com.example.course_android.di
+package com.example.course_android.di.koin
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.course_android.fragments.allCountries.AllCountriesFragment

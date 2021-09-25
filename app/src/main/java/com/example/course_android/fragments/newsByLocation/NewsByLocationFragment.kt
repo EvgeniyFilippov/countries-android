@@ -8,18 +8,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterNews
 import com.example.course_android.base.mvi.BaseMviFragment
+import com.example.course_android.base.mvvm.BaseMvvmView
 import com.example.course_android.databinding.FragmentNewsByLocationBinding
 import com.example.course_android.ext.askLocationPermission
 import com.example.course_android.ext.checkLocationPermission
+import com.example.course_android.ext.isOnline
+import com.example.course_android.ext.showAlertDialog
+import com.example.course_android.utils.toast
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 private const val LOCATION_PERMISSION_CODE = 1000
 
 class NewsByLocationFragment :
-    BaseMviFragment<NewsIntent, NewsAction, NewsState>() {
+    BaseMviFragment<NewsIntent, NewsAction, NewsState, NewsByLocationViewModel>(NewsByLocationViewModel::class.java),
+    BaseMvvmView {
 
     private var binding: FragmentNewsByLocationBinding? = null
-    private val viewModel: NewsByLocationViewModel by stateViewModel()
     var adapterNews = AdapterNews()
 
     override fun onCreateView(
@@ -28,22 +32,12 @@ class NewsByLocationFragment :
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentNewsByLocationBinding.inflate(inflater, container, false)
-
-        return binding?.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         if (context?.checkLocationPermission() == false) {
             activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
         }
-        initUI()
-        viewModel.state.observe(viewLifecycleOwner, {
-            viewState = it
-            render(it)
-        })
-        initDATA()
+        return binding?.root
     }
+
 
     override fun initUI() {
         binding?.recyclerLocalNews?.setHasFixedSize(true)
@@ -67,12 +61,7 @@ class NewsByLocationFragment :
             }
 
             is NewsState.Loading -> {
-                if (state.loading) {
-                    binding?.progressLocalNews?.visibility = View.VISIBLE
-                } else {
-                    binding?.progressLocalNews?.visibility = View.GONE
-                }
-
+                if (state.loading) showProgress() else hideProgress()
             }
 
             is NewsState.Exception -> {
@@ -81,8 +70,21 @@ class NewsByLocationFragment :
         }
     }
 
-    override fun dispatchIntent(intent: NewsIntent) {
-        viewModel.dispatchIntent(intent)
+    override fun showError() {
+        hideProgress()
+        if (context?.isOnline() == false) {
+            context?.toast(getString(R.string.chek_inet))
+        } else {
+            activity?.showAlertDialog()
+        }
+    }
+
+    override fun showProgress() {
+        binding?.progressLocalNews?.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress() {
+        binding?.progressLocalNews?.visibility = View.GONE
     }
 
 }
