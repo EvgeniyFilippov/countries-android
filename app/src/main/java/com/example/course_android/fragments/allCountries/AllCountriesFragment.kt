@@ -1,5 +1,6 @@
 package com.example.course_android.fragments.allCountries
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.Menu
@@ -16,27 +17,27 @@ import com.example.course_android.Constants.DEFAULT_INT
 import com.example.course_android.Constants.DEFAULT_SORT_STATUS
 import com.example.course_android.Constants.FILE_NAME_PREF
 import com.example.course_android.Constants.KEY_SORT_STATUS
+import com.example.course_android.Constants.MIN_SEARCH_STRING_LENGTH
 import com.example.course_android.Constants.SORT_STATUS_DOWN
 import com.example.course_android.Constants.SORT_STATUS_UP
 import com.example.course_android.Constants.VALUE_OF_FILTER_KEY
 import com.example.course_android.R
 import com.example.course_android.adapters.AdapterOfAllCountries
 import com.example.course_android.base.mvvm.BaseMvvmView
-import com.example.domain.outcome.Outcome
 import com.example.course_android.databinding.FragmentAllCountriesBinding
-import com.example.course_android.ext.askLocationPermission
-import com.example.course_android.ext.checkLocationPermission
-import com.example.domain.dto.model.CountryDescriptionItemDto
 import com.example.course_android.ext.isOnline
 import com.example.course_android.ext.showAlertDialog
-import com.example.course_android.utils.getCurrentLocation
+import com.example.course_android.ext.showAlertDialogWithMessage
+import com.example.course_android.services.LocationTrackingService.Companion.defaultLocation
+import com.example.course_android.services.LocationTrackingService.Companion.mCheckIsGPSTurnedOn
+import com.example.course_android.services.LocationTrackingService.Companion.mLocation
 import com.example.course_android.utils.toast
+import com.example.domain.dto.model.CountryDescriptionItemDto
+import com.example.domain.outcome.Outcome
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
-
-private const val LOCATION_PERMISSION_CODE = 1000
 
 class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), BaseMvvmView {
 
@@ -44,25 +45,20 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     private var sortStatus = DEFAULT_SORT_STATUS
     private lateinit var inet: MenuItem
     private val mCompositeDisposable = CompositeDisposable()
-    private var permissionGps = false
     var adapterOfAllCountries = AdapterOfAllCountries()
     private val viewModel: AllCountriesViewModel by stateViewModel()
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.let { location ->
-            viewModel.getCountriesFromApi(requireContext())
-        }
+        viewModel.getCountriesFromApi()
         readSortStatus()
+        viewModel.getCountriesFromSearch()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAllCountriesBinding.bind(view)
-
-        if (context?.checkLocationPermission() == false) {
-            activity?.askLocationPermission(LOCATION_PERMISSION_CODE)
-        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<HashMap<String?, Int>>(
             VALUE_OF_FILTER_KEY
@@ -78,10 +74,12 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
                 }
                 is Outcome.Failure -> {
                     showError()
+                    viewModel.getCountriesFromDB()
                 }
 
                 is Outcome.Next -> {
                     showCountries(it.data)
+                    viewModel.saveToDBfromApi(it.data)
                 }
                 else -> {
 
@@ -92,10 +90,12 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         viewModel.countriesFromSearchAndFilterLiveData.singleObserve(viewLifecycleOwner) {
             when (it) {
                 is Outcome.Progress -> {
-                    showProgress()
+                    if (it.loading) showProgress() else hideProgress()
+
                 }
                 is Outcome.Failure -> {
-                    showError()
+                    adapterOfAllCountries.clear()
+                    hideProgress()
                 }
 
                 is Outcome.Next -> {
@@ -133,18 +133,19 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { viewModel.getCountriesFromSearch().onNext(query) }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.getCountriesFromSearch().onNext(newText)
+                if (newText.length >= MIN_SEARCH_STRING_LENGTH) {
+                    viewModel.mSearchSubject.onNext(newText)
+                }
                 return true
             }
         })
 
         mSvMenu.setOnCloseListener {
-            context?.let { it1 -> viewModel.getCountriesFromApi(it1) }
+            mLocation?.let { viewModel.getCountriesFromApi() }
             false
         }
     }
@@ -169,6 +170,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
             showSortResetDialog()
         }
         if (item.itemId == R.id.filter) {
+            adapterOfAllCountries.clear()
             findNavController().navigate(R.id.action_allCountriesFragment_to_filterFragment)
         }
 
@@ -194,6 +196,7 @@ class AllCountriesFragment : ScopeFragment(R.layout.fragment_all_countries), Bas
     }
 
     private fun showCountries(listCountriesFromApiDto: MutableList<CountryDescriptionItemDto>) {
+        hideProgress()
         adapterOfAllCountries.repopulate(
             listCountriesFromApiDto
         )

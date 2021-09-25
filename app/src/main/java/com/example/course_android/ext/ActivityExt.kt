@@ -97,3 +97,13 @@ fun Activity.showAlertDialog() {
         }
     alertDialog?.show()
 }
+
+fun Activity.showAlertDialogWithMessage(message: String) {
+    val alertDialog = AlertDialog.Builder(this)
+        .setTitle(getString(R.string.error))
+        .setMessage(message)
+        .setPositiveButton(getString(R.string.dialog_ok)) { dialog, _ ->
+            dialog.dismiss()
+        }
+    alertDialog?.show()
+}

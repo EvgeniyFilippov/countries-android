@@ -42,7 +42,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     private var permissionGps = false
     private val mModulePresenter : CountryDetailsPresenter by inject()
     private lateinit var country: CountryDescriptionItemDto
-    private lateinit var currentCountryLocation: LatLng
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,7 +85,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         if (item.itemId == R.id.gps_distance) {
             activity?.showDialogWithOneButton(
                 null,
-                getString(R.string.distanceToYou, mCountryName, context?.let { getDistance(it, country) }),
+                getString(R.string.distanceToYou, getDistance(country)),
                 R.string.dialog_ok,
                 null
             )

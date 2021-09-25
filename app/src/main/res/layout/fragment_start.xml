@@ -6,12 +6,75 @@
     android:layout_height="match_parent"
     tools:context=".fragments.StartFragment">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/earth01"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="fitEnd"
+        app:layout_constraintEnd_toEndOf="@id/guidelineVertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineHorizontal"
+        app:srcCompat="@drawable/earth_part_001" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/earth02"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
+        app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleType="fitEnd"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineHorizontal"
+        app:srcCompat="@drawable/earth_part_002" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/earth03"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
+        android:scaleType="fitStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineVertical"
+        app:layout_constraintTop_toTopOf="@id/guidelineHorizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/earth_part_003" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/earth04"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
+        android:scaleType="fitStart"
+        app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineHorizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/earth_part_004" />
+
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/backGr"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#B007497A"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/hello_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_name_fragment"
         android:text="@string/start_fragment"
+        android:textColor="@color/black"
         android:textSize="@dimen/text_name_fragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,6 +84,10 @@
         android:id="@+id/btn_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/padding_20dp"
+        android:minWidth="@dimen/min_width_220dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
         android:text="@string/main_button"
         android:layout_marginTop="@dimen/margin_top_name_fragment"
         app:layout_constraintTop_toBottomOf="@id/hello_text"
@@ -31,6 +98,9 @@
         android:id="@+id/btn_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="@dimen/min_width_220dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
         android:layout_marginTop="@dimen/margin_top_button"
         android:text="@string/main_map"
         app:layout_constraintTop_toBottomOf="@id/btn_main"
@@ -42,6 +112,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_button"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
+        android:minWidth="@dimen/min_width_220dp"
         android:text="@string/capitals"
         app:layout_constraintTop_toBottomOf="@id/btn_map"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,6 +124,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_button"
+        android:minWidth="@dimen/min_width_220dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
         android:text="@string/news"
         app:layout_constraintTop_toBottomOf="@id/btn_capitals"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,9 +137,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_button"
+        android:background="@drawable/button_background"
+        android:textColor="@color/black"
+        android:minWidth="@dimen/min_width_220dp"
         android:text="@string/local_news"
         app:layout_constraintTop_toBottomOf="@id/btn_news"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineVertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

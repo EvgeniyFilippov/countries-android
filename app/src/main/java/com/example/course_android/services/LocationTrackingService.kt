@@ -10,6 +10,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -28,12 +29,14 @@ class LocationTrackingService : Service(), LocationListener {
         const val MIN_DISTANCE_CHANGE_FOR_UPDATES = DEFAULT_LONG
         const val MIN_TIME_BW_UPDATES = MIN_TIME_BW_UPDATES_VALUE
         const val NEW_LOCATION_ACTION = NEW_LOCATION_ACTION_VALUE
+        var mCheckIsGPSTurnedOn = false
+        var mLocation: Location? = null
+        var defaultLocation = Location("")
     }
 
-    var mCheckIsGPSTurnedOn = false
+
     var mCheckNetworkIsTurnedOn = false
     var mCanGetLocation = false
-    var mLocation: Location? = null
     var mLatitude = DEFAULT_DOUBLE
     var mLongitude = DEFAULT_DOUBLE
 
@@ -76,11 +79,15 @@ class LocationTrackingService : Service(), LocationListener {
         //text style notification
         val bigTextStyle = NotificationCompat.BigTextStyle()
         bigTextStyle.setBigContentTitle(getString(R.string.foreground_notification_name))
-        builder.setStyle(bigTextStyle)
-        builder.setWhen(System.currentTimeMillis())
 
-        //head-up notification
-        builder.setFullScreenIntent(pendingIntent, true)
+        builder.apply {
+            this
+                .setStyle(bigTextStyle)
+                .setWhen(System.currentTimeMillis())
+                .setFullScreenIntent(pendingIntent, true)
+                .setSmallIcon(R.drawable.ic_baseline_navigation_24)
+                .setContentText(getString(R.string.service_notification_text))
+        }
 
         //build notification
         val notification: Notification = builder.build()
@@ -92,6 +99,7 @@ class LocationTrackingService : Service(), LocationListener {
 
     @SuppressLint("MissingPermission")
     private fun initLocationScan(): Location? {
+
         try {
             mLocationManager =
                 applicationContext?.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -173,5 +181,17 @@ class LocationTrackingService : Service(), LocationListener {
         intent.action = NEW_LOCATION_ACTION
         intent.putExtra("location", location)
         sendBroadcast(intent)
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+
+    }
+
+    override fun onProviderDisabled(provider: String) {
+
+    }
+
+    override fun onProviderEnabled(provider: String) {
+
     }
 }

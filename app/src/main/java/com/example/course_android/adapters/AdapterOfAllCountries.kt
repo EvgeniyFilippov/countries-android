@@ -3,7 +3,9 @@ package com.example.course_android.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.course_android.Constants.DEFAULT_KM
 import com.example.course_android.R
@@ -20,6 +22,7 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
         val tvLanguages: AppCompatTextView = view.findViewById(R.id.item_lang)
         val tvArea: AppCompatTextView = view.findViewById(R.id.item_area)
         val tvDistance: AppCompatTextView = view.findViewById(R.id.like_bar_distance)
+        val cardTvCountry: CardView = view.findViewById(R.id.card_view)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
@@ -35,7 +38,9 @@ class AdapterOfAllCountries : BaseAdapter<CountryDescriptionItemDto>() {
             holder.tvCapital.text = item.capital
             holder.tvLanguages.text = item.languages.getLanguageByKey()
             holder.tvArea.text = item.area.toString()
-            holder.tvDistance.text = item.distance.toString()
+            holder.tvDistance.text = item.distance
+            holder.cardTvCountry.animation =
+                AnimationUtils.loadAnimation(holder.itemView.context, R.anim.recycler_animation)
             holder.itemView.setOnClickListener { mClickFunction?.invoke(item) }
         }
     }

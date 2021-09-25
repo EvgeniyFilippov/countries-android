@@ -5,37 +5,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_news"
     android:layout_marginVertical="@dimen/card_recycler_margin"
-    app:cardBackgroundColor="@color/background_color_recycler"
-    app:cardCornerRadius="@dimen/radius_recycler_card"
+    app:cardBackgroundColor="@color/white"
     app:contentPadding="@dimen/card_recycler_margin"
+    app:cardCornerRadius="@dimen/radius_recycler_card"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/relativeLayout"
-        android:padding="@dimen/padding_recycler_layout"
+        android:padding="@dimen/margin_10dp"
         >
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/news_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textFontWeight="700"
+            android:gravity="top"
+            android:textSize="@dimen/text_heading"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textColor="@color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/margin_start_heading"
-            android:textSize="@dimen/text_heading"/>
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/news_picture"
+            app:layout_constraintTop_toBottomOf="@id/news_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/news_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_top_shot_descr_recycler"
-            app:layout_constraintTop_toBottomOf="@id/news_title"
+            android:textFontWeight="500"
+            android:textSize="@dimen/font_size_16sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textColor="@color/news_description_color"
+            app:layout_constraintTop_toBottomOf="@id/news_picture"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/margin_start_heading"
-            android:textSize="@dimen/text_heading"/>
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
